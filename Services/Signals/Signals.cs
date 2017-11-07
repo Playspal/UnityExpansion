@@ -6,6 +6,35 @@ namespace UnityExpansion.Services
     /// <summary>
     /// Provides basic events system functionality
     /// </summary>
+    /// <example>
+    /// <code>
+    /// using UnityExpansion.Services;
+    /// 
+    /// public class MyClass1
+    /// {
+    ///     public MyClass1()
+    ///     {
+    ///         // Subscribe to "mySignalName" signal
+    ///         Signals.AddListener("mySignalName", MyMethod);
+    ///     }
+    ///     
+    ///     private void MyMethod()
+    ///     {
+    ///         // Unsubscribe from "mySignalName" signal
+    ///         Signals.RemoveListener("mySignalName", MyMethod);
+    ///     }
+    /// }
+    /// 
+    /// public class MyClass2
+    /// {
+    ///     public MyClass2()
+    ///     {
+    ///         // Dispatch "mySignalName"
+    ///         Signals.Dispatch("mySignalName");
+    ///     }
+    /// }
+    /// </code>
+    /// </example>
     public static class Singnals
     {
         private class Signal
@@ -18,7 +47,7 @@ namespace UnityExpansion.Services
         private static List<Signal> _signals = new List<Signal>();
 
         /// <summary>
-        /// Dispatch signal with provided name
+        /// Dispatch signal with provided name.
         /// </summary>
         /// <param name="name">Signal name</param>
         public static void Dispatch(string name)
@@ -28,7 +57,7 @@ namespace UnityExpansion.Services
         }
 
         /// <summary>
-        /// Subscribe on provided signal
+        /// Subscribe on provided signal.
         /// </summary>
         /// <param name="name">Signal name</param>
         /// <param name="handler">Signal handler</param>
@@ -39,7 +68,7 @@ namespace UnityExpansion.Services
         }
 
         /// <summary>
-        /// Unsubscribe from provided signal
+        /// Unsubscribe from provided signal.
         /// </summary>
         /// <param name="name">Signal name</param>
         /// <param name="handler">Signal handler</param>

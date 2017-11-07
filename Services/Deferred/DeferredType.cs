@@ -1,9 +1,9 @@
 ﻿namespace UnityExpansion.Services
 {
     /// <summary>
-    /// Defines DefferedAction countdown type
+    /// Defines deferred service countdown type.
     /// </summary>
-    public enum DefferedActionType
+    public enum DeferredType
     {
         /// <summary>
         /// Provides delay in frames/updates
