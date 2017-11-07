@@ -6,7 +6,7 @@ namespace UnityExpansion
     public static class UtilityTime
     {
         /// <summary>
-        /// The time in seconds it took to complete the last frame
+        /// The time in seconds it took to complete the last frame.
         /// </summary>
         public static float DeltaTime
         {
@@ -17,7 +17,7 @@ namespace UnityExpansion
         }
 
         /// <summary>
-        /// Frames per second
+        /// Frames per second.
         /// </summary>
         public static float Fps = 0;
 
@@ -25,11 +25,11 @@ namespace UnityExpansion
         private static float _deltaTimeAccumulator = 0;
 
         /// <summary>
-        /// Initializes the UtilityTime class
+        /// Initializes the UtilityTime class.
         /// </summary>
         static UtilityTime()
         {
-            Singnals.AddListener(UnityExpansion.SIGNAL_FRAME_START, UpdateFps);
+            Singnals.AddListener(UnityExpansionIndex.SIGNAL_FRAME_START, UpdateFps);
         }
 
 
