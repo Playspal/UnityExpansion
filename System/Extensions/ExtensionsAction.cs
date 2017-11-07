@@ -1,6 +1,6 @@
 ﻿using System;
 
-public static class ActionExtensions
+public static class ExtensionsAction
 {
     public static void InvokeIfNotNull<T>(this Action<T, T, T> action, T obj1, T obj2, T obj3)
     {

@@ -5,7 +5,7 @@ public static class ExtensionsGameObject
 {
     /// <summary>
     /// Returns specified component in the GameObject.
-    /// Adds new component to GameObject if component not added yet
+    /// Adds new component to GameObject if component not added yet.
     /// </summary>
     /// <returns>Component instance</returns>
     public static T GetOrAddComponent<T>(this GameObject target) where T : Component
@@ -21,7 +21,7 @@ public static class ExtensionsGameObject
     }
 
     /// <summary>
-    /// Set object's alpha using CanvasGroup component. Works with UI objects only
+    /// Set object's alpha using CanvasGroup component. Works with UI objects only.
     /// </summary>
     /// <param name="value">Float number from 0 to 1</param>
     public static void SetAlpha(this GameObject target, float value)
@@ -33,7 +33,7 @@ public static class ExtensionsGameObject
     }
 
     /// <summary>
-    /// Returns object's alpha using CanvasGroup component. Works with UI objects only
+    /// Returns object's alpha using CanvasGroup component. Works with UI objects only.
     /// </summary>
     /// <param name="target"></param>
     /// <returns>Float number from 0 to 1</returns>
@@ -45,7 +45,7 @@ public static class ExtensionsGameObject
     }
 
     /// <summary>
-    /// Increases object's alpha using CanvasGroup component. Works with UI objects only
+    /// Increases object's alpha using CanvasGroup component. Works with UI objects only.
     /// </summary>
     /// <param name="step">Float number from 0 to 1</param>
     public static void FadeIn(this GameObject target, float step)
@@ -59,7 +59,7 @@ public static class ExtensionsGameObject
     }
 
     /// <summary>
-    /// Decreases object's alpha using CanvasGroup component. Works with UI objects only
+    /// Decreases object's alpha using CanvasGroup component. Works with UI objects only.
     /// </summary>
     /// <param name="step">Float number from 0 to 1</param>
     public static void FadeOut(this GameObject target, float step)

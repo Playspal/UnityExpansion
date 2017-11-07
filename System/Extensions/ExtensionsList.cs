@@ -3,7 +3,7 @@
 public static class ExtensionsList
 {
     /// <summary>
-    /// Removes first item in list and returns it value
+    /// Removes first item in list and returns it value.
     /// </summary>
     public static T Shift<T>(this List<T> list)
     {
@@ -19,7 +19,7 @@ public static class ExtensionsList
     }
 
     /// <summary>
-    /// Removes last item in list and returns it value
+    /// Removes last item in list and returns it value.
     /// </summary>
     public static T Pop<T>(this List<T> list)
     {

@@ -3,7 +3,7 @@
 public static class ExtensionsString
 {
     /// <summary>
-    /// Adds spaces with provided interval
+    /// Adds spaces with provided interval.
     /// </summary>
     public static string SplitBySpaces(this string value, int interval = 3)
     {
@@ -21,7 +21,7 @@ public static class ExtensionsString
     }
 
     /// <summary>
-    /// Puts variable's value to Unity PlayerPrefs
+    /// Puts variable's value to Unity PlayerPrefs.
     /// </summary>
     /// <param name="id">Unique Id of variable</param>
     public static void CacheSave(this string value, string id)
@@ -31,7 +31,7 @@ public static class ExtensionsString
     }
 
     /// <summary>
-    /// Get value from Unity PlayerPrefs by unique Id
+    /// Get value from Unity PlayerPrefs by unique Id.
     /// </summary>
     /// <param name="id">Unique Id of variable</param>
     /// <param name="valueDefault">That value will be returned if PlayerPreft not contain provided Id</param>   

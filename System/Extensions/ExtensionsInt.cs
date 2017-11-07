@@ -5,7 +5,7 @@ public static class ExtensionsInt
 {
     /// <summary>
     /// Convert to string with leading zeros.
-    /// If length of original value same or bigger than length parameter, zeros will be not added
+    /// If length of original value same or bigger than length parameter, zeros will be not added.
     /// </summary>
     /// <param name="length">Target string length</param>
     public static string ToLeadingZerosString(this int value, int length = 2)
@@ -28,7 +28,7 @@ public static class ExtensionsInt
     }
 
     /// <summary>
-    /// Puts variable's value to Unity PlayerPrefs
+    /// Puts variable's value to Unity PlayerPrefs.
     /// </summary>
     /// <param name="id">Unique Id of variable</param>
     public static void CacheSave(this int value, string id)
@@ -38,7 +38,7 @@ public static class ExtensionsInt
     }
 
     /// <summary>
-    /// Get value from Unity PlayerPrefs by unique Id
+    /// Get value from Unity PlayerPrefs by unique Id.
     /// </summary>
     /// <param name="id">Unique Id of variable</param>
     /// <param name="valueDefault">That value will be returned if PlayerPreft not contain provided Id</param>   
