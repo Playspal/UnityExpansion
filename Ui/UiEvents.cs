@@ -7,12 +7,12 @@ namespace UnityExpansion.UI
 {
     /// <summary>
     /// Provides quick and simple access to Unity Event System
-    /// that allows to subscribe listeners to specified UI objects
+    /// that allows to subscribe listeners to specified UI objects.
     /// </summary>
     public static class UiEvents
     {
         /// <summary>
-        /// Adds the start drag listener
+        /// Adds the start drag listener.
         /// </summary>
         /// <param name="target">Target GameObject</param>
         /// <param name="handler">Handler</param>
@@ -22,7 +22,7 @@ namespace UnityExpansion.UI
         }
 
         /// <summary>
-        /// Adds the stop drag listener
+        /// Adds the stop drag listener.
         /// </summary>
         /// <param name="target">Target GameObject</param>
         /// <param name="handler">Handler</param>
@@ -32,7 +32,7 @@ namespace UnityExpansion.UI
         }
 
         /// <summary>
-        /// Adds the mouse over listener
+        /// Adds the mouse over listener.
         /// </summary>
         /// <param name="target">Target GameObject</param>
         /// <param name="handler">Handler</param>
@@ -42,7 +42,7 @@ namespace UnityExpansion.UI
         }
 
         /// <summary>
-        /// Adds the mouse out listener
+        /// Adds the mouse out listener.
         /// </summary>
         /// <param name="target">Target GameObject</param>
         /// <param name="handler">Handler</param>
@@ -52,7 +52,7 @@ namespace UnityExpansion.UI
         }
 
         /// <summary>
-        /// Adds the mouse press listener
+        /// Adds the mouse press listener.
         /// </summary>
         /// <param name="target">Target GameObject</param>
         /// <param name="handler">Handler</param>
@@ -67,7 +67,7 @@ namespace UnityExpansion.UI
         }
 
         /// <summary>
-        /// Adds the mouse release listener
+        /// Adds the mouse release listener.
         /// </summary>
         /// <param name="target">Target GameObject</param>
         /// <param name="handler">Handler</param>
@@ -82,7 +82,7 @@ namespace UnityExpansion.UI
         }
 
         /// <summary>
-        /// Adds the mouse click listener
+        /// Adds the mouse click listener.
         /// </summary>
         /// <param name="target">Target GameObject</param>
         /// <param name="handler">Handler</param>

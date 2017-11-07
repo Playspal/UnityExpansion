@@ -8,32 +8,32 @@ namespace UnityExpansion.UI
     public class UiObject
     {
         /// <summary>
-        /// Assosiated GameObject
+        /// Assosiated GameObject.
         /// </summary>
         public GameObject Graphics;
 
         /// <summary>
-        /// RectTransform of assosiated GameObject
+        /// RectTransform of assosiated GameObject.
         /// </summary>
         public RectTransform GraphicsTransform;
 
         /// <summary>
-        /// Is the Graphics active
+        /// Is the Graphics active.
         /// </summary>
         public bool IsActive = true;
 
         /// <summary>
-        /// Is the Graphics visible
+        /// Is the Graphics visible.
         /// </summary>
         public bool IsVisible = false;
 
         /// <summary>
-        /// Is the Graphics destroyed and UiObject ready to be removed
+        /// Is the Graphics destroyed and UiObject ready to be removed.
         /// </summary>
         public bool IsDestroyed = false;
 
         /// <summary>
-        /// Anchored position X
+        /// Anchored position X.
         /// </summary>
         public float X
         {
@@ -44,12 +44,12 @@ namespace UnityExpansion.UI
 
             set
             {
-                GraphicsTransform.anchoredPosition = new Vector2(value, Y);
+                SetPosition(value, Y);
             }
         }
 
         /// <summary>
-        /// Anchored position Y
+        /// Anchored position Y.
         /// </summary>
         public float Y
         {
@@ -60,12 +60,12 @@ namespace UnityExpansion.UI
 
             set
             {
-                GraphicsTransform.anchoredPosition = new Vector2(X, value);
+                SetPosition(X, value);
             }
         }
 
         /// <summary>
-        /// Graphics width
+        /// Graphics width.
         /// </summary>
         public float Width
         {
@@ -76,7 +76,7 @@ namespace UnityExpansion.UI
         }
 
         /// <summary>
-        /// Graphics height
+        /// Graphics height.
         /// </summary>
         public float Height
         {
@@ -87,7 +87,7 @@ namespace UnityExpansion.UI
         }
 
         /// <summary>
-        /// Graphics size delta X
+        /// Graphics size delta X.
         /// </summary>
         public float SizeX
         {
@@ -98,7 +98,7 @@ namespace UnityExpansion.UI
         }
 
         /// <summary>
-        /// Graphics size delta Y
+        /// Graphics size delta Y.
         /// </summary>
         public float SizeY
         {
@@ -109,7 +109,23 @@ namespace UnityExpansion.UI
         }
 
         /// <summary>
-        /// Destroys Graphics and mark UiObject as destroyed
+        /// Graphics alpha level. Uses CanvasGroup component to set this property.
+        /// </summary>
+        public float Alpha
+        {
+            get
+            {
+                return Graphics.GetOrAddComponent<CanvasGroup>().alpha;
+            }
+
+            set
+            {
+                Graphics.GetOrAddComponent<CanvasGroup>().alpha = value;
+            }
+        }
+
+        /// <summary>
+        /// Destroys Graphics and mark UiObject as destroyed.
         /// </summary>
         public void Destroy()
         {
@@ -119,7 +135,7 @@ namespace UnityExpansion.UI
         }
 
         /// <summary>
-        /// Set Graphics instance
+        /// Set Graphics instance.
         /// </summary>
         /// <param name="graphics">Graphics instance</param>
         public void SetGraphics(GameObject graphics)
@@ -129,7 +145,7 @@ namespace UnityExpansion.UI
         }
 
         /// <summary>
-        /// Loads and instantiates Graphics prefab from Resources
+        /// Loads and instantiates Graphics prefab from Resources.
         /// </summary>
         /// <param name="path">Pathname of the target prefab</param>
         public void LoadGraphicsSimple(string path)
@@ -143,13 +159,13 @@ namespace UnityExpansion.UI
         /// <summary>
         /// 
         /// </summary>
-        public void LoadGraphics(string path, int layer = 1)
+        public void LoadGraphics(string path, int layer = 0)
         {
             GameObject screenSrc = Resources.Load(path) as GameObject;
 
             Graphics = UnityEngine.Object.Instantiate(screenSrc) as GameObject;
             GraphicsTransform = Graphics.GetComponent<RectTransform>();
-            //GraphicsTransform.SetParent(UiRoot.GetLayer(layer));
+            GraphicsTransform.SetParent(Ui.GetLayer(layer));
             GraphicsTransform.localScale = new Vector3(1, 1, 1);
             GraphicsTransform.anchoredPosition = new Vector3(0, 0, 0);
             GraphicsTransform.offsetMin = Vector2.zero;
@@ -157,7 +173,7 @@ namespace UnityExpansion.UI
         }
 
         /// <summary>
-        /// Sets the Graphics rotation
+        /// Sets the Graphics rotation.
         /// </summary>
         /// <param name="value">Roration in degress</param>
         public void SetRotation(float value)
@@ -172,7 +188,7 @@ namespace UnityExpansion.UI
         }
 
         /// <summary>
-        /// Sets the sizeDelta of Graphics
+        /// Sets the sizeDelta of Graphics.
         /// </summary>
         /// <param name="x">X</param>
         /// <param name="y">Y</param>
@@ -182,7 +198,7 @@ namespace UnityExpansion.UI
         }
 
         /// <summary>
-        /// Sets the same scale of the Graphics
+        /// Sets the same scale of the Graphics.
         /// </summary>
         /// <param name="x">Horizontal scale</param>
         /// <param name="y">Vertical scale</param>
@@ -192,7 +208,7 @@ namespace UnityExpansion.UI
         }
 
         /// <summary>
-        /// Sets the same scale of the Graphics in all dimensions
+        /// Sets the same scale of the Graphics in all dimensions.
         /// </summary>
         /// <param name="value">Scale value</param>
         public void SetScale(float value)
@@ -201,7 +217,7 @@ namespace UnityExpansion.UI
         }
 
         /// <summary>
-        /// Set the parent of the Graphics transform
+        /// Set the parent of the Graphics transform.
         /// </summary>
         /// <param name="parent">The parent Transform to use</param>
         /// <param name="reset">Reset Graphics current scale to one and position to zero</param>
@@ -217,7 +233,7 @@ namespace UnityExpansion.UI
         }
 
         /// <summary>
-        /// Sets the Graphics anchored position
+        /// Sets the Graphics anchored position.
         /// </summary>
         /// <param name="x">Position X</param>
         /// <param name="y">Position Y</param>
@@ -227,7 +243,7 @@ namespace UnityExpansion.UI
         }
 
         /// <summary>
-        /// Activates/Deactivates the UiObject
+        /// Activates/Deactivates the UiObject.
         /// </summary>
         /// <param name="value">Activate or deactivation the object</param>
         public void SetActive(bool value)
@@ -240,7 +256,7 @@ namespace UnityExpansion.UI
         }
 
         /// <summary>
-        /// Makes Graphics invisible, but keeps all processes and animations
+        /// Makes Graphics invisible, but keeps all processes and animations.
         /// </summary>
         /// <param name="value">Visible or invisible</param>
         public void SetVisible(bool value)
@@ -261,7 +277,7 @@ namespace UnityExpansion.UI
         }
 
         /// <summary>
-        /// Finds a child by name and returns it
+        /// Finds a child by name and returns it.
         /// </summary>
         /// <param name="name">Name of child to be found</param>
         /// <returns>Instance of GameObject or null</returns>
@@ -272,7 +288,7 @@ namespace UnityExpansion.UI
         }
 
         /// <summary>
-        /// Finds a child by name and returns specified Component attached to it
+        /// Finds a child by name and returns specified Component attached to it.
         /// </summary>
         /// <param name="name">Name of child to be found</param>
         /// <returns>Instance of Component or null</returns>
