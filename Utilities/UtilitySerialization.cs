@@ -3,12 +3,13 @@ using System.Xml.Serialization;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 
-namespace UnityExpansion
+namespace UnityExpansion.Utilities
 {
     /// <summary>
     /// Provides common Serialization and Deserialization functionality.
+    /// Can be used to serialize any object into xml string and back.
     /// </summary>
-    public static class Serialization
+    public static class UtilitySerialization
     {
         /// <summary>
         /// Serializes object to string using BinaryFormatter.

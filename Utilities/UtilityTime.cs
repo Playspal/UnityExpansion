@@ -1,12 +1,13 @@
 ﻿using UnityEngine;
 using UnityExpansion.Services;
 
-namespace UnityExpansion
+namespace UnityExpansion.Utilities
 {
     public static class UtilityTime
     {
         /// <summary>
         /// The time in seconds it took to complete the last frame.
+        /// Clamped between 0 to 1.
         /// </summary>
         public static float DeltaTime
         {
@@ -29,16 +30,18 @@ namespace UnityExpansion
         /// </summary>
         static UtilityTime()
         {
-            Singnals.AddListener(UnityExpansionIndex.SIGNAL_FRAME_START, UpdateFps);
+            Signals.AddListener(Expansion.SIGNAL_FRAME_START, Update);
         }
 
-
-
-        private static void UpdateFps()
+        // Updates fps
+        private static void Update()
         {
             _deltaTimeAccumulator += (Time.deltaTime - _deltaTimeAccumulator) * 0.1f;
 
-            Fps = 1.0f / _deltaTimeAccumulator;
+            if (_deltaTimeAccumulator > 0)
+            {
+                Fps = 1.0f / _deltaTimeAccumulator;
+            }
         }
     }
 }
