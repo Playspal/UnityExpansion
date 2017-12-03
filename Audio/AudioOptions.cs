@@ -1,19 +1,16 @@
 ﻿namespace UnityExpansion.Audio
 {
     /// <summary>
-    /// Sound clip options
+    /// Audio object options
     /// </summary>
-    public class SoundOptions
+    /// <seealso cref="UnityExpansion.Audio.AudioPlayer" />
+    /// <seealso cref="UnityExpansion.Audio.AudioObject" />
+    public class AudioOptions
     {
         /// <summary>
         /// Loop sound clip or play once.
         /// </summary>
         public bool Loop = false;
-
-        /// <summary>
-        /// If unique only one instance of sound clip will be played at the same time.
-        /// </summary>
-        public bool Unique = false;
 
         /// <summary>
         /// Volume of sound clip.
