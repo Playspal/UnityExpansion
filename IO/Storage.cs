@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Reflection;
 
 using UnityExpansion.Utilities;
 
@@ -7,8 +9,8 @@ namespace UnityExpansion.IO
 {
     /// <summary>
     /// Abstract class that provides storage functionality.
-    /// All public members of Storage instance can be saved and loaded from local file.
-    /// Private members will be not serialized and saved.
+    /// All public dynamic members of Storage instance can be saved and loaded from local file.
+    /// Private and static members will be not serialized and saved.
     /// </summary>
     /// <example>
     /// <code>
@@ -16,7 +18,8 @@ namespace UnityExpansion.IO
     /// 
     /// public class MyStorage : Storage
     /// {
-    ///     public int MyCounter;
+    ///     // Default value used in case MyStorage created first time at all.
+    ///     public int MyCounter = 100;
     /// }
     /// 
     /// public class MyClass
@@ -41,11 +44,23 @@ namespace UnityExpansion.IO
         /// </summary>
         public Storage()
         {
+            string type = GetType().FullName;
+
+            // Constructor validation.
+            // It required to make sure that XmlSerializer will work properly with current instance.
+            ConstructorInfo[] constructors = GetType().GetConstructors();
+
+            for (int i = 0; i < constructors.Length; i++)
+            {
+                if (constructors[i].GetParameters().Length > 0)
+                {
+                    throw (new Exception(type + " should not contain constructor that takes any arguments."));
+                }
+            }
+
             // In Load method new instance will be created and new
             // constructor will be called again because of XmlSerializer flow
             // So this code prevent infinity loop of Loads
-            string type = GetType().FullName;
-
             if (!_loadedInstances.Contains(type))
             {
                 _loadedInstances.Add(type);

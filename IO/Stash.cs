@@ -7,7 +7,7 @@ namespace UnityExpansion.IO
 {
     /// <summary>
     /// Stores any kind of serializable data in a single file.
-    /// Use it instead of UnityEngine.PlayerPrefs.
+    /// Use it instead of UnityEngine.PlayerPrefs if you need to store generic types or complicated objects.
     /// </summary>
     /// <example>
     /// <code>
@@ -16,42 +16,42 @@ namespace UnityExpansion.IO
     /// 
     /// public class MyLeaderboard
     /// {
-    ///     private const string CACHE_KEY_BEST_PLAYERS = "BestPlayers";
-    ///     private const string CACHE_KEY_BEST_SCORE = "BestScore";
+    ///     private const string STASH_KEY_BEST_PLAYERS = "BestPlayers";
+    ///     private const string STASH_KEY_BEST_SCORE = "BestScore";
     ///     
     ///     public List<string> BestPlayers = new List<string>();
     ///     public int BestScore;
     ///     
     ///     public void Load()
     ///     {
-    ///         // Gets data from cache
-    ///         BestPlayers = Cache.Get(CACHE_KEY_BEST_PLAYERS);
-    ///         BestScore = Cache.Get(CACHE_KEY_BEST_SCORE);
+    ///         // Gets data from stash
+    ///         BestPlayers = Stash.Get(STASH_KEY_BEST_PLAYERS);
+    ///         BestScore = Stash.Get(STASH_KEY_BEST_SCORE);
     ///     }
     ///     
     ///     public void Save()
     ///     {
-    ///         // Puts data to cache
-    ///         Cache.Set(CACHE_KEY_BEST_PLAYERS, BestPlayers);
-    ///         Cache.Set(CACHE_KEY_BEST_SCORE, BestScore);
+    ///         // Puts data to stash
+    ///         Stash.Set(STASH_KEY_BEST_PLAYERS, BestPlayers);
+    ///         Stash.Set(STASH_KEY_BEST_SCORE, BestScore);
     ///     }
     /// }
     /// </code>
     /// </example>
-    public static class Cache
+    public static class Stash
     {
         private static List<CommonPair<string, object>> _data = new List<CommonPair<string, object>>();
 
         /// <summary>
         /// Initializes the cache.
         /// </summary>
-        static Cache()
+        static Stash()
         {
             Load();
         }
 
         /// <summary>
-        /// Clears all cache data.
+        /// Clears all stash data.
         /// </summary>
         public static void Clear()
         {
@@ -60,7 +60,7 @@ namespace UnityExpansion.IO
         }
 
         /// <summary>
-        /// Is cache contains specified key.
+        /// Is stash contains specified key.
         /// </summary>
         /// <param name="key">The key</param>
         public static bool Contains(string key)
@@ -120,18 +120,18 @@ namespace UnityExpansion.IO
             return (T)item.Value;
         }
 
-        // Saves cache data
+        // Saves stash data
         private static void Save()
         {
-            string filename = Environment.DataPath + "cache.dat";
+            string filename = Environment.DataPath + "stash.dat";
 
             File.WriteAllText(filename, UtilitySerialization.ObjectToXML(_data));
         }
 
-        // Loads cache data
+        // Loads stash data
         private static void Load()
         {
-            string filename = Environment.DataPath + "cache.dat";
+            string filename = Environment.DataPath + "stash.dat";
 
             if (File.Exists(filename))
             {

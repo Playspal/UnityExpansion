@@ -37,7 +37,7 @@ namespace UnityExpansion.Audio
     /// <seealso cref="UnityExpansion.Audio.Music" />
     public static class Sound
     {
-        private const string CACHE_KEY_MUTE = "UnityExpansion.Audio.Sound.IsMuted";
+        private const string STASH_KEY_MUTE = "UnityExpansion.Audio.Sound.IsMuted";
 
         private static AudioPlayer _audioPlayer;
 
@@ -56,7 +56,7 @@ namespace UnityExpansion.Audio
             {
                 _audioPlayer.SetMute(value);
 
-                Cache.Set(CACHE_KEY_MUTE, value);
+                Stash.Set(STASH_KEY_MUTE, value);
             }
         }
 
@@ -66,7 +66,7 @@ namespace UnityExpansion.Audio
         static Sound()
         {
             _audioPlayer = new AudioPlayer("SoundContainer");
-            _audioPlayer.SetMute(Cache.Get(CACHE_KEY_MUTE, false));
+            _audioPlayer.SetMute(Stash.Get(STASH_KEY_MUTE, false));
         }
 
         /// <summary>
