@@ -1,5 +1,4 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 
 public static class ExtensionsGameObject
 {
@@ -35,7 +34,6 @@ public static class ExtensionsGameObject
     /// <summary>
     /// Returns object's alpha using CanvasGroup component. Works with UI objects only.
     /// </summary>
-    /// <param name="target"></param>
     /// <returns>Float number from 0 to 1</returns>
     public static float GetAlpha(this GameObject target)
     {
