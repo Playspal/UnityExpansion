@@ -34,9 +34,9 @@
             SetupAndStart(delay, type);
         }
 
-        internal override void Perform()
+        protected override void Invoke()
         {
-            Singnals.Dispatch(_signalName);
+            Signals.Dispatch(_signalName);
         }
     }
 }

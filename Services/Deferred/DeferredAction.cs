@@ -44,7 +44,7 @@ namespace UnityExpansion.Services
             SetupAndStart(delay, type);
         }
 
-        internal override void Perform()
+        protected override void Invoke()
         {
             _callback.InvokeIfNotNull();
         }

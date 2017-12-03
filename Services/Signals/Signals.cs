@@ -35,8 +35,9 @@ namespace UnityExpansion.Services
     /// }
     /// </code>
     /// </example>
-    public static class Singnals
+    public static class Signals
     {
+        // Signal structure class
         private class Signal
         {
             public string Name;
@@ -47,33 +48,57 @@ namespace UnityExpansion.Services
         private static List<Signal> _signals = new List<Signal>();
 
         /// <summary>
-        /// Dispatch signal with provided name.
+        /// Dispatch signal with specified name.
         /// </summary>
         /// <param name="name">Signal name</param>
         public static void Dispatch(string name)
         {
+            if (string.IsNullOrEmpty(name))
+            {
+                return;
+            }
+
             Signal signal = GetSignal(name);
-            signal.Handler.InvokeIfNotNull();
+
+            if (signal.Handler != null)
+            {
+                Delegate[] delegates = signal.Handler.GetInvocationList();
+
+                for (int i = 0; i < delegates.Length; i++)
+                {
+                    delegates[i].DynamicInvoke();
+                }
+            }
         }
 
         /// <summary>
-        /// Subscribe on provided signal.
+        /// Subscribe on specified signal.
         /// </summary>
         /// <param name="name">Signal name</param>
         /// <param name="handler">Signal handler</param>
         public static void AddListener(string name, Action handler)
         {
+            if(string.IsNullOrEmpty(name))
+            {
+                return;
+            }
+
             Signal signal = GetSignal(name);
             signal.Handler += handler;
         }
 
         /// <summary>
-        /// Unsubscribe from provided signal.
+        /// Unsubscribe from specified signal.
         /// </summary>
         /// <param name="name">Signal name</param>
         /// <param name="handler">Signal handler</param>
         public static void RemoveListener(string name, Action handler)
         {
+            if (string.IsNullOrEmpty(name))
+            {
+                return;
+            }
+
             Signal signal = GetSignal(name);
             signal.Handler -= handler;
         }

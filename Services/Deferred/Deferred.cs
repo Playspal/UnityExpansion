@@ -1,4 +1,6 @@
-﻿namespace UnityExpansion.Services
+﻿using UnityExpansion.Utilities;
+
+namespace UnityExpansion.Services
 {
     /// <summary>
     /// Abstract class that provides deferred service functionality.
@@ -25,7 +27,7 @@
             _isStarted = true;
             _delay = _delayDefined;
 
-            Singnals.AddListener(UnityExpansionIndex.SIGNAL_FRAME_START, Process);
+            Signals.AddListener(Expansion.SIGNAL_FRAME_START, Process);
         }
 
         /// <summary>
@@ -40,23 +42,19 @@
 
             _isStarted = false;
 
-            Singnals.RemoveListener(UnityExpansionIndex.SIGNAL_FRAME_START, Process);
+            Signals.RemoveListener(Expansion.SIGNAL_FRAME_START, Process);
         }
-
-        /// <summary>
-        /// Will be called after countdown finish.
-        /// </summary>
-        internal abstract void Perform();
 
         /// <summary>
         /// Starts the service. This method should be called from constructor of inheriting class.
         /// </summary>
         /// <param name="delay">Delay value in frames or seconds</param>
         /// <param name="type">Deferred service type</param>
-        internal void SetupAndStart(float delay, DeferredType type)
+        protected void SetupAndStart(float delay, DeferredType type)
         {
             _delay = delay;
             _delayDefined = delay;
+
             _type = type;
 
             Start();
@@ -81,10 +79,13 @@
             if (_delay <= 0)
             {
                 Stop();
-
-                // Perform action
-                Perform();
+                Invoke();
             }
         }
+
+        /// <summary>
+        /// Will be called after countdown finish.
+        /// </summary>
+        protected abstract void Invoke();
     }
 }
