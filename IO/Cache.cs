@@ -1,17 +1,49 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 
+using UnityExpansion.Utilities;
+
 namespace UnityExpansion.IO
 {
     /// <summary>
-    /// Stores any kind of serializable data in a file. Use it instead of UnityEngine.PlayerPrefs.
+    /// Stores any kind of serializable data in a single file.
+    /// Use it instead of UnityEngine.PlayerPrefs.
     /// </summary>
+    /// <example>
+    /// <code>
+    /// using using System.Collections.Generic;
+    /// using UnityExpansion.IO;
+    /// 
+    /// public class MyLeaderboard
+    /// {
+    ///     private const string CACHE_KEY_BEST_PLAYERS = "BestPlayers";
+    ///     private const string CACHE_KEY_BEST_SCORE = "BestScore";
+    ///     
+    ///     public List<string> BestPlayers = new List<string>();
+    ///     public int BestScore;
+    ///     
+    ///     public void Load()
+    ///     {
+    ///         // Gets data from cache
+    ///         BestPlayers = Cache.Get(CACHE_KEY_BEST_PLAYERS);
+    ///         BestScore = Cache.Get(CACHE_KEY_BEST_SCORE);
+    ///     }
+    ///     
+    ///     public void Save()
+    ///     {
+    ///         // Puts data to cache
+    ///         Cache.Set(CACHE_KEY_BEST_PLAYERS, BestPlayers);
+    ///         Cache.Set(CACHE_KEY_BEST_SCORE, BestScore);
+    ///     }
+    /// }
+    /// </code>
+    /// </example>
     public static class Cache
     {
-        private static List<CommonPair> _data = new List<CommonPair>();
+        private static List<CommonPair<string, object>> _data = new List<CommonPair<string, object>>();
 
         /// <summary>
-        /// Initializes the cache
+        /// Initializes the cache.
         /// </summary>
         static Cache()
         {
@@ -19,7 +51,7 @@ namespace UnityExpansion.IO
         }
 
         /// <summary>
-        /// Clears all cache data
+        /// Clears all cache data.
         /// </summary>
         public static void Clear()
         {
@@ -28,9 +60,9 @@ namespace UnityExpansion.IO
         }
 
         /// <summary>
-        /// Is cache contains specified key
+        /// Is cache contains specified key.
         /// </summary>
-        /// <param name="key">The key.</param>
+        /// <param name="key">The key</param>
         public static bool Contains(string key)
         {
             return _data.Exists(x => x.Key == key);
@@ -43,11 +75,11 @@ namespace UnityExpansion.IO
         /// <param name="value">The value</param>
         public static void Set(string key, object value)
         {
-            CommonPair item = _data.Find(x => x.Key == key);
+            CommonPair<string, object> item = _data.Find(x => x.Key == key);
 
             if (item == null)
             {
-                _data.Add(new CommonPair(key, value));
+                _data.Add(new CommonPair<string, object>(key, value));
             }
 
             else
@@ -78,7 +110,7 @@ namespace UnityExpansion.IO
         /// <returns>Value corresponding to key or default value</returns>
         public static T Get<T>(string key, T defaultValue)
         {
-            CommonPair item = _data.Find(x => x.Key == key);
+            CommonPair<string, object> item = _data.Find(x => x.Key == key);
 
             if (item == null)
             {
@@ -93,7 +125,7 @@ namespace UnityExpansion.IO
         {
             string filename = Environment.DataPath + "cache.dat";
 
-            File.WriteAllText(filename, Serialization.ObjectToXML(_data));
+            File.WriteAllText(filename, UtilitySerialization.ObjectToXML(_data));
         }
 
         // Loads cache data
@@ -104,7 +136,7 @@ namespace UnityExpansion.IO
             if (File.Exists(filename))
             {
                 string xml = File.ReadAllText(filename);
-                _data = Serialization.XMLToObject(xml, _data.GetType()) as List<CommonPair>;
+                _data = UtilitySerialization.XMLToObject(xml, _data.GetType()) as List<CommonPair<string, object>>;
             }
         }
     }

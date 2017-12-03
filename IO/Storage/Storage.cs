@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 
+using UnityExpansion.Utilities;
+
 namespace UnityExpansion.IO
 {
     /// <summary>
@@ -69,7 +71,7 @@ namespace UnityExpansion.IO
         /// </summary>
         public void Save()
         {
-            File.WriteAllText(FileName, Serialization.ObjectToXML(this));
+            File.WriteAllText(FileName, UtilitySerialization.ObjectToXML(this));
         }
 
         /// <summary>
@@ -81,17 +83,9 @@ namespace UnityExpansion.IO
             if (File.Exists(FileName))
             {
                 string xml = File.ReadAllText(FileName);
-                var output = Serialization.XMLToObject(xml, GetType());
+                object deserialized = UtilitySerialization.XMLToObject(xml, GetType());
 
-                foreach (var prop in output.GetType().GetProperties())
-                {
-                    this.SetMemberValue(prop.Name, prop.GetValue(output, null));
-                }
-
-                foreach (var prop in output.GetType().GetFields())
-                {
-                    this.SetMemberValue(prop.Name, prop.GetValue(output));
-                }
+                UtilityReflection.CloneMembers(deserialized, this);
             }
         }
     }
