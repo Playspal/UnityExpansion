@@ -197,7 +197,7 @@ namespace UnityExpansionInternal
                 return;
             }
 
-            InternalUiAnimationEditorSelection.TargetAnimationClip.Goto(position);
+            InternalUiAnimationEditorSelection.TargetAnimationClip.Rewind(position);
         }
     }
 }

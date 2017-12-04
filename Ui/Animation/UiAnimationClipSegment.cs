@@ -60,7 +60,7 @@ namespace UnityExpansion.UI.Animation
         public Vector2 ScaleTo = Vector2.zero;
 
         /// <summary>
-        /// Interpolates value using specified position of animation clip.
+        /// Interpolates and sets value to target game object using specified position of animation clip.
         /// </summary>
         /// <param name="time">Time in seconds</param>
         public void Goto(float time)

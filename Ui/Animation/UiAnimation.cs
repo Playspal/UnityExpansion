@@ -80,12 +80,12 @@ namespace UnityExpansion.UI.Animation
                 IsPlaying = true;
                 Time = 0;
 
-                _activeAnimation.Goto(0);
+                _activeAnimation.RewindToBegin();
             }
         }
 
         /// <summary>
-        /// Stops animation clip if playing.
+        /// Stops all playing animation clips that were started with this UiAnimation.
         /// </summary>
         public void Stop(bool gotoLastFrame = true)
         {
@@ -96,7 +96,7 @@ namespace UnityExpansion.UI.Animation
 
             if (gotoLastFrame)
             {
-                _activeAnimation.Goto(_activeAnimation.GetDuration());
+                _activeAnimation.RewindToEnd();
             }
 
             OnComplete.InvokeIfNotNull(_activeAnimation);
@@ -116,7 +116,7 @@ namespace UnityExpansion.UI.Animation
 
                 if(_activeAnimation != null)
                 {
-                    _activeAnimation.Goto(Time);
+                    _activeAnimation.Rewind(Time);
 
                     if (Time > _activeAnimation.GetDuration())
                     {

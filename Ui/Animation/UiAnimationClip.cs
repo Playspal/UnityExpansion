@@ -66,15 +66,31 @@ namespace UnityExpansion.UI.Animation
         }
 
         /// <summary>
-        /// Sets the specified playback time.
+        /// Rewinds animation clip to specified time.
         /// </summary>
         /// <param name="time">Time in seconds</param>
-        public void Goto(float time)
+        public void Rewind(float time)
         {
             for (int i = 0; i < Items.Count; i++)
             {
                 Items[i].Goto(time);
             }
+        }
+
+        /// <summary>
+        /// Rewinds animation clip to the begining (first frame).
+        /// </summary>
+        public void RewindToBegin()
+        {
+            Rewind(0);
+        }
+
+        /// <summary>
+        /// Rewinds animation clip to the end (last frame).
+        /// </summary>
+        public void RewindToEnd()
+        {
+            Rewind(GetDuration());
         }
     }
 }
