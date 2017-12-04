@@ -14,7 +14,7 @@ namespace UnityExpansion.Audio
     ///     public void GotoMainMenu()
     ///     {
     ///         // Plays "MainMenuMusic.wav" that is placed in "Resources/Sound" folder
-    ///         Music.Play("MainMenuMusic.wav");
+    ///         Music.Play("Sound/MainMenuMusic");
     ///     }
     ///     
     ///     public void GotoGameplay()
@@ -28,7 +28,7 @@ namespace UnityExpansion.Audio
     ///         };
     ///         
     ///         // Plays "GameplayMusic.wav" with provided options
-    ///         Music.Play("GameplayMusic.wav", options);
+    ///         Music.Play("Sound/GameplayMusic", options);
     ///     }
     /// }
     /// </code>
