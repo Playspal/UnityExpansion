@@ -1,6 +1,7 @@
 ﻿#if UNITY_EDITOR
 using System.Collections.Generic;
 using System.IO;
+using System.Text.RegularExpressions;
 using UnityEditor;
 using UnityEditorInternal;
 using UnityEngine;
@@ -243,9 +244,14 @@ namespace UnityExpansionInternal
             {
                 if (prefab != null)
                 {
-                    item.PrefabPath = AssetDatabase.GetAssetPath(prefab.gameObject);
-                    item.PrefabPath = item.PrefabPath.Replace(".prefab", string.Empty);
-                    item.PrefabPath = item.PrefabPath.Replace("Assets/Resources/", string.Empty);
+                    Match match = Regex.Match
+                    (
+                        AssetDatabase.GetAssetPath(prefab.gameObject),
+                        @"Resources/([A-Za-z0-9\-\/.]*).prefab",
+                        RegexOptions.IgnoreCase
+                    );
+
+                    item.PrefabPath = match.Success ? match.Groups[1].Value : string.Empty;
 
                     switch (type)
                     {
