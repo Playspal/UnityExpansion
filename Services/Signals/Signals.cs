@@ -48,6 +48,18 @@ namespace UnityExpansion.Services
         private static List<Signal> _signals = new List<Signal>();
 
         /// <summary>
+        /// Dispatch group of signals with specified names.
+        /// </summary>
+        /// <param name="name">Signal name</param>
+        public static void DispatchGroup(string[] names)
+        {
+            for(int i = 0; i < names.Length; i++)
+            {
+                Dispatch(names[i]);
+            }
+        }
+
+        /// <summary>
         /// Dispatch signal with specified name.
         /// </summary>
         /// <param name="name">Signal name</param>
