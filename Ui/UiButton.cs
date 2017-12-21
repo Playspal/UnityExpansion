@@ -184,7 +184,7 @@ namespace UnityExpansion.UI
 
                 if (!string.IsNullOrEmpty(_signalPress))
                 {
-                    Signals.Dispatch(_signalPress);
+                    Signals.DispatchGroup(_signalPress);
                 }
 
                 SetState(State.Pressed);
@@ -200,7 +200,7 @@ namespace UnityExpansion.UI
 
                 if (!string.IsNullOrEmpty(_signalRelease))
                 {
-                    Signals.Dispatch(_signalRelease);
+                    Signals.DispatchGroup(_signalRelease);
                 }
 
                 if (IsPressed)
@@ -211,7 +211,7 @@ namespace UnityExpansion.UI
 
                     if (!string.IsNullOrEmpty(_signalClick))
                     {
-                        Signals.Dispatch(_signalClick);
+                        Signals.DispatchGroup(_signalClick);
                     }
                 }
 

@@ -50,7 +50,17 @@ namespace UnityExpansion.Services
         /// <summary>
         /// Dispatch group of signals with specified names.
         /// </summary>
-        /// <param name="name">Signal name</param>
+        /// <param name="names">String that contains signals names</param>
+        /// <param name="separator">Separator to split names string</param>
+        public static void DispatchGroup(string names, char separator = ';')
+        {
+            DispatchGroup(names.Split(separator));
+        }
+
+        /// <summary>
+        /// Dispatch group of signals with specified names.
+        /// </summary>
+        /// <param name="names">Array of signal names</param>
         public static void DispatchGroup(string[] names)
         {
             for(int i = 0; i < names.Length; i++)
