@@ -154,7 +154,21 @@ namespace UnityExpansionInternal
             {
                 float size = Delay * InternalUiAnimationEditorTimeline.SegmentWidth * 10;
 
-                InternalUiAnimationEditorGUI.DrawTexture(X - size, Y, size, Height, InternalUiAnimationEditorTextures.GenerateCanvasItemBackground((int)size, (int)Height, Target.ItemType, Target.EasingType, true));
+                InternalUiAnimationEditorGUI.DrawTexture
+                (
+                    X - size,
+                    Y,
+                    size,
+                    Height,
+                    InternalUiAnimationEditorTextures.GenerateCanvasItemBackground
+                    (
+                        (int)size,
+                        (int)Height,
+                        Target.ItemType,
+                        Target.EasingType,
+                        true
+                    )
+                );
             }
 
             InternalUiAnimationEditorGUI.DrawTexture(X, Y, Width, Height, InternalUiAnimationEditorTextures.GenerateCanvasItemBackground((int)Width, (int)Height, Target.ItemType, Target.EasingType));
@@ -177,6 +191,14 @@ namespace UnityExpansionInternal
                 }
 
                 GUILayout.Label(Target.GameObject.name + " " + Target.ItemType.ToString(), labelStyle);
+            }
+            else
+            {
+                GUIStyle labelStyle = new GUIStyle(GUI.skin.GetStyle("Label"));
+
+                labelStyle.normal.textColor = Color.red;
+
+                GUILayout.Label("Missed", labelStyle);
             }
 
             GUILayout.EndArea();

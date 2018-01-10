@@ -101,6 +101,7 @@ namespace UnityExpansionInternal
                     if (InternalUiAnimationEditorSelection.TargetAnimationClip != null)
                     {
                         InternalUiAnimationEditorSelection.TargetAnimationClip.Items.Add(tween);
+                        InternalUiAnimationEditorSelection.TargetAnimationClip.Items.Sort((a, b) => (a.Delay.CompareTo(b.Delay)));
 
                         justAddedTween = tween;
                     }
@@ -207,7 +208,7 @@ namespace UnityExpansionInternal
             // Drag and drop game objects
             if (Event.current.type == EventType.DragExited)
             {
-                if (InternalUiAnimationEditor.MousePosition.x > InternalUiAnimationEditorInspector.Width)
+                if (InternalUiAnimationEditor.MousePosition.x > InternalUiAnimationEditorInspector.Width && InternalUiAnimationEditor.MousePosition.y > InternalUiAnimationEditorTimeline.Height)
                 {
                     object[] objects = DragAndDrop.objectReferences;
                     DragAndDropQueue = new List<GameObject>();

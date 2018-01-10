@@ -52,7 +52,7 @@ namespace UnityExpansionInternal
         {
             if (Event.current.type == EventType.ScrollWheel)
             {
-                if (Event.current.delta.y < 0)
+                if (Event.current.delta.y > 0)
                 {
                     if (Scale < 1)
                     {
@@ -60,7 +60,7 @@ namespace UnityExpansionInternal
                     }
                 }
 
-                if (Event.current.delta.y > 0)
+                if (Event.current.delta.y < 0)
                 {
                     if (Scale >= 0.2f)
                     {

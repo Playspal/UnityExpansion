@@ -30,7 +30,7 @@ namespace UnityExpansionInternal
             GUILayout.BeginArea(new Rect(positionX, positionY, width - 2, height), new GUIStyle());
 
             GUILayout.Space(5);
-            GUILayout.Label("Timeline Settings");
+            GUILayout.Label("Animation Clip Settings");
             GUILayout.BeginVertical(new GUIStyle(GUI.skin.GetStyle("HelpBox")));
             GUILayout.Space(2);
             RenderAnimationClip(InternalUiAnimationEditorSelection.TargetAnimationClip);
@@ -40,7 +40,7 @@ namespace UnityExpansionInternal
             if (InternalUiAnimationEditorSelection.CanvasItemToEdit != null)
             {
                 GUILayout.Space(5);
-                GUILayout.Label("Tween Settings");
+                GUILayout.Label("Segment Settings");
                 GUILayout.BeginVertical(new GUIStyle(GUI.skin.GetStyle("HelpBox")));
                 GUILayout.Space(2);
                 RenderAnimationClipSegment(InternalUiAnimationEditorSelection.CanvasItemToEdit.Target);
@@ -143,13 +143,21 @@ namespace UnityExpansionInternal
 
         private static void RenderAnimationClipSegment(UiAnimationClipSegment segment)
         {
+            if (segment.GameObject == null)
+            {
+                EditorGUILayout.HelpBox("Game object is missed! Setup another game object or delete this segment.", MessageType.Error);
+            }
+
             segment.GameObject = InternalUiAnimationEditorGUI.InspectorObjectField
             (
                 "Game Object",
                 segment.GameObject
             );
 
-            segment.ItemType = (UiAnimationClipSegmentType)InternalUiAnimationEditorGUI.InspectorEnumPopup
+            if (segment.GameObject != null)
+            {
+
+                segment.ItemType = (UiAnimationClipSegmentType)InternalUiAnimationEditorGUI.InspectorEnumPopup
             (
                 "Type",
                 segment.ItemType,
@@ -171,57 +179,59 @@ namespace UnityExpansionInternal
                 }
             );
 
-            segment.EasingType = (EasingType)InternalUiAnimationEditorGUI.InspectorEnumPopup
-            (
-                "Processor",
-                segment.EasingType
-            );
+                segment.EasingType = (EasingType)InternalUiAnimationEditorGUI.InspectorEnumPopup
+                (
+                    "Easing type",
+                    segment.EasingType
+                );
 
-            switch (segment.ItemType)
-            {
-                case UiAnimationClipSegmentType.Alpha:
-                    segment.AlphaFrom = InternalUiAnimationEditorGUI.InspectorFloatField("Alpha From", segment.AlphaFrom);
-                    segment.AlphaTo = InternalUiAnimationEditorGUI.InspectorFloatField("Alpha To", segment.AlphaTo);
-                    break;
+                switch (segment.ItemType)
+                {
+                    case UiAnimationClipSegmentType.Alpha:
+                        segment.AlphaFrom = InternalUiAnimationEditorGUI.InspectorFloatField("Alpha From", segment.AlphaFrom);
+                        segment.AlphaTo = InternalUiAnimationEditorGUI.InspectorFloatField("Alpha To", segment.AlphaTo);
+                        break;
 
-                case UiAnimationClipSegmentType.Color:
-                    segment.ColorFrom = InternalUiAnimationEditorGUI.InspectorColorField("Color From", segment.ColorFrom);
-                    segment.ColorTo = InternalUiAnimationEditorGUI.InspectorColorField("Color To", segment.ColorTo);
-                    break;
+                    case UiAnimationClipSegmentType.Color:
+                        segment.ColorFrom = InternalUiAnimationEditorGUI.InspectorColorField("Color From", segment.ColorFrom);
+                        segment.ColorTo = InternalUiAnimationEditorGUI.InspectorColorField("Color To", segment.ColorTo);
+                        break;
 
-                case UiAnimationClipSegmentType.Position:
-                    segment.PositionFrom = InternalUiAnimationEditorGUI.InspectorVector2Field("Position From XY", segment.PositionFrom);
-                    segment.PositionTo = InternalUiAnimationEditorGUI.InspectorVector2Field("Position To XY", segment.PositionTo);
-                    break;
+                    case UiAnimationClipSegmentType.Position:
+                        segment.PositionFrom = InternalUiAnimationEditorGUI.InspectorVector2Field("Position From XY", segment.PositionFrom);
+                        segment.PositionTo = InternalUiAnimationEditorGUI.InspectorVector2Field("Position To XY", segment.PositionTo);
+                        break;
 
-                case UiAnimationClipSegmentType.Rotation:
-                    segment.RotationFrom = InternalUiAnimationEditorGUI.InspectorFloatField("Rotation From", segment.RotationFrom);
-                    segment.RotationTo = InternalUiAnimationEditorGUI.InspectorFloatField("Rotation To", segment.RotationTo);
-                    break;
+                    case UiAnimationClipSegmentType.Rotation:
+                        segment.RotationFrom = InternalUiAnimationEditorGUI.InspectorFloatField("Rotation From", segment.RotationFrom);
+                        segment.RotationTo = InternalUiAnimationEditorGUI.InspectorFloatField("Rotation To", segment.RotationTo);
+                        break;
 
-                case UiAnimationClipSegmentType.Scale:
-                    segment.ScaleFrom = InternalUiAnimationEditorGUI.InspectorVector2Field("Scale From XY", segment.ScaleFrom);
-                    segment.ScaleTo = InternalUiAnimationEditorGUI.InspectorVector2Field("Scale To XY", segment.ScaleTo);
-                    break;
-            }
+                    case UiAnimationClipSegmentType.Scale:
+                        segment.ScaleFrom = InternalUiAnimationEditorGUI.InspectorVector2Field("Scale From XY", segment.ScaleFrom);
+                        segment.ScaleTo = InternalUiAnimationEditorGUI.InspectorVector2Field("Scale To XY", segment.ScaleTo);
+                        break;
+                }
 
-            segment.Predefined = InternalUiAnimationEditorGUI.InspectorBooleanField
-            (
-                new GUIContent("Predefined", "Use From value as predefined value for " + segment.GameObject.name),
-                segment.Predefined
-            );
-
-            /*
-            UtilityReflection.SetMemberValue
-            (
-                segment, "Predefined",
                 segment.Predefined = InternalUiAnimationEditorGUI.InspectorBooleanField
                 (
                     new GUIContent("Predefined", "Use From value as predefined value for " + segment.GameObject.name),
-                    (bool)UtilityReflection.GetMemberValue(segment, "Predefined")
-                )
-            );
-            */
+                    segment.Predefined
+                );
+
+                /*
+                UtilityReflection.SetMemberValue
+                (
+                    segment, "Predefined",
+                    segment.Predefined = InternalUiAnimationEditorGUI.InspectorBooleanField
+                    (
+                        new GUIContent("Predefined", "Use From value as predefined value for " + segment.GameObject.name),
+                        (bool)UtilityReflection.GetMemberValue(segment, "Predefined")
+                    )
+                );
+                */
+            }
+
             GUIStyle buttonStyle = new GUIStyle(GUI.skin.GetStyle("Button"));
             buttonStyle.margin.left = 138;
             buttonStyle.margin.top = 5;
@@ -231,6 +241,7 @@ namespace UnityExpansionInternal
             if (EditorGUI.EndChangeCheck())
             {
                 InternalUiAnimationEditorSelection.TargetAnimationClip.Items.Remove(segment);
+                InternalUiAnimationEditorSelection.TargetAnimationClip.Items.Sort((a, b) => (a.Delay.CompareTo(b.Delay)));
                 InternalUiAnimationEditorSelection.SetCanvasItemToEdit(null);
             }
         }
