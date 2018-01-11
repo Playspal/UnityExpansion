@@ -2,7 +2,7 @@
 
 public static class ExtensionsAction
 {
-    public static void InvokeIfNotNull<T>(this Action<T, T, T> action, T obj1, T obj2, T obj3)
+    public static void InvokeIfNotNull<T1, T2, T3>(this Action<T1, T2, T3> action, T1 obj1, T2 obj2, T3 obj3)
     {
         if (action != null)
         {
@@ -10,7 +10,7 @@ public static class ExtensionsAction
         }
     }
 
-    public static void InvokeIfNotNull<T>(this Action<T, T> action, T obj1, T obj2)
+    public static void InvokeIfNotNull<T1, T2>(this Action<T1, T2> action, T1 obj1, T2 obj2)
     {
         if (action != null)
         {
