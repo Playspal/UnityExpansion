@@ -49,7 +49,7 @@ namespace UnityExpansion.UI
         internal float _interactionDelay = 0f;
 
         [SerializeField]
-        internal string _signalClick = "";
+        internal string[] _signalsClick = new string[0];
 
         [SerializeField]
         internal string _signalPress = "";
@@ -209,10 +209,7 @@ namespace UnityExpansion.UI
 
                     OnClick.InvokeIfNotNull();
 
-                    if (!string.IsNullOrEmpty(_signalClick))
-                    {
-                        Signals.DispatchGroup(_signalClick);
-                    }
+                    Signals.DispatchGroup(_signalsClick);
                 }
 
                 SetState(IsHovered ? State.Hover : State.Normal);
