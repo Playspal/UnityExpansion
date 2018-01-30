@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 
 using UnityEngine;
-using UnityExpansion.UI.Animation;
 
 namespace UnityExpansion.UI
 {
@@ -58,7 +56,6 @@ namespace UnityExpansion.UI
             {
                 return RectTransform.anchoredPosition.x;
             }
-
             set
             {
                 SetPosition(value, Y);
@@ -74,7 +71,6 @@ namespace UnityExpansion.UI
             {
                 return RectTransform.anchoredPosition.y;
             }
-
             set
             {
                 SetPosition(X, value);
@@ -120,7 +116,6 @@ namespace UnityExpansion.UI
             {
                 return RectTransform.localRotation.eulerAngles.z;
             }
-
             set
             {
                 Vector3 euler = RectTransform.localRotation.eulerAngles;
@@ -137,7 +132,6 @@ namespace UnityExpansion.UI
             {
                 return RectTransform.localScale.x;
             }
-
             set
             {
                 RectTransform.localScale = new Vector2(value, ScaleY);
@@ -153,7 +147,6 @@ namespace UnityExpansion.UI
             {
                 return RectTransform.localScale.y;
             }
-
             set
             {
                 RectTransform.localScale = new Vector2(ScaleX, value);
@@ -169,7 +162,6 @@ namespace UnityExpansion.UI
             {
                 return gameObject.GetAlpha();
             }
-
             set
             {
                 gameObject.SetAlpha(value);
