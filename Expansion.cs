@@ -10,6 +10,8 @@ namespace UnityExpansion
     [AddComponentMenu("Expansion/Expansion Main Object", 1)]
     public class Expansion : MonoBehaviour
     {
+        public const string VERSION = "1.1.4";
+
         /// <summary>
         /// Signal name that dispatched on start of each frame.
         /// </summary>
@@ -26,6 +28,7 @@ namespace UnityExpansion
         // Initialization
         private void Awake()
         {
+            Debug.Log("Initializated UnityExpansion " + VERSION + ". If you are looking any information visit http://okov.se/expansion/");
             Instance = this;
         }
 
@@ -43,6 +46,7 @@ namespace UnityExpansion
                 LayoutSettings = gameObject.GetOrAddComponent<UiLayoutSettings>();
                 LayoutSettings.hideFlags = HideFlags.HideInInspector;
             }
+
         }
     }
 }

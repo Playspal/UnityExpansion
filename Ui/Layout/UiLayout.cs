@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 
 using UnityEngine;
-using UnityExpansion.Services;
 
 namespace UnityExpansion.UI
 {
@@ -139,7 +138,11 @@ namespace UnityExpansion.UI
                 throw new Exception("Screen " + path + " is already instantiated. Use UiLayout.FindScreen to get the instance.");
             }
 
-            UiLayoutElementScreen screen = UiObject.Instantiate<UiLayoutElementScreen>(path, parent ?? DefaultContainer);
+            UiLayoutElementScreen screen = UiObject.Instantiate<UiLayoutElementScreen>
+            (
+                path,
+                GetFirstNotContainer(parent, DefaultContainer)
+            );
 
             AddElement(path, screen);
 
@@ -160,8 +163,12 @@ namespace UnityExpansion.UI
                 throw new Exception("Panel " + path + " is already instantiated. Use UiLayout.FindPanel to get the instance.");
             }
 
-            UiLayoutElementPanel panel = UiObject.Instantiate<UiLayoutElementPanel>(path, parent ?? DefaultContainer);
-
+            UiLayoutElementPanel panel = UiObject.Instantiate<UiLayoutElementPanel>
+            (
+                path,
+                GetFirstNotContainer(parent, DefaultContainer)
+            );
+            
             AddElement(path, panel);
 
             return panel;
@@ -179,16 +186,20 @@ namespace UnityExpansion.UI
         {
             UiLayoutPreset preset = FindPreset(path);
 
+            UiLayoutElementPopup popup = UiObject.Instantiate<UiLayoutElementPopup>
+            (
+                path,
+                GetFirstNotContainer
+                (
+                    parent,
+                    preset != null ? preset.Container : null,
+                    DefaultContainer
+                )
+            );
+            
             if (preset != null)
             {
-                parent = parent ?? preset.Container;
-            }
-
-            UiLayoutElementPopup popup = UiObject.Instantiate<UiLayoutElementPopup>(path, parent ?? DefaultContainer);
-
-            if(preset != null)
-            {
-                Signals.AddListener(preset.SignalHide, popup.Hide);
+                preset.InitializeSignalsHide(popup.Hide);
             }
 
             return popup;
@@ -223,13 +234,7 @@ namespace UnityExpansion.UI
         private static UiLayoutElement GetElement(string path)
         {
             CommonPair<string, UiLayoutElement> pair = _elements.Find(x => x.Key == path);
-
-            if(pair != null)
-            {
-                return pair.Value;
-            }
-
-            return null;
+            return pair != null ? pair.Value : null;
         }
 
         // Adds new layout element to list
@@ -245,7 +250,7 @@ namespace UnityExpansion.UI
             Reorder();
         }
 
-        // Reorders depth of layout element inside of theyr containers.
+        // Reorders depth of layout element inside of their containers.
         private static void Reorder()
         {
             for(int index = 0; index < _elements.Count; index++)
@@ -278,6 +283,12 @@ namespace UnityExpansion.UI
 
                 index++;
             }
+        }
+
+        // Return first not null RectTransform from provided RectTransforms
+        private static RectTransform GetFirstNotContainer(RectTransform a = null, RectTransform b = null, RectTransform c = null)
+        {
+            return a != null ? a : b != null ? b : c;
         }
     }
 }

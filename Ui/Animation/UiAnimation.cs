@@ -143,9 +143,22 @@ namespace UnityExpansion.UI.Animation
                     Play(AnimationClips[i]);
                 }
 
-                if(AnimationClips[i].PlayOnSignal && !string.IsNullOrEmpty(AnimationClips[i].PlayOnSignalName))
+                if(AnimationClips[i].PlayOnSignals != null)
                 {
-                    SubscribeClipToSignal(AnimationClips[i].PlayOnSignalName, AnimationClips[i].Name);
+                    for(int j = 0; j < AnimationClips[i].PlayOnSignals.Length; j++)
+                    {
+                        UiLayoutSettings.Signal signal = Expansion.Instance.LayoutSettings.Signals.Find(x => x.Id == AnimationClips[i].PlayOnSignals[j]);
+
+                        if (signal != null)
+                        {
+                            SubscribeClipToSignal(signal.Id, AnimationClips[i].Name);
+                            SubscribeClipToSignal(signal.Name, AnimationClips[i].Name);
+                        }
+                        else
+                        {
+                            SubscribeClipToSignal(AnimationClips[i].PlayOnSignals[j], AnimationClips[i].Name);
+                        }
+                    }                    
                 }
             }
 

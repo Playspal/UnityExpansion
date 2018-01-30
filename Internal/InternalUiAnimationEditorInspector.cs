@@ -82,9 +82,9 @@ namespace UnityExpansionInternal
                 triggers.Add("Element Hide");
             }
 
-            if (clip.PlayOnSignal)
+            if (clip.PlayOnSignals.Length > 0)
             {
-                triggers.Add("Signal \"" + clip.PlayOnSignalName + "\"");
+                triggers.Add("Signals");
             }
 
             string playon = "";
@@ -124,20 +124,17 @@ namespace UnityExpansionInternal
                     clip.PlayOnLayoutElementHide
                 );
 
-                clip.PlayOnSignal = InternalUiAnimationEditorGUI.InspectorBooleanField
+                InternalLayout.ButtonSignals
                 (
-                    new GUIContent("   Signal"),
-                    clip.PlayOnSignal
+                    "   Signals",
+                    "Select signals to play animation clip",
+                    clip.PlayOnSignals,
+                    (string[] result) =>
+                    {
+                        clip.PlayOnSignals = result;
+                    },
+                    15
                 );
-
-                if (clip.PlayOnSignal)
-                {
-                    clip.PlayOnSignalName = InternalUiAnimationEditorGUI.InspectorTextField
-                    (
-                        "   Signal name",
-                        clip.PlayOnSignalName
-                    );
-                }
             }
         }
 

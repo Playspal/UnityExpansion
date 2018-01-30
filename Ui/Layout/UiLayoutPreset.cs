@@ -81,12 +81,12 @@ namespace UnityExpansion.UI
         /// <summary>
         /// Signal to show preset's instance
         /// </summary>
-        public string SignalShow;
+        public string[] SignalsShow = new string[0];
 
         /// <summary>
         /// Signal to hide preset's instance
         /// </summary>
-        public string SignalHide;
+        public string[] SignalsHide = new string[0];
 
         /// <summary>
         /// Is the preset will be active at start.
@@ -141,8 +141,54 @@ namespace UnityExpansion.UI
                     break;
             }
 
-            Signals.AddListener(SignalShow, OnSignalShow);
-            Signals.AddListener(SignalHide, OnSignalHide);
+            InitializeSignalsShow(OnSignalShow);
+            InitializeSignalsHide(OnSignalHide);
+        }
+
+        /// <summary>
+        /// Subscribes to Show Signals using specified handler.
+        /// </summary>
+        /// <param name="handler">Handler.</param>
+        public void InitializeSignalsShow(Action handler)
+        {
+            SubscribeOnSignals(SignalsShow, handler);
+        }
+
+        /// <summary>
+        /// Subscribes to Hide Signals using specified handler.
+        /// </summary>
+        /// <param name="handler">Handler.</param>
+        public void InitializeSignalsHide(Action handler)
+        {
+            SubscribeOnSignals(SignalsHide, handler);
+        }
+
+        // Subscribe on signals using specified handler
+        private void SubscribeOnSignals(string[] signals, Action handler)
+        {
+            if (signals != null)
+            {
+                for (int i = 0; i < signals.Length; i++)
+                {
+                    SubscribeOnSignal(signals[i], handler);
+                }
+            }
+        }
+
+        // Subscribe on specified signal using specified handler
+        private void SubscribeOnSignal(string name, Action handler)
+        {
+            UiLayoutSettings.Signal signal = Expansion.Instance.LayoutSettings.Signals.Find(x => x.Id == name);
+
+            if (signal != null)
+            {
+                Signals.AddListener(signal.Id, handler);
+                Signals.AddListener(signal.Name, handler);
+            }
+            else
+            {
+                Signals.AddListener(name, handler);
+            }
         }
 
         // Signal show handler
@@ -159,8 +205,7 @@ namespace UnityExpansion.UI
                     break;
 
                 case Type.Popup:
-                    UiLayoutElementPopup popup = UiLayout.CreatePopup(PrefabPath, Container);
-                    Signals.AddListener(SignalHide, popup.Hide);
+                    UiLayout.CreatePopup(PrefabPath, Container);
                     break;
             }
         }

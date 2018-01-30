@@ -78,7 +78,6 @@ namespace UnityExpansion.UI
                     _animationShow.PlayOnAwake = false;
                     _animationShow.PlayOnLayoutElementShow = false;
                     _animationShow.PlayOnLayoutElementHide = false;
-                    _animationShow.PlayOnSignal = false;
                     _animationShow.Loop = false;
                 }
 
@@ -87,7 +86,6 @@ namespace UnityExpansion.UI
                     _animationHide.PlayOnAwake = false;
                     _animationHide.PlayOnLayoutElementShow = false;
                     _animationHide.PlayOnLayoutElementHide = false;
-                    _animationHide.PlayOnSignal = false;
                     _animationHide.Loop = false;
                 }
             }

@@ -34,15 +34,10 @@ namespace UnityExpansion.UI.Animation
         public bool PlayOnLayoutElementHide = false;
 
         /// <summary>
-        /// Start animation on specified signal.
-        /// </summary>
-        public bool PlayOnSignal = false;
-
-        /// <summary>
         /// Animation will be started after the signal with specified name will be dispatched.
         /// Used if PlayOnSignal is true.
         /// </summary>
-        public string PlayOnSignalName = string.Empty;
+        public string[] PlayOnSignals = new string[0];
 
         /// <summary>
         /// Loop animation clip.

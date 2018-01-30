@@ -51,12 +51,6 @@ namespace UnityExpansion.UI
         [SerializeField]
         internal string[] _signalsClick = new string[0];
 
-        [SerializeField]
-        internal string _signalPress = "";
-
-        [SerializeField]
-        internal string _signalRelease = "";
-
         private State _state = State.Normal;
 
         private float _interactionTime = 0;
@@ -65,26 +59,6 @@ namespace UnityExpansion.UI
         /// Called on button click.
         /// </summary>
         public event Action OnClick;
-
-        /// <summary>
-        /// Called on button press
-        /// </summary>
-        public event Action OnPress;
-
-        /// <summary>
-        /// Called on button release.
-        /// </summary>
-        public event Action OnRelease;
-
-        /// <summary>
-        /// Called on cursor rolled over the button.
-        /// </summary>
-        public event Action OnMouseOver;
-
-        /// <summary>
-        /// Called on cursor rolled out the button.
-        /// </summary>
-        public event Action OnMouseOut;
 
         /// <summary>
         /// Is button enabled and interactable.
@@ -180,13 +154,6 @@ namespace UnityExpansion.UI
             {
                 IsPressed = true;
 
-                OnPress.InvokeIfNotNull();
-
-                if (!string.IsNullOrEmpty(_signalPress))
-                {
-                    Signals.DispatchGroup(_signalPress);
-                }
-
                 SetState(State.Pressed);
             }
         }
@@ -196,13 +163,6 @@ namespace UnityExpansion.UI
         {
             if (IsEnabled && Time.realtimeSinceStartup - _interactionTime > _interactionDelay)
             {
-                OnRelease.InvokeIfNotNull();
-
-                if (!string.IsNullOrEmpty(_signalRelease))
-                {
-                    Signals.DispatchGroup(_signalRelease);
-                }
-
                 if (IsPressed)
                 {
                     IsPressed = false;
@@ -225,8 +185,6 @@ namespace UnityExpansion.UI
             {
                 IsHovered = true;
 
-                OnMouseOver.InvokeIfNotNull();
-
                 SetState(State.Hover);
             }
         }
@@ -242,8 +200,6 @@ namespace UnityExpansion.UI
                 {
                     OnReleaseHandler();
                 }
-
-                OnMouseOut.InvokeIfNotNull();
 
                 SetState(State.Normal);
             }

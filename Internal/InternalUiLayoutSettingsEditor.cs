@@ -1,4 +1,5 @@
 ﻿#if UNITY_EDITOR
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
@@ -23,6 +24,82 @@ namespace UnityExpansionInternal
         private UiLayoutPreset _dynamicItemSelected = null;
         private UiLayoutPreset _staticItemSelected = null;
         private UiLayoutPreset _popupItemSelected = null;
+
+        private ReorderableList _signalsReorderableList;
+
+        private void OnEnable()
+        {
+            List<UiLayoutSettings.Signal> signals = InternalUtilities.GetSignals();
+
+            _signalsReorderableList = new ReorderableList(signals, typeof(UiLayoutSettings.Signal), true, false, true, true);
+
+            _signalsReorderableList.onReorderCallback = (ReorderableList target) =>
+            {
+                signals = target.list as List<UiLayoutSettings.Signal>;
+            };
+
+            _signalsReorderableList.drawElementCallback = (Rect rect, int index, bool isActive, bool isFocused) =>
+            {
+                rect.y += 2;
+
+                if (signals[index].Locked)
+                {
+                    EditorGUI.TextField
+                    (
+                        new Rect(rect.x, rect.y, rect.width - 50, EditorGUIUtility.singleLineHeight),
+                        signals[index].Name
+                    );
+                }
+                else
+                {
+                    signals[index].Name = EditorGUI.TextField
+                    (
+                        new Rect(rect.x, rect.y, rect.width - 50, EditorGUIUtility.singleLineHeight),
+                        signals[index].Name
+                    );
+                }
+
+                signals[index].Locked = EditorGUI.ToggleLeft
+                (
+                    new Rect(rect.x + rect.width - 45, rect.y, 50, EditorGUIUtility.singleLineHeight),
+                    "Lock",
+                    signals[index].Locked
+                );
+
+            };
+
+            _signalsReorderableList.onAddCallback = (ReorderableList list) =>
+            {
+                InternalUtilities.AddSignal();
+            };
+
+            _signalsReorderableList.onRemoveCallback = (ReorderableList list) =>
+            {
+                if (signals[list.index].Locked)
+                {
+                    EditorUtility.DisplayDialog
+                    (
+                        "Warning!",
+                        "You can not delete this signal because it is Locked.",
+                        "Ok"
+                    );
+
+                    return;
+                }
+
+                if
+                (
+                    EditorUtility.DisplayDialog
+                    (
+                        "Warning!",
+                        "Are you sure you want to delete signal \"" + signals[list.index].Name + "\"?", "Yes", "No"
+                    )
+                )
+                {
+                    ReorderableList.defaultBehaviours.DoRemoveButton(list);
+                }
+            };
+        }
 
         public override void OnInspectorGUI()
         {
@@ -51,6 +128,21 @@ namespace UnityExpansionInternal
             _popupItemSelected = RenderList(layoutSettings.Popups, _popupItemSelected, ItemType.Popup);
 
             EditorGUILayout.Space();
+
+            EditorGUILayout.LabelField("Custom Signals");
+            RenderSignals();
+
+            EditorGUILayout.Space();
+        }
+
+        private void RenderSignals()
+        {
+            GUIStyle s = new GUIStyle();
+            s.margin = new RectOffset(4, 4, 5, 5);
+
+            GUILayout.BeginVertical(s);
+            _signalsReorderableList.DoLayoutList();
+            GUILayout.EndVertical();
         }
 
         private UiLayoutPreset RenderList(List<UiLayoutPreset> list, UiLayoutPreset listItemSelected, ItemType type)
@@ -85,7 +177,7 @@ namespace UnityExpansionInternal
 
             // Buttons
             GUIStyle buttonsStyle = new GUIStyle();
-            buttonsStyle.margin.left = -5;// (int)EditorGUIUtility.currentViewWidth - (listItemSelected == null ? 110 : 213);
+            buttonsStyle.margin.left = -5;
             
             GUIStyle buttonStyle = new GUIStyle(GUI.skin.GetStyle("HelpBox"));
             buttonStyle.alignment = TextAnchor.MiddleCenter;
@@ -100,6 +192,8 @@ namespace UnityExpansionInternal
 
             if (EditorGUI.EndChangeCheck())
             {
+                InternalUtilities.SetDirty(target);
+
                 UiLayoutPreset itemNew = new UiLayoutPreset();
 
                 itemNew.Container = layoutSettings.DefaultContainer;
@@ -114,6 +208,8 @@ namespace UnityExpansionInternal
                 GUILayout.Button("REMOVE", buttonStyle);
                 if (EditorGUI.EndChangeCheck())
                 {
+                    InternalUtilities.SetDirty(target);
+
                     list.Remove(listItemSelected);
                     listItemSelected = null;
                 }
@@ -213,6 +309,8 @@ namespace UnityExpansionInternal
 
             if (EditorGUI.EndChangeCheck())
             {
+                InternalUtilities.SetDirty(target);
+
                 listItemSelected = foldout ? item : null;
             }
 
@@ -242,6 +340,8 @@ namespace UnityExpansionInternal
 
             if (EditorGUI.EndChangeCheck())
             {
+                InternalUtilities.SetDirty(target);
+
                 if (prefab != null)
                 {
                     Match match = Regex.Match
@@ -253,24 +353,17 @@ namespace UnityExpansionInternal
 
                     item.PrefabPath = match.Success ? match.Groups[1].Value : string.Empty;
 
-                    switch (type)
-                    {
-                        case ItemType.Popup:
-                        case ItemType.Panel:
-                            item.SignalShow = "Ui." + GetItemPrefabName(item) + ".Show";
-                            item.SignalHide = "Ui." + GetItemPrefabName(item) + ".Hide";
-                            break;
-                        case ItemType.Screen:
-                            item.SignalShow = "Ui." + GetItemPrefabName(item) + ".Show";
-                            item.SignalHide = "Ui.DynamicScreens.Hide";
-                            break;
-                    }
+                    UiLayoutSettings.Signal signalShow = InternalUtilities.AddSignal("Ui." + GetItemPrefabName(item) + ".Show");
+                    UiLayoutSettings.Signal signalHide = InternalUtilities.AddSignal("Ui." + GetItemPrefabName(item) + ".Hide");
+
+                    item.SignalsShow = item.SignalsShow.Push(signalShow.Id);
+                    item.SignalsHide = item.SignalsHide.Push(signalHide.Id);
                 }
                 else
                 {
                     item.PrefabPath = string.Empty;
-                    item.SignalShow = string.Empty;
-                    item.SignalHide = string.Empty;
+                    //item.SignalShow = string.Empty;
+                    //item.SignalHide = string.Empty;
                 }
             }
         }
@@ -282,17 +375,39 @@ namespace UnityExpansionInternal
             item.Container = (RectTransform)EditorGUILayout.ObjectField("Container", item.Container, typeof(RectTransform), allowSceneObjects: true);
             if (EditorGUI.EndChangeCheck())
             {
+                InternalUtilities.SetDirty(target);
             }
         }
 
         // Render item element signals fields
         private void RenderListItemSignals(List<UiLayoutPreset> list, UiLayoutPreset item, ItemType type)
         {
-            item.SignalShow = EditorGUILayout.TextField("Signal Show", item.SignalShow);
-            item.SignalHide = EditorGUILayout.TextField("Signal Hide", item.SignalHide);
+            InternalLayout.ButtonSignals
+            (
+                "Show on signals",
+                "Select signals to show " + GetItemPrefabName(item),
+                item.SignalsShow,
+                (string[] result) =>
+                {
+                    item.SignalsShow = result;
+                    Repaint();
+                }
+            );
+
+            InternalLayout.ButtonSignals
+            (
+                "Hide on signals",
+                "Select signals to hide " + GetItemPrefabName(item),
+                item.SignalsHide,
+                (string[] result) =>
+                {
+                    item.SignalsHide = result;
+                    Repaint();
+                }
+            );
         }
 
-        // Render item element "active by default" togle
+        // Render item element "active by default" toggle
         private void RenderListItemActiveByDefault(List<UiLayoutPreset> list, UiLayoutPreset item, ItemType type)
         {
             if (type != ItemType.Popup)
@@ -302,6 +417,8 @@ namespace UnityExpansionInternal
                 item.ActiveByDefault = EditorGUILayout.Toggle("Active by default", item.ActiveByDefault);
                 if (EditorGUI.EndChangeCheck())
                 {
+                    InternalUtilities.SetDirty(target);
+
                     if (type == ItemType.Screen)
                     {
                         OnItemSetActiveByDefault(list, item, item.ActiveByDefault);
@@ -311,7 +428,12 @@ namespace UnityExpansionInternal
                 // Skip animation
                 if (item.ActiveByDefault)
                 {
+                    EditorGUI.BeginChangeCheck();
                     item.ActiveByDefaultImmediately = EditorGUILayout.Toggle("Skip animation", item.ActiveByDefaultImmediately);
+                    if (EditorGUI.EndChangeCheck())
+                    {
+                        InternalUtilities.SetDirty(target);
+                    }
                 }
             }
         }
