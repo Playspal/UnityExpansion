@@ -134,7 +134,7 @@ namespace UnityExpansion.UI.Animation
         }
         
         // Initialization
-        private void Awake()
+        private void Start()
         {
             for(int i = 0; i < AnimationClips.Count; i++)
             {
