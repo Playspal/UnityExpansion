@@ -31,6 +31,9 @@ namespace UnityExpansionInternal
             // To revert scale tween
             public Vector3 RectTransformScale;
 
+            // To rever size tween
+            public Vector2 RectTransformRectSize;
+
             public void Apply(GameObject target)
             {
                 Target = target;
@@ -64,6 +67,7 @@ namespace UnityExpansionInternal
                     RectTransformPosition = rectTransform.anchoredPosition;
                     RectTransformRotation = rectTransform.localRotation.eulerAngles;
                     RectTransformScale = rectTransform.localScale;
+                    RectTransformRectSize = new Vector2(rectTransform.rect.width, rectTransform.rect.height);
                 }
             }
 
@@ -101,6 +105,8 @@ namespace UnityExpansionInternal
                     rectTransform.anchoredPosition = RectTransformPosition;
                     rectTransform.localRotation = Quaternion.Euler(RectTransformRotation);
                     rectTransform.localScale = RectTransformScale;
+                    rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, RectTransformRectSize.x);
+                    rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, RectTransformRectSize.y);                    
                 }
             }
         }
