@@ -10,7 +10,7 @@ namespace UnityExpansion
     [AddComponentMenu("Expansion/Expansion Main Object", 1)]
     public class Expansion : MonoBehaviour
     {
-        public const string VERSION = "1.1.4";
+        public const string VERSION = "1.1.5";
 
         /// <summary>
         /// Signal name that dispatched on start of each frame.

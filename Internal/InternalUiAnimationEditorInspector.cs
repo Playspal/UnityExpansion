@@ -172,6 +172,9 @@ namespace UnityExpansionInternal
 
                         segment.ScaleFrom = new Vector2(rectTransform.localScale.x, rectTransform.localScale.y);
                         segment.ScaleTo = new Vector2(rectTransform.localScale.x, rectTransform.localScale.y);
+
+                        segment.SizeFrom = new Vector2(rectTransform.rect.width, rectTransform.rect.height);
+                        segment.SizeTo = new Vector2(rectTransform.rect.width, rectTransform.rect.height);
                     }
                 }
             );
@@ -207,6 +210,11 @@ namespace UnityExpansionInternal
                     case UiAnimationClipSegmentType.Scale:
                         segment.ScaleFrom = InternalUiAnimationEditorGUI.InspectorVector2Field("Scale From XY", segment.ScaleFrom);
                         segment.ScaleTo = InternalUiAnimationEditorGUI.InspectorVector2Field("Scale To XY", segment.ScaleTo);
+                        break;
+
+                    case UiAnimationClipSegmentType.Size:
+                        segment.SizeFrom = InternalUiAnimationEditorGUI.InspectorVector2Field("Size From WH", segment.SizeFrom);
+                        segment.SizeTo = InternalUiAnimationEditorGUI.InspectorVector2Field("Size To WH", segment.SizeTo);
                         break;
                 }
 

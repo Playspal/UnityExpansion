@@ -58,6 +58,8 @@ namespace UnityExpansion.UI.Animation
         public float RotationTo = 0;
         public Vector2 ScaleFrom = Vector2.zero;
         public Vector2 ScaleTo = Vector2.zero;
+        public Vector2 SizeFrom = Vector2.zero;
+        public Vector2 SizeTo = Vector2.zero;
 
         /// <summary>
         /// Interpolates and sets value to target game object using specified position of animation clip.
@@ -94,6 +96,10 @@ namespace UnityExpansion.UI.Animation
 
                 case UiAnimationClipSegmentType.Scale:
                     SetScale(timeNormalized);
+                    break;
+
+                case UiAnimationClipSegmentType.Size:
+                    SetSize(timeNormalized);
                     break;
 
                 case UiAnimationClipSegmentType.Rotation:
@@ -138,6 +144,21 @@ namespace UnityExpansion.UI.Animation
             if (rectTransform != null)
             {
                 rectTransform.localScale = Easing.Interpolate(ScaleFrom, ScaleTo, time, EasingType);
+            }
+        }
+
+        // Interpolate rect width and height by normalized time
+        private void SetSize(float time)
+        {
+            RectTransform rectTransform = GameObject.GetComponent<RectTransform>();
+
+            if (rectTransform != null)
+            {
+                float width = Easing.Interpolate(SizeFrom.x, SizeTo.x, time, EasingType);
+                float height = Easing.Interpolate(SizeFrom.y, SizeTo.y, time, EasingType);
+
+                rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, width);
+                rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, height);
             }
         }
 

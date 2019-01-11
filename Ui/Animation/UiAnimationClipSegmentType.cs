@@ -31,6 +31,11 @@ namespace UnityExpansion.UI.Animation
         /// <summary>
         /// Interpolation of RectTransform's local scale x and y.
         /// </summary>
-        Scale
+        Scale,
+
+        /// <summary>
+        /// Interpolation of RectTransform's rect.width and rect.height.
+        /// </summary>
+        Size
     }
 }

@@ -96,6 +96,9 @@ namespace UnityExpansionInternal
 
                         tween.ScaleFrom = new Vector2(rectTransform.localScale.x, rectTransform.localScale.y);
                         tween.ScaleTo = new Vector2(rectTransform.localScale.x, rectTransform.localScale.y);
+
+                        tween.SizeFrom = new Vector2(rectTransform.rect.width, rectTransform.rect.height);
+                        tween.SizeTo = new Vector2(rectTransform.rect.width, rectTransform.rect.height);
                     }
 
                     if (InternalUiAnimationEditorSelection.TargetAnimationClip != null)

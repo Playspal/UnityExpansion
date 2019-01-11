@@ -121,6 +121,12 @@ namespace UnityExpansionInternal
                     colorB = new Color(247f / 255f, 192f / 255f, 101f / 255f, 1f);
                     colorC = new Color(196f / 255f, 141f / 255f, 50f / 255f, 1f);
                     break;
+
+                case UiAnimationClipSegmentType.Size:
+                    colorA = new Color(154f / 255f, 84f / 255f, 199f / 255f, 1f);
+                    colorB = new Color(173f / 255f, 118f / 255f, 211f / 255f, 1f);
+                    colorC = new Color(122f / 255f, 68f / 255f, 160f / 255f, 1f);
+                    break;
             }
 
             Texture2D texture = new Texture2D(width, height);
