@@ -21,6 +21,7 @@ namespace UnityExpansion.UI
         {
             get
             {
+                // MonoBehaviour specific. Google it to learn more.
                 return this == null;
             }
         }
@@ -58,7 +59,7 @@ namespace UnityExpansion.UI
             }
             set
             {
-                SetPosition(value, Y);
+                SetPosition(value, Y, false);
             }
         }
 
@@ -73,7 +74,7 @@ namespace UnityExpansion.UI
             }
             set
             {
-                SetPosition(X, value);
+                SetPosition(X, value, false);
             }
         }
 
@@ -169,11 +170,47 @@ namespace UnityExpansion.UI
         }
 
         /// <summary>
+        /// MonoBehavior Update handler.
+        /// In inherited classes always use base.Update() when overriding this method.
+        /// </summary>
+        protected virtual void Update() { }
+
+        /// <summary>
+        /// MonoBehavior Awake handler.
+        /// In inherited classes always use base.Awake() when overriding this method.
+        /// </summary>
+        protected virtual void Awake() { }
+
+        /// <summary>
+        /// MonoBehavior Start handler.
+        /// In inherited classes always use base.Start() when overriding this method.
+        /// </summary>
+        protected virtual void Start() { }
+
+        /// <summary>
+        /// MonoBehavior OnDisable handler.
+        /// In inherited classes always use base.OnDisable() when overriding this method.
+        /// </summary>
+        protected virtual void OnDisable() { }
+
+        /// <summary>
         /// Destroys game object.
         /// </summary>
         public void Destroy()
         {
             Destroy(gameObject);
+        }
+
+        /// <summary>
+        /// Activates/Deactivates the UiObject and his GameObject.
+        /// </summary>
+        /// <param name="value">Activate or deactivation the object</param>
+        public void SetActive(bool value)
+        {
+            if (value != IsActive)
+            {
+                gameObject.SetActive(value);
+            }
         }
 
         /// <summary>
@@ -187,25 +224,51 @@ namespace UnityExpansion.UI
         }
 
         /// <summary>
-        /// Sets the Graphics anchored position.
+        /// Sets the Object's position.
         /// </summary>
         /// <param name="x">Position X</param>
         /// <param name="y">Position Y</param>
-        public void SetPosition(float x, float y)
+        /// <param name="inScreenSpace">Is it Screen Space position or RectTransform anchoredPosition</param>
+        public void SetPosition(float x, float y, bool inScreenSpace = false)
         {
-            RectTransform.anchoredPosition = new Vector2(x, y);
+            if (inScreenSpace)
+            {
+                RectTransform.SetPositionInScreenSpace(x, y);
+            }
+            else
+            {
+                RectTransform.anchoredPosition = new Vector2(x, y);
+            }
         }
 
         /// <summary>
-        /// Activates/Deactivates the UiObject and his GameObject.
+        /// Gets object's bound box.
         /// </summary>
-        /// <param name="value">Activate or deactivation the object</param>
-        public void SetActive(bool value)
+        /// <param name="inScreenSpace">Is bounds in Screen Space or RectTransform.rect</param>
+        /// <returns>Rect object</returns>
+        public Rect GetBounds(bool inScreenSpace = false)
         {
-            if (value != IsActive)
+            if (inScreenSpace)
             {
-                gameObject.SetActive(value);
+                return RectTransform.GetBoundsInScreenSpace();
             }
+            else
+            {
+                return RectTransform.rect;
+            }
+        }
+
+        /// <summary>
+        /// Is the screen point inside of object's bounds box.
+        /// </summary>
+        /// <param name="x">X coordinate</param>
+        /// <param name="y">Y coordinate</param>
+        /// <param name="inScreenSpace">Is coordinates in Screen Space or in local space</param>
+        /// <returns>True if point inside of object.</returns>
+        public bool HitTest(float x, float y, bool inScreenSpace = false)
+        {
+            Rect bounds = inScreenSpace ? GetBounds(true) : RectTransform.rect;
+            return x >= bounds.x && x <= bounds.x + bounds.width && y >= bounds.y && y <= bounds.y + bounds.height;
         }
 
         /// <summary>
@@ -229,30 +292,6 @@ namespace UnityExpansion.UI
         {
             return Find(name).GetComponent<T>() as T;
         }
-
-        /// <summary>
-        /// MonoBehavior Update handler.
-        /// In inherited classes always use base.Update() when overriding this method.
-        /// </summary>
-        protected virtual void Update() { }
-
-        /// <summary>
-        /// MonoBehavior Awake handler.
-        /// In inherited classes always use base.Awake() when overriding this method.
-        /// </summary>
-        protected virtual void Awake() { }
-
-        /// <summary>
-        /// MonoBehavior Start handler.
-        /// In inherited classes always use base.Start() when overriding this method.
-        /// </summary>
-        protected virtual void Start() { }
-
-        /// <summary>
-        /// MonoBehavior OnDisable handler.
-        /// In inherited classes always use base.OnDisable() when overriding this method.
-        /// </summary>
-        protected virtual void OnDisable() { }
 
         /// <summary>
         /// Loads and instantiates UiObject stored at path in a Resources folder.
