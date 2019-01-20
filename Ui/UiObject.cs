@@ -248,14 +248,7 @@ namespace UnityExpansion.UI
         /// <returns>Rect object</returns>
         public Rect GetBounds(bool inScreenSpace = false)
         {
-            if (inScreenSpace)
-            {
-                return RectTransform.GetBoundsInScreenSpace();
-            }
-            else
-            {
-                return RectTransform.rect;
-            }
+            return inScreenSpace ? RectTransform.GetBoundsInScreenSpace() : RectTransform.rect;
         }
 
         /// <summary>
@@ -267,7 +260,7 @@ namespace UnityExpansion.UI
         /// <returns>True if point inside of object.</returns>
         public bool HitTest(float x, float y, bool inScreenSpace = false)
         {
-            Rect bounds = inScreenSpace ? GetBounds(true) : RectTransform.rect;
+            Rect bounds = GetBounds(inScreenSpace);
             return x >= bounds.x && x <= bounds.x + bounds.width && y >= bounds.y && y <= bounds.y + bounds.height;
         }
 
