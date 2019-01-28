@@ -8,7 +8,7 @@ namespace UnityExpansion.UI.Animation
 {
     [Serializable]
     [DisallowMultipleComponent]
-    [AddComponentMenu("Expansion/Ui/Animation", 1)]
+    [AddComponentMenu("Expansion/UiAnimation", 1)]
     public class UiAnimation : MonoBehaviour
     {
         /// <summary>

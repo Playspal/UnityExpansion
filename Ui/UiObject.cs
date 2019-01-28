@@ -12,6 +12,7 @@ namespace UnityExpansion.UI
     /// </summary>
     [DisallowMultipleComponent]
     [RequireComponent(typeof(RectTransform))]
+    [AddComponentMenu("Expansion/UiObject", 1)]
     public class UiObject : MonoBehaviour
     {
         /// <summary>

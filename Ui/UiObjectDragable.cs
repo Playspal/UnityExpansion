@@ -7,6 +7,7 @@ namespace UnityExpansion.UI
     /// Uses screen space instead of Canvas and not depends on parents layout and wireframe.
     /// </summary>
     /// <seealso cref="UnityExpansion.UI.UiObject" />
+    [AddComponentMenu("Expansion/UiObjectDragable", 1)]
     public class UiObjectDragable : UiObject
     {
         /// <summary>

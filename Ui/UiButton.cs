@@ -7,7 +7,7 @@ using UnityExpansion.Utilities;
 
 namespace UnityExpansion.UI
 {
-    [AddComponentMenu("Expansion/Ui/Button", 1)]
+    [AddComponentMenu("Expansion/UiButton", 1)]
     public class UiButton : UiObject
     {
         public enum TransitionType
