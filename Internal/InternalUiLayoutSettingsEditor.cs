@@ -1,8 +1,8 @@
 ﻿#if UNITY_EDITOR
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Text.RegularExpressions;
+
 using UnityEditor;
 using UnityEditorInternal;
 using UnityEngine;
@@ -29,76 +29,7 @@ namespace UnityExpansionInternal
 
         private void OnEnable()
         {
-            List<UiLayoutSettings.Signal> signals = InternalUtilities.GetSignals();
-
-            _signalsReorderableList = new ReorderableList(signals, typeof(UiLayoutSettings.Signal), true, false, true, true);
-
-            _signalsReorderableList.onReorderCallback = (ReorderableList target) =>
-            {
-                signals = target.list as List<UiLayoutSettings.Signal>;
-            };
-
-            _signalsReorderableList.drawElementCallback = (Rect rect, int index, bool isActive, bool isFocused) =>
-            {
-                rect.y += 2;
-
-                if (signals[index].Locked)
-                {
-                    EditorGUI.TextField
-                    (
-                        new Rect(rect.x, rect.y, rect.width - 50, EditorGUIUtility.singleLineHeight),
-                        signals[index].Name
-                    );
-                }
-                else
-                {
-                    signals[index].Name = EditorGUI.TextField
-                    (
-                        new Rect(rect.x, rect.y, rect.width - 50, EditorGUIUtility.singleLineHeight),
-                        signals[index].Name
-                    );
-                }
-
-                signals[index].Locked = EditorGUI.ToggleLeft
-                (
-                    new Rect(rect.x + rect.width - 45, rect.y, 50, EditorGUIUtility.singleLineHeight),
-                    "Lock",
-                    signals[index].Locked
-                );
-
-            };
-
-            _signalsReorderableList.onAddCallback = (ReorderableList list) =>
-            {
-                InternalUtilities.AddSignal();
-            };
-
-            _signalsReorderableList.onRemoveCallback = (ReorderableList list) =>
-            {
-                if (signals[list.index].Locked)
-                {
-                    EditorUtility.DisplayDialog
-                    (
-                        "Warning!",
-                        "You can not delete this signal because it is Locked.",
-                        "Ok"
-                    );
-
-                    return;
-                }
-
-                if
-                (
-                    EditorUtility.DisplayDialog
-                    (
-                        "Warning!",
-                        "Are you sure you want to delete signal \"" + signals[list.index].Name + "\"?", "Yes", "No"
-                    )
-                )
-                {
-                    ReorderableList.defaultBehaviours.DoRemoveButton(list);
-                }
-            };
+            _signalsReorderableList = new InternalSignalsEditor().CreateEditor();
         }
 
         public override void OnInspectorGUI()
@@ -137,6 +68,43 @@ namespace UnityExpansionInternal
 
         private void RenderSignals()
         {
+            GUIStyle style = new GUIStyle(GUI.skin.GetStyle("HelpBox"));
+            style.padding = new RectOffset(7, 7, 7, 7);
+
+            GUILayout.BeginVertical(style);
+
+            EditorGUILayout.HelpBox("\nUse CamelCase for signals names. You can access all signals from the code using Signals class located at " + InternalSignalsFile.GetFile() + "\n", MessageType.Info);
+
+            InternalLayout.Button
+            (
+                "Relocate signals file",
+                "Browse",
+                () =>
+                {
+                    var path = EditorUtility.SaveFilePanel
+                    (
+                        "Move signals class file",
+                        InternalSignalsFile.GetDirrectory(),
+                        InternalSignalsFile.GetFilename(),
+                        "cs"
+                    );
+
+                    if (path.Length != 0)
+                    {
+                        if(path.Contains(Application.dataPath))
+                        {
+                            path = path.Replace(Application.dataPath, "Assets");
+                            InternalSignalsFile.Move(path);
+                        }
+                        else
+                        {
+                            Debug.LogError("Signals file should be placed incide of Assets/ folder");
+                        }
+                    }
+                }
+            );
+            GUILayout.EndVertical();
+
             GUIStyle s = new GUIStyle();
             s.margin = new RectOffset(4, 4, 5, 5);
 
@@ -352,12 +320,6 @@ namespace UnityExpansionInternal
                     );
 
                     item.PrefabPath = match.Success ? match.Groups[1].Value : string.Empty;
-
-                    UiLayoutSettings.Signal signalShow = InternalUtilities.AddSignal("Ui." + GetItemPrefabName(item) + ".Show");
-                    UiLayoutSettings.Signal signalHide = InternalUtilities.AddSignal("Ui." + GetItemPrefabName(item) + ".Hide");
-
-                    item.SignalsShow = item.SignalsShow.Push(signalShow.Id);
-                    item.SignalsHide = item.SignalsHide.Push(signalHide.Id);
                 }
                 else
                 {

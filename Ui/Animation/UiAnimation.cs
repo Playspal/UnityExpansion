@@ -147,17 +147,7 @@ namespace UnityExpansion.UI.Animation
                 {
                     for(int j = 0; j < AnimationClips[i].PlayOnSignals.Length; j++)
                     {
-                        UiLayoutSettings.Signal signal = Expansion.Instance.LayoutSettings.Signals.Find(x => x.Id == AnimationClips[i].PlayOnSignals[j]);
-
-                        if (signal != null)
-                        {
-                            SubscribeClipToSignal(signal.Id, AnimationClips[i].Name);
-                            SubscribeClipToSignal(signal.Name, AnimationClips[i].Name);
-                        }
-                        else
-                        {
-                            SubscribeClipToSignal(AnimationClips[i].PlayOnSignals[j], AnimationClips[i].Name);
-                        }
+                        SubscribeClipToSignal(AnimationClips[i].PlayOnSignals[j], AnimationClips[i].Name);
                     }                    
                 }
             }

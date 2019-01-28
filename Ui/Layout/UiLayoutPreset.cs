@@ -170,24 +170,8 @@ namespace UnityExpansion.UI
             {
                 for (int i = 0; i < signals.Length; i++)
                 {
-                    SubscribeOnSignal(signals[i], handler);
+                    Signals.AddListener(signals[i], handler);
                 }
-            }
-        }
-
-        // Subscribe on specified signal using specified handler
-        private void SubscribeOnSignal(string name, Action handler)
-        {
-            UiLayoutSettings.Signal signal = Expansion.Instance.LayoutSettings.Signals.Find(x => x.Id == name);
-
-            if (signal != null)
-            {
-                Signals.AddListener(signal.Id, handler);
-                Signals.AddListener(signal.Name, handler);
-            }
-            else
-            {
-                Signals.AddListener(name, handler);
             }
         }
 

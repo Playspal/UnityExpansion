@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using UnityExpansion.Services;
 using UnityExpansion.UI;
+using UnityExpansionInternal;
 
 namespace UnityExpansion
 {
@@ -25,6 +26,9 @@ namespace UnityExpansion
         [SerializeField]
         public UiLayoutSettings LayoutSettings;
 
+        [SerializeField]
+        public InternalSettings InternalSettings;
+
         // Initialization
         private void Awake()
         {
@@ -47,6 +51,11 @@ namespace UnityExpansion
                 LayoutSettings.hideFlags = HideFlags.HideInInspector;
             }
 
+            if(InternalSettings == null)
+            {
+                InternalSettings = gameObject.GetOrAddComponent<InternalSettings>();
+                InternalSettings.hideFlags = HideFlags.HideInInspector;
+            }
         }
     }
 }

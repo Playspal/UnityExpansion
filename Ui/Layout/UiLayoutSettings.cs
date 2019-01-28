@@ -15,31 +15,6 @@ namespace UnityExpansion.UI
     [Serializable]
     public class UiLayoutSettings : MonoBehaviour
     {
-        [Serializable]
-        public class Signal
-        {
-            /// <summary>
-            /// Unique Id.
-            /// </summary>
-            public string Id;
-
-            /// <summary>
-            /// Display name.
-            /// </summary>
-            public string Name;
-
-            /// <summary>
-            /// Allow to change Name or not.
-            /// </summary>
-            public bool Locked = false;
-        }
-
-        /// <summary>
-        /// List of signals used in UiLayout.
-        /// </summary>
-        [SerializeField]
-        public List<Signal> Signals = new List<Signal>();
-
         /// <summary>
         /// List of screens presets.
         /// </summary>

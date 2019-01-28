@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEditorInternal;
 using UnityEngine;
+using UnityExpansion;
 using UnityExpansion.UI;
 
 namespace UnityExpansionInternal
@@ -15,6 +16,8 @@ namespace UnityExpansionInternal
         public Action<string[]> OnChange;
 
         private Vector2 _scrollPosition;
+
+        private InternalSignalsEditor _signalsEditor;
         private ReorderableList _reorderableList;
         private List<string> _selectedSignals;
         private string _description;
@@ -28,7 +31,7 @@ namespace UnityExpansionInternal
         {
             bool foundUnusedSignals = false;
 
-            List<UiLayoutSettings.Signal> signals = InternalUtilities.GetSignals();
+            List<CommonPair<string, string>> signals = InternalSignalsFile.Load();
 
             _selectedSignals = new List<string>();
 
@@ -36,7 +39,7 @@ namespace UnityExpansionInternal
             {
                 for(int i = 0; i < input.Length; i++)
                 {
-                    if(signals.Find(x => x.Id == input[i]) != null)
+                    if(signals.Find(x => x.Value == input[i]) != null)
                     {
                         _selectedSignals.Add(input[i]);
                     }
@@ -47,7 +50,9 @@ namespace UnityExpansionInternal
                 }
             }
 
-            if(foundUnusedSignals)
+            _signalsEditor.SetSignalsSelected(_selectedSignals);
+
+            if (foundUnusedSignals)
             {
                 Callback();
             }
@@ -55,6 +60,8 @@ namespace UnityExpansionInternal
 
         private void SignalAdd(string id)
         {
+            Debug.LogError(id);
+
             if(!_selectedSignals.Contains(id))
             {
                 _selectedSignals.Add(id);
@@ -76,94 +83,28 @@ namespace UnityExpansionInternal
         private void Callback()
         {
             string[] output = new string[_selectedSignals.Count];
-            List<UiLayoutSettings.Signal> signals = InternalUtilities.GetSignals();
+            List<CommonPair<string, string>> signals = InternalSignalsFile.Load();
 
             int n = 0;
 
             for(int i = 0; i < signals.Count; i++)
             {
-                if(_selectedSignals.Contains(signals[i].Id))
+                if(_selectedSignals.Contains(signals[i].Value))
                 {
-                    output[n] = signals[i].Id;
+                    output[n] = signals[i].Value;
                     n++;
                 }
             }
+
+            _signalsEditor.SetSignalsSelected(_selectedSignals);
 
             OnChange.InvokeIfNotNull(output);
         }
 
         private void OnEnable()
         {
-            List<UiLayoutSettings.Signal> signals = InternalUtilities.GetSignals();
-
-            _reorderableList = new ReorderableList(signals, typeof(UiLayoutSettings.Signal), true, false, true, true);
-
-            _reorderableList.onReorderCallback = (ReorderableList target) =>
-            {
-                signals = target.list as List<UiLayoutSettings.Signal>;
-            };
-
-            _reorderableList.drawElementCallback = (Rect rect, int index, bool isActive, bool isFocused) =>
-            {
-                rect.y += 2;
-
-                signals[index].Name = EditorGUI.TextField
-                (
-                    new Rect(rect.x + 20, rect.y, rect.width - 30, EditorGUIUtility.singleLineHeight),
-                    signals[index].Name
-                );
-
-                bool isCheckedOld = _selectedSignals.Contains(signals[index].Id);
-                bool isCheckedNew = EditorGUI.Toggle
-                (
-                    new Rect(rect.x, rect.y, 20, EditorGUIUtility.singleLineHeight),
-                    isCheckedOld
-                );
-
-                if(isCheckedOld != isCheckedNew)
-                {
-                    if(isCheckedNew)
-                    {
-                        SignalAdd(signals[index].Id);
-                    }
-                    else
-                    {
-                        SignalRemove(signals[index].Id);
-                    }
-                }
-            };
-
-            _reorderableList.onAddCallback = (ReorderableList list) =>
-            {
-                InternalUtilities.AddSignal();
-            };
-
-            _reorderableList.onRemoveCallback = (ReorderableList list) =>
-            {
-                if (signals[list.index].Locked)
-                {
-                    EditorUtility.DisplayDialog
-                    (
-                        "Warning!",
-                        "You can not delete this signal because it is Locked.",
-                        "Ok"
-                    );
-
-                    return;
-                }
-
-                if
-                (
-                    EditorUtility.DisplayDialog
-                    (
-                        "Warning!",
-                        "Are you sure you want to delete signal \"" + signals[list.index].Name + "\"?", "Yes", "No"
-                    )
-                )
-                {
-                    ReorderableList.defaultBehaviours.DoRemoveButton(list);
-                }
-            };
+            _signalsEditor = new InternalSignalsEditor();
+            _reorderableList = _signalsEditor.CreateEditorWithCheckboxes(SignalAdd, SignalRemove);
         }
 
         private void OnGUI()

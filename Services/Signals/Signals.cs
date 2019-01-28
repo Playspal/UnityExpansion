@@ -37,54 +37,49 @@ namespace UnityExpansion.Services
     /// </example>
     public static class Signals
     {
-        // Signal structure class
-        private class Signal
+        // Registered signal entry data structure.
+        private class SignalEntry
         {
-            public string Name;
+            public readonly string Signal;
             public Action Handler;
+
+            public SignalEntry(string signal)
+            {
+                Signal = signal;
+            }
         }
 
         // List of registered signals
-        private static List<Signal> _signals = new List<Signal>();
+        private static List<SignalEntry> _entries = new List<SignalEntry>();
 
         /// <summary>
-        /// Dispatch group of signals with specified names.
+        /// Dispatch group of signals.
         /// </summary>
-        /// <param name="names">String that contains signals names</param>
-        /// <param name="separator">Separator to split names string</param>
-        public static void DispatchGroup(string names, char separator = ';')
+        /// <param name="signals">Array of signal</param>
+        public static void DispatchGroup(string[] signals)
         {
-            DispatchGroup(names.Split(separator));
-        }
-
-        /// <summary>
-        /// Dispatch group of signals with specified names.
-        /// </summary>
-        /// <param name="names">Array of signal names</param>
-        public static void DispatchGroup(string[] names)
-        {
-            for(int i = 0; i < names.Length; i++)
+            for(int i = 0; i < signals.Length; i++)
             {
-                Dispatch(names[i]);
+                Dispatch(signals[i]);
             }
         }
 
         /// <summary>
-        /// Dispatch signal with specified name.
+        /// Dispatches specified signal.
         /// </summary>
-        /// <param name="name">Signal name</param>
-        public static void Dispatch(string name)
+        /// <param name="signal">Signal</param>
+        public static void Dispatch(string signal)
         {
-            if (string.IsNullOrEmpty(name))
+            if (string.IsNullOrEmpty(signal))
             {
                 return;
             }
 
-            Signal signal = GetSignal(name);
+            SignalEntry signalEntry = GetSignalEntry(signal);
 
-            if (signal.Handler != null)
+            if (signalEntry.Handler != null)
             {
-                Delegate[] delegates = signal.Handler.GetInvocationList();
+                Delegate[] delegates = signalEntry.Handler.GetInvocationList();
 
                 for (int i = 0; i < delegates.Length; i++)
                 {
@@ -96,51 +91,48 @@ namespace UnityExpansion.Services
         /// <summary>
         /// Subscribe on specified signal.
         /// </summary>
-        /// <param name="name">Signal name</param>
+        /// <param name="signal">Signal</param>
         /// <param name="handler">Signal handler</param>
-        public static void AddListener(string name, Action handler)
+        public static void AddListener(string signal, Action handler)
         {
-            if(string.IsNullOrEmpty(name))
+            if(string.IsNullOrEmpty(signal))
             {
                 return;
             }
 
-            Signal signal = GetSignal(name);
-            signal.Handler += handler;
+            SignalEntry signalEntry = GetSignalEntry(signal);
+            signalEntry.Handler += handler;
         }
 
         /// <summary>
         /// Unsubscribe from specified signal.
         /// </summary>
-        /// <param name="name">Signal name</param>
+        /// <param name="signal">Signal</param>
         /// <param name="handler">Signal handler</param>
-        public static void RemoveListener(string name, Action handler)
+        public static void RemoveListener(string signal, Action handler)
         {
-            if (string.IsNullOrEmpty(name))
+            if (string.IsNullOrEmpty(signal))
             {
                 return;
             }
 
-            Signal signal = GetSignal(name);
-            signal.Handler -= handler;
+            SignalEntry signalEntry = GetSignalEntry(signal);
+            signalEntry.Handler -= handler;
         }
 
-        // Searches for signal, creates new one if signal not found
-        private static Signal GetSignal(string name)
+        // Searches for entry, creates new one if entry not found
+        private static SignalEntry GetSignalEntry(string signal)
         {
-            Signal signal = _signals.Find(x => x.Name == name);
+            SignalEntry signalEntry = _entries.Find(x => x.Signal == signal);
 
-            if (signal == null)
+            if (signalEntry == null)
             {
-                signal = new Signal
-                {
-                    Name = name
-                };
+                signalEntry = new SignalEntry(signal);
 
-                _signals.Add(signal);
+                _entries.Add(signalEntry);
             }
 
-            return signal;
+            return signalEntry;
         }
     }
 }
