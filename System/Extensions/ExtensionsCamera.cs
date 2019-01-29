@@ -13,7 +13,7 @@ public static class ExtensionsCamera
 
         for(int i = 0; i < worldPoints.Length; i++)
         {
-            output[i] = camera.WorldToScreenPoint(worldPoints[0]);
+            output[i] = camera.WorldToScreenPoint(worldPoints[i]);
         }
 
         return output;
