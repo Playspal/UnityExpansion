@@ -7,6 +7,7 @@ namespace UnityExpansion
 {
     /// <summary>
     /// Main class of UnityExpansion and it should be added as component to one of game objects.
+    /// If you are looking any information visit http://okov.se/expansion/
     /// </summary>
     [AddComponentMenu("Expansion/Expansion Main Object", 1)]
     public class Expansion : MonoBehaviour
@@ -32,7 +33,6 @@ namespace UnityExpansion
         // Initialization
         private void Awake()
         {
-            Debug.Log("Initializated UnityExpansion " + VERSION + ". If you are looking any information visit http://okov.se/expansion/");
             Instance = this;
         }
 
@@ -45,13 +45,25 @@ namespace UnityExpansion
         // Resets UnityExpansion component to default state.
         private void Reset()
         {
-            if(LayoutSettings == null)
+            Validate();
+        }
+
+        // Script is loaded or a value is changed in the inspector
+        private void OnValidate()
+        {
+            Validate();
+        }
+
+        // Validation
+        private void Validate()
+        {
+            if (LayoutSettings == null)
             {
                 LayoutSettings = gameObject.GetOrAddComponent<UiLayoutSettings>();
                 LayoutSettings.hideFlags = HideFlags.HideInInspector;
             }
 
-            if(InternalSettings == null)
+            if (InternalSettings == null)
             {
                 InternalSettings = gameObject.GetOrAddComponent<InternalSettings>();
                 InternalSettings.hideFlags = HideFlags.HideInInspector;
