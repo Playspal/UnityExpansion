@@ -60,8 +60,6 @@ namespace UnityExpansionInternal
 
         private void SignalAdd(string id)
         {
-            Debug.LogError(id);
-
             if(!_selectedSignals.Contains(id))
             {
                 _selectedSignals.Add(id);
