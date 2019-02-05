@@ -37,8 +37,9 @@ namespace UnityExpansionInternal.UiFlow
         public void SetLayoutElement(UiLayoutElement layoutElement)
         {
             LayoutElement = layoutElement;
-        }
 
+            _header.SetTitle(LayoutElement.name);
+        }
 
         private void MouseHandlerPress()
         {

@@ -1,27 +1,22 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace UnityExpansion.Editor
 {
-    public class EditorLayoutTexture2D
+    public class EditorLayoutTexture2D : EditorLayoutObject
     {
         public Texture2D Texture { get; private set; }
 
-        public int Width { get; private set; }
-        public int Height { get; private set; }
-
-        public EditorLayoutTexture2D(int width, int height)
+        public EditorLayoutTexture2D(EditorLayout layout, int width, int height) : base(layout, width, height)
         {
-            Width = width;
-            Height = height;
-
             Texture = new Texture2D(Width, Height);
         }
 
-        public void Render(int x, int y)
+        public override void Render()
         {
-            GUI.DrawTexture(new Rect(x, y, Width, Height), Texture, ScaleMode.StretchToFill, true, 1f);
+            base.Render();
+
+            Rect bounds = new Rect(GetPositionGlobalX(), GetPositionGlobalY(), Width, Height);
+            GUI.DrawTexture(bounds, Texture, ScaleMode.StretchToFill, true, 1f);
         }
 
         /// <summary>

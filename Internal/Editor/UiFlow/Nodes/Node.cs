@@ -16,9 +16,10 @@ namespace UnityExpansionInternal.UiFlow
 
         public Node(EditorLayout layout, int width, int height) : base (layout, width, height)
         {
-            _textureBackground = new EditorLayoutTexture2D(Width, Height);
+            _textureBackground = new EditorLayoutTexture2D(layout, Width, Height);
             _textureBackground.Fill(COLOR_BACKGROUND);
             _textureBackground.DrawBorder(1, COLOR_BACKGROUND_BORDER);
+            _textureBackground.SetParent(this);
 
             SetupColors();
         }
@@ -34,7 +35,10 @@ namespace UnityExpansionInternal.UiFlow
                 SetupColors(InternalUiFlowEditorConfig.COLOR_BLOCK_MAIN, InternalUiFlowEditorConfig.COLOR_BLOCK_DARK, InternalUiFlowEditorConfig.COLOR_BLOCK_LIGHT);
             }
 
-            
+            if (this is NodeLayoutElementScreen)
+            {
+                SetupColors(InternalUiFlowEditorConfig.COLOR_SCREEN_MAIN, InternalUiFlowEditorConfig.COLOR_SCREEN_DARK, InternalUiFlowEditorConfig.COLOR_SCREEN_LIGHT);
+            }
         }
 
         protected void SetupColors(string main, string dark, string light)
@@ -47,9 +51,6 @@ namespace UnityExpansionInternal.UiFlow
         public override void Render()
         {
             base.Render();
-
-            _textureBackground.Render(X, Y);
         }
-
     }
 }

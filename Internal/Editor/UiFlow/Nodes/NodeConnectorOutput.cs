@@ -16,9 +16,9 @@ namespace UnityExpansionInternal.UiFlow
         private NodeConnector _connector;
         private EditorLayoutObjectText _label;
 
-        public NodeConnectorOutput(EditorLayout layout, int width, string label) : base(layout, width, HEIGHT)
+        public NodeConnectorOutput(EditorLayout layout, Node node, int width, string label) : base(layout, width, HEIGHT)
         {
-            _connector = new NodeConnector(layout, NodeConnector.Type.Output);
+            _connector = new NodeConnector(layout, node, NodeConnector.Type.Output);
             _connector.SetParent(this);
             _connector.X = Width - CONNECTOR_OFFSET;
             _connector.Y = 0;

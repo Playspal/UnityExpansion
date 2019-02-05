@@ -14,24 +14,28 @@ namespace UnityExpansionInternal.UiFlow
         {
             X = Y = 1;
 
-            _textureBackground = new EditorLayoutTexture2D(Width, Height);
+            _textureBackground = new EditorLayoutTexture2D(layout, Width, Height);
             _textureBackground.Fill(node.ColorMain);
             _textureBackground.DrawBorderBottom(1, node.ColorDark);
+            _textureBackground.SetParent(this);
 
             _label = new EditorLayoutObjectText(layout, Width - 18, Height);
             _label.SetFontStyle(FontStyle.Bold);
             _label.SetAlignment(TextAnchor.MiddleLeft);
             _label.SetColor(node.ColorLight);
-            _label.SetText("Screen: UiScreenMainMenu");
+            _label.SetText("...");
             _label.SetParent(this);
             _label.X = 9;
+        }
+
+        public void SetTitle(string value)
+        {
+            _label.SetText(value);
         }
 
         public override void Render()
         {
             base.Render();
-
-            _textureBackground.Render(GetPositionGlobalX(), GetPositionGlobalY());
         }
     }
 }
