@@ -1,6 +1,5 @@
-﻿using System.Collections;
+﻿using System;
 using System.Collections.Generic;
-using UnityEngine;
 
 namespace UnityExpansion.Editor
 {
@@ -51,6 +50,16 @@ namespace UnityExpansion.Editor
         /// </summary>
         public bool IsDragging { get; private set; }
 
+        /// <summary>
+        /// Z Index
+        /// </summary>
+        public float ZIndex { get; set; }
+
+        /// <summary>
+        /// Dispatches on resize
+        /// </summary>
+        protected event Action OnResize; 
+
         // Position before drag is started
         private int _dragStartPositionX;
         private int _dragStartPositionY;
@@ -85,6 +94,31 @@ namespace UnityExpansion.Editor
             Layout.Objects.Remove(this);
         }
 
+
+        /// <summary>
+        /// Move object to the end of the local objects list.
+        /// </summary>
+        public void SetAsLastSibling()
+        {
+            if(ParentObject != null)
+            {
+                ParentObject.ChildObjects.Remove(this);
+                ParentObject.ChildObjects.Add(this);
+            }
+        }
+
+        /// <summary>
+        /// Move object to the begining of the local objects list.
+        /// </summary>
+        public void SetAsFirstSibling()
+        {
+            if (ParentObject != null)
+            {
+                ParentObject.ChildObjects.Remove(this);
+                ParentObject.ChildObjects.Insert(0, this);
+            }
+        }
+
         /// <summary>
         /// Sets the parent object.
         /// </summary>
@@ -112,11 +146,22 @@ namespace UnityExpansion.Editor
         }
 
         /// <summary>
+        /// Resizes object
+        /// </summary>
+        public virtual void SetSize(int width, int height)
+        {
+            Width = width;
+            Height = height;
+
+            OnResize.InvokeIfNotNull();
+        }
+
+        /// <summary>
         /// Gets the global position X.
         /// </summary>
         public int GetPositionGlobalX()
         {
-            return ParentObject != null ? ParentObject.GetPositionGlobalX() + X : X;
+            return ParentObject != null ? ParentObject.GetPositionGlobalX() + X : Layout.CanvasX + X;
         }
 
         /// <summary>
@@ -124,7 +169,7 @@ namespace UnityExpansion.Editor
         /// </summary>
         public int GetPositionGlobalY()
         {
-            return ParentObject != null ? ParentObject.GetPositionGlobalY() + Y : Y;
+            return ParentObject != null ? ParentObject.GetPositionGlobalY() + Y : Layout.CanvasY + Y;
         }
 
         /// <summary>
@@ -133,6 +178,13 @@ namespace UnityExpansion.Editor
         /// <param name="stickToCenter">If true then object's center will match mouse position</param>
         public void DragStart(bool stickToCenter = false)
         {
+            if(Layout.ObjectDragged != null)
+            {
+                return;
+            }
+
+            Layout.ObjectDragged = this;
+
             IsDragging = true;
 
             _dragStartPositionX = X;
@@ -166,6 +218,7 @@ namespace UnityExpansion.Editor
         /// </summary>
         public void DragStop()
         {
+            Layout.ObjectDragged = null;
             IsDragging = false;
         }
 
@@ -185,16 +238,16 @@ namespace UnityExpansion.Editor
 
         public virtual void Render()
         {
-            if (IsDragging)
-            {
-                X = Layout.Mouse.X - _dragOffsetX;
-                Y = Layout.Mouse.Y - _dragOffsetY;
-            }
+
         }
 
         public virtual void Update()
         {
-
+            if (IsDragging)
+            {
+                X = Layout.Mouse.X - Layout.CanvasX - _dragOffsetX;
+                Y = Layout.Mouse.Y - Layout.CanvasY - _dragOffsetY;
+            }
         }
     }
 }

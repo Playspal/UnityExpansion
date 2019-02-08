@@ -1,5 +1,5 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System;
+
 using UnityEngine;
 using UnityExpansion.Editor;
 
@@ -13,173 +13,99 @@ namespace UnityExpansionInternal.UiFlow
             Output
         }
 
-        public NodeConnector Connection { get; private set; }
+        public Action<NodeConnector> OnConnected;
+        public Action<NodeConnector> OnDisconnected;
 
-        protected EditorLayoutTexture2D _textureBackground;
+        public readonly Node Node;
+        public readonly Type ConnectorType;
 
-        private const string COLOR_BACKGROUND = "#3A3A3A";
-        private const string COLOR_CENTER = "#FFFFFF";
+        public string Data { get; private set; }
 
-        public Color ColorNormal { get; private set; }
-        public Color ColorConnected { get; private set; }
-        public Color ColorCurrent { get; private set; }
+        public NodeConnector Connected { get; private set; }
 
-        public Type ConnectionType;
+        public NodeConnectorIcon Icon { get; private set; }
+        public EditorLayoutObjectText Label { get; private set; }
 
-        private bool _curveDragging = false;
+        private const int HEIGHT = 15;
 
-        public NodeConnector(EditorLayout layout, Node node, Type direction) : base(layout, 15, 15)
+        public NodeConnector(EditorLayout layout, Node node, Type type, string label) : base(layout, node.Width, HEIGHT)
         {
-            ConnectionType = direction;
+            Node = node;
+            ConnectorType = type;
 
-            ColorNormal = Color.white;
-            ColorConnected = node.ColorMain;
-
-            _textureBackground = new EditorLayoutTexture2D(layout, Width, Height);
-            _textureBackground.Fill(new Color(0, 0, 0, 0));
-            _textureBackground.DrawRhombus(7, 7, Width, COLOR_BACKGROUND);
-            _textureBackground.DrawRhombus(7, 7, 9, COLOR_CENTER);
-            _textureBackground.SetParent(this);
-
-            Layout.Mouse.OnPress += MouseHandlerPress;
-            Layout.Mouse.OnRelease += MouseHandlerRelease;
-
-            SetColor(ColorNormal);
+            SetupIcon();
+            SetupLabel(label);
         }
 
-        public override void Destroy()
+        protected void SetupIcon()
         {
-            base.Destroy();
-
-            Layout.Mouse.OnPress -= MouseHandlerPress;
-            Layout.Mouse.OnRelease -= MouseHandlerRelease;
+            Icon = new NodeConnectorIcon(Layout, Node, this);
+            Icon.SetParent(this);
+            Icon.X = ConnectorType == Type.Input ? -Icon.Width / 2 : Width - Icon.Width / 2 - 1;
+            Icon.Y = 0;
         }
 
-        public void SetColor(Color color)
+        protected void SetupLabel(string text)
         {
-            ColorCurrent = color;
-            _textureBackground.DrawRhombus(7, 7, 9, ColorCurrent);
+            Label = new EditorLayoutObjectText(Layout, Width - 20, Height);
+            Label.SetAlignment(ConnectorType == Type.Input ? TextAnchor.MiddleLeft : TextAnchor.MiddleRight);
+            Label.SetColor(InternalUiFlowEditorConfig.COLOR_NODE_LABEL);
+            Label.SetText(text);
+            Label.SetParent(this);
+            Label.X = 10;
+            Label.Y = -1;
         }
 
-        public void StartConnectionDrag()
+        public void SetData(string value)
         {
-            _curveDragging = true;
+            Data = value;
         }
 
-        public void StopConnectionDrag()
+        public void ConnectTo(NodeConnector target)
         {
-            _curveDragging = false;
+            ConnectionCreate(this, target);
         }
 
         public override void Render()
         {
             base.Render();
+        }
 
-            if(_curveDragging)
+        public static void ConnectionCreate(NodeConnector a, NodeConnector b)
+        {
+            if (a.Connected != null)
             {
-                RenderCurveToMouse();
-            }
-            else if(ConnectionType == Type.Output && Connection != null)
-            {
-                RenderCurveToConnection();
-            }
-        }
-
-        private void RenderCurveToMouse()
-        {
-            RenderCurveTo
-            (
-                Layout.Mouse.X,
-                Layout.Mouse.Y
-            );
-        }
-
-        private void RenderCurveToConnection()
-        {
-            RenderCurveTo
-            (
-                Connection.GetPositionGlobalX() + Connection.Width / 2,
-                Connection.GetPositionGlobalY() + Connection.Height / 2
-            );
-        }
-
-        private void RenderCurveTo(int toX, int toY)
-        {
-            int fromX = GetPositionGlobalX() + Width / 2;
-            int fromY = GetPositionGlobalY() + Height / 2;
-
-            InternalUiFlowEditorCurve curve = null;
-
-            curve = new InternalUiFlowEditorCurve(fromX, fromY, toX, toY);
-            curve.SetStyle(3, ColorCurrent);
-
-            ((InternalUiFlowEditor)Layout).Curves.AddToFrontground(curve);
-        }
-
-        private void MouseHandlerPress()
-        {
-            if (HitTest(Layout.Mouse.X, Layout.Mouse.Y))
-            {
-                if(Connection != null)
-                {
-                    Connection.StartConnectionDrag();
-                    Disconnect(this, Connection);
-                }
-                else
-                {
-                    StartConnectionDrag();
-                }
-            }
-        }
-
-        private void MouseHandlerRelease()
-        {
-            if (_curveDragging)
-            {
-                _curveDragging = false;
-
-                List<NodeConnector> nodeConnectors = Layout.Objects.FindAllObjects<NodeConnector>();
-
-                for(int i = 0; i < nodeConnectors.Count; i++)
-                {
-                    if(nodeConnectors[i].ConnectionType != ConnectionType && nodeConnectors[i].HitTest(Layout.Mouse.X, Layout.Mouse.Y))
-                    {
-                        Connect(this, nodeConnectors[i]);
-
-                        break;
-                    }
-                }
-            }
-        }
-
-        public static void Connect(NodeConnector a, NodeConnector b)
-        {
-            if (a.Connection != null)
-            {
-                Disconnect(a, a.Connection);
+                ConnectionRemove(a, a.Connected);
             }
 
-            if (b.Connection != null)
+            if (b.Connected != null)
             {
-                Disconnect(b, b.Connection);
+                ConnectionRemove(b, b.Connected);
             }
 
-            Color color = a.ConnectionType == Type.Output ? a.ColorConnected : b.ColorConnected;
+            NodeConnectorInput input = (a.ConnectorType == Type.Input ? a : b) as NodeConnectorInput;
+            NodeConnectorOutput output = (a.ConnectorType == Type.Output ? a : b) as NodeConnectorOutput;
 
-            a.Connection = b;
-            a.SetColor(color);
+            Color color = output.Node.ColorMain;
 
-            b.Connection = a;
-            b.SetColor(color);
+            input.Connected = output;
+            input.Icon.SetColor(color);
+            input.OnConnected.InvokeIfNotNull(output);
+
+            output.Connected = input;
+            output.Icon.SetColor(color);
+            output.OnConnected.InvokeIfNotNull(input);
         }
 
-        public static void Disconnect(NodeConnector a, NodeConnector b)
+        public static void ConnectionRemove(NodeConnector a, NodeConnector b)
         {
-            a.Connection = null;
-            a.SetColor(a.ColorNormal);
+            a.OnDisconnected.InvokeIfNotNull(a.Connected);
+            a.Connected = null;
+            a.Icon.ResetColor();
 
-            b.Connection = null;
-            b.SetColor(a.ColorNormal);
+            b.OnDisconnected.InvokeIfNotNull(b.Connected);
+            b.Connected = null;
+            b.Icon.ResetColor();
         }
     }
 }

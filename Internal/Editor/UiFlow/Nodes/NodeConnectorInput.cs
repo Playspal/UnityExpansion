@@ -1,34 +1,11 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityExpansion.Editor;
+﻿using UnityExpansion.Editor;
 
 namespace UnityExpansionInternal.UiFlow
 {
-    public class NodeConnectorInput : EditorLayoutObject
+    public class NodeConnectorInput : NodeConnector
     {
-        private const string COLOR_LABEL = "#999999";
-
-        private const int HEIGHT = 15;
-        private const int LABEL_X = 10;
-        private const int CONNECTOR_X = -7;
-
-        private NodeConnector _connector;
-        private EditorLayoutObjectText _label;
-
-        public NodeConnectorInput(EditorLayout layout, Node node, int width, string label) : base(layout, width, HEIGHT)
+        public NodeConnectorInput(EditorLayout layout, Node node, string label) : base(layout, node, Type.Input, label)
         {
-            _connector = new NodeConnector(layout, node, NodeConnector.Type.Input);
-            _connector.SetParent(this);
-            _connector.X = CONNECTOR_X;
-            _connector.Y = 0;
-
-            _label = new EditorLayoutObjectText(layout, width - LABEL_X, Height);
-            _label.SetAlignment(TextAnchor.MiddleLeft);
-            _label.SetColor(COLOR_LABEL);
-            _label.SetText(label);
-            _label.SetParent(this);
-            _label.X = LABEL_X;
         }
     }
 }

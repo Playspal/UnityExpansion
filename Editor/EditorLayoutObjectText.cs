@@ -45,7 +45,7 @@ namespace UnityExpansion.Editor
         public override void Render()
         {
             base.Render();
-
+            
             GUILayout.BeginArea(new Rect(GetPositionGlobalX(), GetPositionGlobalY(), Width, Height));
 
             GUIStyle labelStyle = new GUIStyle(GUI.skin.GetStyle("Label"));

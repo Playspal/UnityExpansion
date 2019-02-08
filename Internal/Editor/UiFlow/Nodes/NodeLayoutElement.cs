@@ -8,55 +8,64 @@ namespace UnityExpansionInternal.UiFlow
 {
     public class NodeLayoutElement : Node
     {
-        private NodeBlockHeader _header;
-        private NodeBlockShowAndHide _blockShowAndHide;
+        public readonly NodeBlockHeader BlockHeader;
+        public readonly NodeBlockShowAndHide BlockShowAndHide;
 
         public UiLayoutElement LayoutElement { get; private set; }
+        public UiLayoutPreset LayoutPreset { get; private set; }
 
-        public NodeLayoutElement(EditorLayout layout) : base(layout, 300, 200)
+        public NodeLayoutElement(EditorLayout layout) : base(layout, 300, 90)
         {
-            _header = new NodeBlockHeader(layout, this);
-            _header.SetParent(this);
+            BlockHeader = new NodeBlockHeader(layout, this);
+            BlockHeader.SetParent(this);
 
-            _blockShowAndHide = new NodeBlockShowAndHide(layout, this);
-            _blockShowAndHide.SetParent(this);
-            _blockShowAndHide.Y = 30;
+            BlockShowAndHide = new NodeBlockShowAndHide(layout, this);
+            BlockShowAndHide.SetParent(this);
+            BlockShowAndHide.Y = 30;
 
-            Layout.Mouse.OnPress += MouseHandlerPress;
-            Layout.Mouse.OnRelease += MouseHandlerRelease;
+            BlockShowAndHide.InputShow.OnConnected += (NodeConnector nodeConnector) =>
+            {
+                if (LayoutPreset != null)
+                {
+                    LayoutPreset.SignalsShow = InternalUiFlowUtils.SignalsAdd(LayoutPreset.SignalsShow, nodeConnector.Data);
+                }
+            };
+
+            BlockShowAndHide.InputShow.OnDisconnected += (NodeConnector nodeConnector) =>
+            {
+                if (LayoutPreset != null)
+                {
+                    LayoutPreset.SignalsShow = InternalUiFlowUtils.SignalsRemove(LayoutPreset.SignalsShow, nodeConnector.Data);
+                }
+            };
+
+            BlockShowAndHide.InputHide.OnConnected += (NodeConnector nodeConnector) =>
+            {
+                if (LayoutPreset != null)
+                {
+                    LayoutPreset.SignalsHide = InternalUiFlowUtils.SignalsAdd(LayoutPreset.SignalsHide, nodeConnector.Data);
+                }
+            };
+
+            BlockShowAndHide.InputHide.OnDisconnected += (NodeConnector nodeConnector) =>
+            {
+                if (LayoutPreset != null)
+                {
+                    LayoutPreset.SignalsHide = InternalUiFlowUtils.SignalsRemove(LayoutPreset.SignalsHide, nodeConnector.Data);
+                }
+            };
         }
-
-        public override void Destroy()
-        {
-            base.Destroy();
-
-            Layout.Mouse.OnPress -= MouseHandlerPress;
-            Layout.Mouse.OnRelease -= MouseHandlerRelease;
-        }
-
+        
         public void SetLayoutElement(UiLayoutElement layoutElement)
         {
             LayoutElement = layoutElement;
 
-            _header.SetTitle(LayoutElement.name);
+            BlockHeader.SetTitle(LayoutElement.name);
         }
 
-        private void MouseHandlerPress()
+        public void SetLayoutPreset(UiLayoutPreset layoutPreset)
         {
-            if (_header.HitTest(Layout.Mouse.X, Layout.Mouse.Y))
-            {
-                DragStart(false);
-            }
+            LayoutPreset = layoutPreset;
         }
-
-        private void MouseHandlerRelease()
-        {
-            if (IsDragging)
-            {
-                DragStop();
-            }
-        }
-
-        private void MouseHandlerClick() { }
     }
 }

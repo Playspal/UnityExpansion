@@ -86,13 +86,54 @@ namespace UnityExpansion.Editor
             _objectsToAdd.Clear();
         }
 
+        public void Update()
+        {
+            for (int i = 0; i < _objects.Count; i++)
+            {
+                if (_objects[i].ParentObject == null)
+                {
+                    UpdateRecursively(_objects[i]);
+                }
+            }
+        }
+
         private void RenderRecursively(EditorLayoutObject layoutObject)
         {
+            if (layoutObject.GetPositionGlobalX() > Layout.WindowWidth || layoutObject.GetPositionGlobalX() + layoutObject.Width < 0)
+            {
+                //return;
+            }
+
+            if (layoutObject.GetPositionGlobalY() > Layout.WindowHeight || layoutObject.GetPositionGlobalY() + layoutObject.Height < 0)
+            {
+                //return;
+            }
+
             layoutObject.Render();
 
             for (int i = 0; i < layoutObject.ChildObjects.Count; i++)
             {
                 RenderRecursively(layoutObject.ChildObjects[i]);
+            }
+        }
+
+        private void UpdateRecursively(EditorLayoutObject layoutObject)
+        {
+            if (layoutObject.GetPositionGlobalX() > Layout.WindowWidth || layoutObject.GetPositionGlobalX() + layoutObject.Width < 0)
+            {
+                //return;
+            }
+
+            if (layoutObject.GetPositionGlobalY() > Layout.WindowHeight || layoutObject.GetPositionGlobalY() + layoutObject.Height < 0)
+            {
+                //return;
+            }
+
+            layoutObject.Update();
+
+            for (int i = 0; i < layoutObject.ChildObjects.Count; i++)
+            {
+                UpdateRecursively(layoutObject.ChildObjects[i]);
             }
         }
     }

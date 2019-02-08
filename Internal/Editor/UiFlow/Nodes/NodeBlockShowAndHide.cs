@@ -4,31 +4,29 @@ namespace UnityExpansionInternal.UiFlow
 {
     public class NodeBlockShowAndHide : EditorLayoutObject
     {
-        private NodeConnectorInput _inputShow;
-        private NodeConnectorInput _inputHide;
+        public readonly NodeConnectorInput InputShow;
+        public readonly NodeConnectorInput InputHide;
 
-        private NodeConnectorOutput _outputOnShow;
-        private NodeConnectorOutput _outputOnHide;
+        public readonly NodeConnectorOutput OutputOnShow;
+        public readonly NodeConnectorOutput OutputOnHide;
 
         public NodeBlockShowAndHide(EditorLayout layout, Node node) : base(layout, node.Width, 30)
         {
-            _inputShow = new NodeConnectorInput(layout, node, Width / 2, "Show");
-            _inputShow.SetParent(this);
-            _inputShow.Y = 10;
+            InputShow = new NodeConnectorInput(layout, node, "Show");
+            InputShow.SetParent(this);
+            InputShow.Y = 10;
 
-            _inputHide = new NodeConnectorInput(layout, node, Width / 2, "Hide");
-            _inputHide.SetParent(this);
-            _inputHide.Y = 30;
+            InputHide = new NodeConnectorInput(layout, node, "Hide");
+            InputHide.SetParent(this);
+            InputHide.Y = 30;
 
-            _outputOnShow = new NodeConnectorOutput(layout, node, Width / 2, "OnShow");
-            _outputOnShow.SetParent(this);
-            _outputOnShow.X = Width / 2;
-            _outputOnShow.Y = 10;
+            OutputOnShow = new NodeConnectorOutput(layout, node, "OnShow");
+            OutputOnShow.SetParent(this);
+            OutputOnShow.Y = 10;
 
-            _outputOnHide = new NodeConnectorOutput(layout, node, Width / 2, "OnHide");
-            _outputOnHide.SetParent(this);
-            _outputOnHide.X = Width / 2;
-            _outputOnHide.Y = 30;
+            OutputOnHide = new NodeConnectorOutput(layout, node, "OnHide");
+            OutputOnHide.SetParent(this);
+            OutputOnHide.Y = 30;
         }
 
         public override void Render()

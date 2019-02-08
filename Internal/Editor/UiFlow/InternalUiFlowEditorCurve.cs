@@ -5,6 +5,14 @@ namespace UnityExpansionInternal.UiFlow
 {
     public class InternalUiFlowEditorCurve
     {
+        public enum Type
+        {
+            Horizontal,
+            Vertical
+        }
+
+        public readonly Type CurveType;
+
         public readonly int XFrom;
         public readonly int XTo;
 
@@ -14,9 +22,11 @@ namespace UnityExpansionInternal.UiFlow
         private Color _color = Color.red;
         private int _thickness = 1;
 
-        public InternalUiFlowEditorCurve(int x1, int y1, int x2, int y2)
+        public InternalUiFlowEditorCurve(Type type, int x1, int y1, int x2, int y2)
         {
-            if(x1 < x2)
+            CurveType = type;
+
+            if (x1 < x2 || type == Type.Vertical)
             {
                 XFrom = x1;
                 YFrom = y1;
@@ -56,14 +66,27 @@ namespace UnityExpansionInternal.UiFlow
 
             distance /= 3f;
 
-            if(distance > distanceMax)
+            Vector3 startTan = Vector3.zero;
+            Vector3 endTan = Vector3.zero;
+
+            switch(CurveType)
             {
-                //distance = distanceMax;
+                case Type.Horizontal:
+                    startTan = startPos + Vector3.right * distance;
+                    endTan = endPos + Vector3.left * distance;
+                    break;
+
+                case Type.Vertical:
+
+                    if(distance > 80)
+                    {
+                        distance = 80;
+                    }
+
+                    startTan = startPos + Vector3.up * distance;
+                    endTan = endPos + Vector3.down * distance;
+                    break;
             }
-
-
-            Vector3 startTan = startPos + Vector3.right * distance;
-            Vector3 endTan = endPos + Vector3.left * distance;
 
             Handles.DrawBezier(startPos, endPos, startTan, endTan, _color, null, _thickness);
         }

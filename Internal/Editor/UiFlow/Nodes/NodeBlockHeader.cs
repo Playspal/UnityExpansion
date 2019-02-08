@@ -1,20 +1,22 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityExpansion.Editor;
 
 namespace UnityExpansionInternal.UiFlow
 {
     public class NodeBlockHeader : EditorLayoutObject
     {
-        private EditorLayoutTexture2D _textureBackground;
+        private Node _parentNode;
+
+        private EditorLayoutObjectTexture _textureBackground;
         private EditorLayoutObjectText _label;
 
         public NodeBlockHeader(EditorLayout layout, Node node) : base(layout, node.Width - 2, 30)
         {
             X = Y = 1;
 
-            _textureBackground = new EditorLayoutTexture2D(layout, Width, Height);
+            _parentNode = node;
+
+            _textureBackground = new EditorLayoutObjectTexture(layout, Width, Height);
             _textureBackground.Fill(node.ColorMain);
             _textureBackground.DrawBorderBottom(1, node.ColorDark);
             _textureBackground.SetParent(this);
@@ -26,6 +28,17 @@ namespace UnityExpansionInternal.UiFlow
             _label.SetText("...");
             _label.SetParent(this);
             _label.X = 9;
+
+            Layout.Mouse.OnPress += MouseHandlerPress;
+            Layout.Mouse.OnRelease += MouseHandlerRelease;
+        }
+
+        public override void Destroy()
+        {
+            base.Destroy();
+
+            Layout.Mouse.OnPress -= MouseHandlerPress;
+            Layout.Mouse.OnRelease -= MouseHandlerRelease;
         }
 
         public void SetTitle(string value)
@@ -36,6 +49,25 @@ namespace UnityExpansionInternal.UiFlow
         public override void Render()
         {
             base.Render();
+        }
+
+        private void MouseHandlerPress()
+        {
+            if (HitTest(Layout.Mouse.X, Layout.Mouse.Y))
+            {
+                _parentNode.DragStart(false);
+            }
+        }
+
+        private void MouseHandlerRelease()
+        {
+            if (_parentNode.IsDragging)
+            {
+                _parentNode.DragStop();
+
+                _parentNode.X = Mathf.RoundToInt((float)_parentNode.X / 20f) * 20;
+                _parentNode.Y = Mathf.RoundToInt((float)(_parentNode.Y) / 20f) * 20;
+            }
         }
     }
 }

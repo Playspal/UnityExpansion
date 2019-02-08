@@ -6,6 +6,11 @@ namespace UnityExpansionInternal.UiFlow
 {
     public static class InternalUiFlowEditorConfig
     {
+        public const string COLOR_NODE_LABEL = "#999999";
+
+        public const string COLOR_NODE_BACKGROUND = "#3A3A3A";
+        public const string COLOR_NODE_BACKGROUND_BORDER = "#4D4D4D";
+
         public const string COLOR_SCREEN_MAIN = "#A73D3F";
         public const string COLOR_SCREEN_DARK = "#72292A";
         public const string COLOR_SCREEN_LIGHT = "#FFCCCC";

@@ -7,12 +7,17 @@ namespace UnityExpansion.Editor
         public int WindowWidth { get { return (int)(position.width); } }
         public int WindowHeight { get { return (int)(position.height); } }
 
+        public int CanvasX { get; set; }
+        public int CanvasY { get; set; }
+
         public EditorLayoutMouse Mouse { get; private set; }
         public EditorLayoutObjects Objects { get; private set; }
 
+        public EditorLayoutObject ObjectDragged { get; set; }
+
         public virtual void Initialization()
         {
-            Mouse = new EditorLayoutMouse();
+            Mouse = new EditorLayoutMouse(this);
             Objects = new EditorLayoutObjects(this);
         }
 
@@ -20,10 +25,12 @@ namespace UnityExpansion.Editor
         {
             Mouse.OnGui();
             Objects.Render();
+            Objects.Update();
         }
 
         private void Update()
         {
+            
             Repaint();
         }
     }
