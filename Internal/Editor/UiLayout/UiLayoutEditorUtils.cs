@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 
-namespace UnityExpansionInternal.UiFlow
+namespace UnityExpansionInternal.UiLayoutEditor
 {
-    public static class InternalUiFlowUtils
+    public static class UiLayoutEditorUtils
     {
         public static string[] SignalsAdd(string[] signals, string signal)
         {

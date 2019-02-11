@@ -47,7 +47,7 @@ namespace UnityExpansion.UI
 
         // Current visibility. Sets to true right before show animations and sets to false before hide animations
         // Used to prevent start animation if it is already started
-        private bool _isScreenShown = false;
+        private bool _isShown = false;
 
         // Attached UiAnimation component
         private UiAnimation _animation;
@@ -115,7 +115,7 @@ namespace UnityExpansion.UI
         /// </summary>
         public void Show()
         {
-            if (IsDestroyed || _isScreenShown)
+            if (IsDestroyed || _isShown)
             {
                 return;
             }
@@ -163,7 +163,7 @@ namespace UnityExpansion.UI
         /// </summary>
         public void Hide()
         {
-            if (IsDestroyed || !_isScreenShown)
+            if (IsDestroyed || !_isShown)
             {
                 return;
             }
@@ -232,7 +232,7 @@ namespace UnityExpansion.UI
         {
             OnShowBegin.InvokeIfNotNull();
 
-            _isScreenShown = true;
+            _isShown = true;
         }
 
         /// <summary>
@@ -252,7 +252,7 @@ namespace UnityExpansion.UI
         {
             OnHideBegin.InvokeIfNotNull();
 
-            _isScreenShown = false;
+            _isShown = false;
         }
 
         /// <summary>

@@ -109,11 +109,14 @@ namespace UnityExpansion.Editor
                 //return;
             }
 
-            layoutObject.Render();
-
-            for (int i = 0; i < layoutObject.ChildObjects.Count; i++)
+            if (layoutObject.IsActive)
             {
-                RenderRecursively(layoutObject.ChildObjects[i]);
+                layoutObject.Render();
+
+                for (int i = 0; i < layoutObject.ChildObjects.Count; i++)
+                {
+                    RenderRecursively(layoutObject.ChildObjects[i]);
+                }
             }
         }
 
@@ -129,11 +132,14 @@ namespace UnityExpansion.Editor
                 //return;
             }
 
-            layoutObject.Update();
-
-            for (int i = 0; i < layoutObject.ChildObjects.Count; i++)
+            if (layoutObject.IsActive)
             {
-                UpdateRecursively(layoutObject.ChildObjects[i]);
+                layoutObject.Update();
+
+                for (int i = 0; i < layoutObject.ChildObjects.Count; i++)
+                {
+                    UpdateRecursively(layoutObject.ChildObjects[i]);
+                }
             }
         }
     }

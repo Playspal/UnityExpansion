@@ -105,6 +105,11 @@ namespace UnityExpansion.Editor
                 ParentObject.ChildObjects.Remove(this);
                 ParentObject.ChildObjects.Add(this);
             }
+            else
+            {
+                Layout.Objects.Remove(this);
+                Layout.Objects.Add(this);
+            }
         }
 
         /// <summary>

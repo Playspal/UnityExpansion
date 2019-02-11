@@ -3,7 +3,7 @@
 using UnityEngine;
 using UnityExpansion.Editor;
 
-namespace UnityExpansionInternal.UiFlow
+namespace UnityExpansionInternal.UiLayoutEditor
 {
     public class NodeConnector : EditorLayoutObject
     {
@@ -49,7 +49,7 @@ namespace UnityExpansionInternal.UiFlow
         {
             Label = new EditorLayoutObjectText(Layout, Width - 20, Height);
             Label.SetAlignment(ConnectorType == Type.Input ? TextAnchor.MiddleLeft : TextAnchor.MiddleRight);
-            Label.SetColor(InternalUiFlowEditorConfig.COLOR_NODE_LABEL);
+            Label.SetColor(UiLayoutEditorConfig.COLOR_NODE_LABEL);
             Label.SetText(text);
             Label.SetParent(this);
             Label.X = 10;

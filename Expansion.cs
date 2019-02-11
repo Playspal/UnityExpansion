@@ -12,7 +12,7 @@ namespace UnityExpansion
     [AddComponentMenu("Expansion/Expansion Main Object", 1)]
     public class Expansion : MonoBehaviour
     {
-        public const string VERSION = "1.1.5";
+        public const string VERSION = "2.0.0";
 
         /// <summary>
         /// Signal name that dispatched on start of each frame.
@@ -23,9 +23,6 @@ namespace UnityExpansion
         /// Expansion instance.
         /// </summary>
         public static Expansion Instance { get; private set; }
-
-        [SerializeField]
-        public UiLayoutSettings LayoutSettings;
 
         [SerializeField]
         public InternalSettings InternalSettings;
@@ -57,12 +54,6 @@ namespace UnityExpansion
         // Validation
         private void Validate()
         {
-            if (LayoutSettings == null)
-            {
-                LayoutSettings = gameObject.GetOrAddComponent<UiLayoutSettings>();
-                LayoutSettings.hideFlags = HideFlags.HideInInspector;
-            }
-
             if (InternalSettings == null)
             {
                 InternalSettings = gameObject.GetOrAddComponent<InternalSettings>();

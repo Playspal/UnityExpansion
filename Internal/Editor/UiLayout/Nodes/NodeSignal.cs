@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityExpansion.Editor;
 
-namespace UnityExpansionInternal.UiFlow
+namespace UnityExpansionInternal.UiLayoutEditor
 {
     public class NodeSignal : Node
     {

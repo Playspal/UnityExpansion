@@ -21,19 +21,6 @@ namespace UnityExpansionInternal
             EditorGUILayout.LabelField("It is the main UnityExpansion object. If you have any question read the documentation at aokov.se/expansion/");
 
             EditorGUILayout.Space();
-
-            if (expansion.LayoutSettings != null)
-                {
-                    if (_editor == null)
-                    {
-                        _editor = Editor.CreateEditor(expansion.LayoutSettings);
-                    }
-
-                    if (_editor != null)
-                    {
-                        _editor.OnInspectorGUI();
-                    }
-                }
            
         }
     }

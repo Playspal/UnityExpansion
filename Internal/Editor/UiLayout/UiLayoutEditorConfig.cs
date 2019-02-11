@@ -1,10 +1,6 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-namespace UnityExpansionInternal.UiFlow
+﻿namespace UnityExpansionInternal.UiLayoutEditor
 {
-    public static class InternalUiFlowEditorConfig
+    public static class UiLayoutEditorConfig
     {
         public const string COLOR_NODE_LABEL = "#999999";
 

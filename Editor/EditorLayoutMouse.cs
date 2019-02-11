@@ -1,4 +1,5 @@
 ﻿using System;
+using UnityEditor;
 using UnityEngine;
 
 namespace UnityExpansion.Editor
@@ -12,11 +13,19 @@ namespace UnityExpansion.Editor
         public event Action OnPress;
         public event Action OnRelease;
         public event Action OnClick;
-        public event Action OnClickContext;
         public event Action OnMove;
 
-        public event Action OnDragContext;
+        public event Action OnDragByButtonLeft;
+        public event Action OnDragByButtonRight;
 
+        public event Action<UnityEngine.Object[]> OnDragPrefabsStarted;
+        public event Action<UnityEngine.Object[]> OnDragPrefabsUpdated;
+        public event Action<UnityEngine.Object[]> OnDragPrefabsEnded;
+        public event Action OnDragPrefabsCanceled;
+
+        /// <summary>
+        /// Parent layout.
+        /// </summary>
         public EditorLayout Layout { get; private set; }
 
         /// <summary>
@@ -30,28 +39,49 @@ namespace UnityExpansion.Editor
         public int Y { get; private set; }
 
         /// <summary>
-        /// Mouse X.
+        /// Delta X.
         /// </summary>
-        public int GlobalX { get; private set; }
+        public int DeltaX { get; private set; }
 
         /// <summary>
-        /// Mouse Y.
+        /// Delta Y.
         /// </summary>
-        public int GlobalY { get; private set; }
-
-        public int DeltaX { get; private set; }
         public int DeltaY { get; private set; }
+
+        /// <summary>
+        /// X position when left mouse button been pressed last time.
+        /// </summary>
+        public int PressedX { get; private set; }
+
+        /// <summary>
+        /// Y position when left mouse button been pressed last time.
+        /// </summary>
+        public int PressedY { get; private set; }
 
         /// <summary>
         /// Is the left mouse button currently pressed.
         /// </summary>
-        public bool IsPressed { get; private set; }
+        public bool IsPressedButtonLeft { get; private set; }
 
-        public bool IsContextPressed { get; private set; }
+        /// <summary>
+        /// Is the right mouse button currently pressed.
+        /// </summary>
+        public bool IsPressedButtonRight { get; private set; }
 
-        private float _x = 0;
-        private float _y = 0;
+        /// <summary>
+        /// Is the prefabs are currently dragged.
+        /// </summary>
+        public bool IsPrefabsDragged { get; private set; }
 
+        /// <summary>
+        /// Is the mouse currently inside window.
+        /// </summary>
+        public bool IsInsideLayout { get; private set; }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="EditorLayoutMouse"/> class.
+        /// </summary>
+        /// <param name="layout">Parent layout.</param>
         public EditorLayoutMouse(EditorLayout layout)
         {
             Layout = layout;
@@ -62,78 +92,127 @@ namespace UnityExpansion.Editor
         /// </summary>
         public void OnGui()
         {
-            switch(Event.current.type)
+            switch (Event.current.type)
             {
                 case EventType.Repaint:
-
-                    DeltaX = Mathf.RoundToInt(Event.current.mousePosition.x - _x);
-                    DeltaY = Mathf.RoundToInt(Event.current.mousePosition.y - _y);
-
-                    _x = Event.current.mousePosition.x;
-                    _y = Event.current.mousePosition.y;
-
-                    X = Mathf.RoundToInt(Event.current.mousePosition.x);
-                    Y = Mathf.RoundToInt(Event.current.mousePosition.y);
-
-                    GlobalX = X + Layout.CanvasX;
-                    GlobalY = Y + Layout.CanvasY;
+                    OnMouseMove();
                     break;
 
                 case EventType.MouseDown:
-                    if (Event.current.button == 0)
-                    {
-                        IsPressed = true;
-                        OnPress.InvokeIfNotNull();
-                    }
-
-                    if (Event.current.button == 1)
-                    {
-                        IsContextPressed = true;
-                    }
+                    OnMouseDown();
                     break;
 
                 case EventType.MouseUp:
-                    if (Event.current.button == 0)
-                    {
-                        IsPressed = false;
-                        OnRelease.InvokeIfNotNull();
-                        OnClick.InvokeIfNotNull();
-                    }
-
-                    if (Event.current.button == 1)
-                    {
-                        IsContextPressed = false;
-                    }
-
-
-                    break;
-
-                case EventType.MouseMove:
-                    OnMove.InvokeIfNotNull();
-                    break;
-
-                case EventType.ContextClick:
-                    OnClickContext.InvokeIfNotNull();
+                    OnMouseUp();
                     break;
 
                 case EventType.MouseDrag:
-                    if(IsContextPressed)
-                    {
-                        DeltaX = Mathf.RoundToInt(Event.current.mousePosition.x - _x);
-                        DeltaY = Mathf.RoundToInt(Event.current.mousePosition.y - _y);
-
-                        _x = Event.current.mousePosition.x;
-                        _y = Event.current.mousePosition.y;
-
-                        X = Mathf.RoundToInt(Event.current.mousePosition.x);
-                        Y = Mathf.RoundToInt(Event.current.mousePosition.y);
-
-                        GlobalX = X + Layout.CanvasX;
-                        GlobalY = Y + Layout.CanvasY;
-
-                        OnDragContext.InvokeIfNotNull();
-                    }
+                    OnMouseMove();
+                    OnMouseDrag();
                     break;
+
+                case EventType.DragUpdated:
+                    OnDragUpdated();
+                    Event.current.Use();
+                    break;
+
+                case EventType.DragExited:
+                    OnDragExit();
+                    Event.current.Use();
+                    break;
+            }
+        }
+
+        private void OnMouseMove()
+        {
+            DeltaX = Mathf.RoundToInt(Event.current.mousePosition.x - X);
+            DeltaY = Mathf.RoundToInt(Event.current.mousePosition.y - Y);
+
+            X = Mathf.RoundToInt(Event.current.mousePosition.x);
+            Y = Mathf.RoundToInt(Event.current.mousePosition.y);
+
+            IsInsideLayout = X >= 0 && Y >= 0 && X <= Layout.WindowWidth && Y <= Layout.WindowHeight;
+
+            OnMove.InvokeIfNotNull();
+        }
+
+        private void OnMouseDown()
+        {
+            if (Event.current.button == 0)
+            {
+                PressedX = X;
+                PressedY = Y;
+
+                IsPressedButtonLeft = true;
+                OnPress.InvokeIfNotNull();
+            }
+
+            if (Event.current.button == 1)
+            {
+                IsPressedButtonRight = true;
+            }
+        }
+
+        private void OnMouseUp()
+        {
+            if (Event.current.button == 0)
+            {
+                IsPressedButtonLeft = false;
+                OnRelease.InvokeIfNotNull();
+
+                if (X == PressedX && Y == PressedY)
+                {
+                    OnClick.InvokeIfNotNull();
+                }
+            }
+
+            if (Event.current.button == 1)
+            {
+                IsPressedButtonRight = false;
+            }
+        }
+
+        private void OnMouseDrag()
+        {
+            if (IsPressedButtonLeft)
+            {
+                OnDragByButtonLeft.InvokeIfNotNull();
+            }
+
+            if (IsPressedButtonRight)
+            {
+                OnDragByButtonRight.InvokeIfNotNull();
+            }
+        }
+
+        private void OnDragUpdated()
+        {
+            if (DragAndDrop.objectReferences.Length > 0)
+            {
+                if (!IsPrefabsDragged)
+                {
+                    IsPrefabsDragged = true;
+                    OnDragPrefabsStarted.InvokeIfNotNull(DragAndDrop.objectReferences);
+                }
+
+                OnDragPrefabsUpdated.InvokeIfNotNull(DragAndDrop.objectReferences);
+            }
+        }
+
+        private void OnDragExit()
+        {
+            if (IsPrefabsDragged)
+            {
+                IsPrefabsDragged = false;
+
+                if (IsInsideLayout)
+                {
+                    OnDragPrefabsEnded.InvokeIfNotNull(DragAndDrop.objectReferences);
+                }
+                else
+                {
+                    OnDragPrefabsCanceled.InvokeIfNotNull();
+                }
             }
         }
     }

@@ -3,7 +3,7 @@
 using UnityEngine;
 using UnityExpansion.Editor;
 
-namespace UnityExpansionInternal.UiFlow
+namespace UnityExpansionInternal.UiLayoutEditor
 {
     public class Node : EditorLayoutObject
     {
@@ -19,8 +19,8 @@ namespace UnityExpansionInternal.UiFlow
 
         public Node(EditorLayout layout, int width, int height) : base (layout, width, height)
         {
-            ColorBackground = Color.red.Parse(InternalUiFlowEditorConfig.COLOR_NODE_BACKGROUND);
-            ColorBackgroundBorder = Color.red.Parse(InternalUiFlowEditorConfig.COLOR_NODE_BACKGROUND_BORDER);
+            ColorBackground = Color.red.Parse(UiLayoutEditorConfig.COLOR_NODE_BACKGROUND);
+            ColorBackgroundBorder = Color.red.Parse(UiLayoutEditorConfig.COLOR_NODE_BACKGROUND_BORDER);
 
             _textureBackground = new EditorLayoutObjectTexture(layout, Width, Height);
             _textureBackground.Fill(ColorBackground);
@@ -30,12 +30,12 @@ namespace UnityExpansionInternal.UiFlow
             SetupColors();
         }
 
-        public void Resize(int height)
+        public virtual void SetAsRootNode()
         {
 
         }
 
-        public void AddLink(Node node)
+        public virtual void AddLink(Node node)
         {
             NodeLink link = new NodeLink(Layout, this, node);
 
@@ -55,17 +55,17 @@ namespace UnityExpansionInternal.UiFlow
 
             if (this is NodeLayoutElement)
             {
-                SetupColors(InternalUiFlowEditorConfig.COLOR_BLOCK_MAIN, InternalUiFlowEditorConfig.COLOR_BLOCK_DARK, InternalUiFlowEditorConfig.COLOR_BLOCK_LIGHT);
+                SetupColors(UiLayoutEditorConfig.COLOR_BLOCK_MAIN, UiLayoutEditorConfig.COLOR_BLOCK_DARK, UiLayoutEditorConfig.COLOR_BLOCK_LIGHT);
             }
 
             if (this is NodeLayoutElementScreen)
             {
-                SetupColors(InternalUiFlowEditorConfig.COLOR_SCREEN_MAIN, InternalUiFlowEditorConfig.COLOR_SCREEN_DARK, InternalUiFlowEditorConfig.COLOR_SCREEN_LIGHT);
+                SetupColors(UiLayoutEditorConfig.COLOR_SCREEN_MAIN, UiLayoutEditorConfig.COLOR_SCREEN_DARK, UiLayoutEditorConfig.COLOR_SCREEN_LIGHT);
             }
 
             if (this is NodeSignal)
             {
-                SetupColors(InternalUiFlowEditorConfig.COLOR_SIGNAL_MAIN, InternalUiFlowEditorConfig.COLOR_SIGNAL_DARK, InternalUiFlowEditorConfig.COLOR_SIGNAL_LIGHT);
+                SetupColors(UiLayoutEditorConfig.COLOR_SIGNAL_MAIN, UiLayoutEditorConfig.COLOR_SIGNAL_DARK, UiLayoutEditorConfig.COLOR_SIGNAL_LIGHT);
             }
         }
 
@@ -81,7 +81,7 @@ namespace UnityExpansionInternal.UiFlow
             int fromX = GetPositionGlobalX() + Width / 2;
             int fromY = GetPositionGlobalY() + Height;
 
-            ((InternalUiFlowEditor)Layout).Curves.AddToBackground(InternalUiFlowEditorCurve.Type.Vertical, fromX, fromY, toX, toY, 5, ColorBackground);
+            ((UiLayoutEditor)Layout).Curves.AddToBackground(UiLayoutEditorCurve.Type.Vertical, fromX, fromY, toX, toY, 5, ColorBackground);
         }
 
         public override void Render()

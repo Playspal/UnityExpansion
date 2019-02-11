@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityExpansion.Editor;
 using UnityExpansion.UI;
 
-namespace UnityExpansionInternal.UiFlow
+namespace UnityExpansionInternal.UiLayoutEditor
 {
     public class NodeLayoutElement : Node
     {
@@ -27,7 +27,7 @@ namespace UnityExpansionInternal.UiFlow
             {
                 if (LayoutPreset != null)
                 {
-                    LayoutPreset.SignalsShow = InternalUiFlowUtils.SignalsAdd(LayoutPreset.SignalsShow, nodeConnector.Data);
+                    LayoutPreset.SignalsShow = UiLayoutEditorUtils.SignalsAdd(LayoutPreset.SignalsShow, nodeConnector.Data);
                 }
             };
 
@@ -35,7 +35,7 @@ namespace UnityExpansionInternal.UiFlow
             {
                 if (LayoutPreset != null)
                 {
-                    LayoutPreset.SignalsShow = InternalUiFlowUtils.SignalsRemove(LayoutPreset.SignalsShow, nodeConnector.Data);
+                    LayoutPreset.SignalsShow = UiLayoutEditorUtils.SignalsRemove(LayoutPreset.SignalsShow, nodeConnector.Data);
                 }
             };
 
@@ -43,7 +43,7 @@ namespace UnityExpansionInternal.UiFlow
             {
                 if (LayoutPreset != null)
                 {
-                    LayoutPreset.SignalsHide = InternalUiFlowUtils.SignalsAdd(LayoutPreset.SignalsHide, nodeConnector.Data);
+                    LayoutPreset.SignalsHide = UiLayoutEditorUtils.SignalsAdd(LayoutPreset.SignalsHide, nodeConnector.Data);
                 }
             };
 
@@ -51,11 +51,19 @@ namespace UnityExpansionInternal.UiFlow
             {
                 if (LayoutPreset != null)
                 {
-                    LayoutPreset.SignalsHide = InternalUiFlowUtils.SignalsRemove(LayoutPreset.SignalsHide, nodeConnector.Data);
+                    LayoutPreset.SignalsHide = UiLayoutEditorUtils.SignalsRemove(LayoutPreset.SignalsHide, nodeConnector.Data);
                 }
             };
         }
-        
+
+        public override void SetAsRootNode()
+        {
+            base.SetAsRootNode();
+
+            BlockShowAndHide.InputShow.Label.SetText("Instantiate and Show");
+            BlockShowAndHide.InputHide.Label.SetText("Hide and Destroy");
+        }
+
         public void SetLayoutElement(UiLayoutElement layoutElement)
         {
             LayoutElement = layoutElement;

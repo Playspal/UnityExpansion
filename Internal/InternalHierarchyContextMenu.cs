@@ -37,22 +37,35 @@ namespace UnityExpansionInternal
         /// <summary>
         /// Creates new layout screen.
         /// </summary>
-        [MenuItem("GameObject/UnityExpansion/Layout Screen", false, 0)]
-        public static void CreateExpansionLayoutScreen()
+        [MenuItem("GameObject/UnityExpansion/Layout", false, 0)]
+        public static void CreateExpansionLayout()
         {
-            GameObject gameObject = new GameObject("LayoutElementScreen");
+            GameObject gameObject = new GameObject("Layout");
             RectTransform rectTransform = CreateRectTransform(gameObject, Selection.activeTransform);
-            UiLayoutElementScreen element = gameObject.AddComponent<UiLayoutElementScreen>();
+            UiLayout element = gameObject.AddComponent<UiLayout>();
+
+            Selection.activeObject = gameObject;
+        }
+
+        /// <summary>
+        /// Creates new layout element.
+        /// </summary>
+        [MenuItem("GameObject/UnityExpansion/LayoutElement", false, 0)]
+        public static void CreateExpansionLayoutElement()
+        {
+            GameObject gameObject = new GameObject("LayoutElement");
+            RectTransform rectTransform = CreateRectTransform(gameObject, Selection.activeTransform);
+            UiLayoutElement element = gameObject.AddComponent<UiLayoutElement>();
 
             UiAnimationClip animationShow = new UiAnimationClip
             {
-                Name = "Screen Show Animation",
+                Name = "Show animation",
                 PlayOnLayoutElementShow = true
             };
 
             UiAnimationClip animationHide = new UiAnimationClip
             {
-                Name = "Screen Hide Animation",
+                Name = "Hide animation",
                 PlayOnLayoutElementHide = true
             };
 
@@ -68,49 +81,7 @@ namespace UnityExpansionInternal
 
             Selection.activeObject = gameObject;
         }
-
-        /// <summary>
-        /// Creates new layout panel.
-        /// </summary>
-        [MenuItem("GameObject/UnityExpansion/Layout Panel", false, 0)]
-        public static void CreateExpansionLayoutPanel()
-        {
-            GameObject gameObject = new GameObject("LayoutElementPanel");
-            RectTransform rectTransform = CreateRectTransform(gameObject, Selection.activeTransform);
-            UiLayoutElementPanel element = gameObject.AddComponent<UiLayoutElementPanel>();
-
-            Selection.activeObject = gameObject;
-        }
-
-        /// <summary>
-        /// Creates new layout popup.
-        /// </summary>
-        [MenuItem("GameObject/UnityExpansion/Layout Popup", false, 0)]
-        public static void CreateExpansionLayoutPopup()
-        {
-            GameObject gameObject = new GameObject("LayoutElementPopup");
-            RectTransform rectTransform = CreateRectTransform(gameObject, Selection.activeTransform);
-            UiLayoutElementPopup element = gameObject.AddComponent<UiLayoutElementPopup>();
-
-            GameObject background = new GameObject("Background");
-            RectTransform backgroundRectTransform = CreateRectTransform(background, rectTransform);
-            Image backgroundImage = background.AddComponent<Image>();
-
-            backgroundImage.color = new Color(0, 0, 0, 0.5f);
-
-            GameObject window = new GameObject("Window");
-            RectTransform windowRectTransform = window.AddComponent<RectTransform>();
-            Image windowImage = window.AddComponent<Image>();
-
-            windowRectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, 360);
-            windowRectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, 180);
-            windowRectTransform.SetParent(rectTransform, false);
-
-            windowImage.color = new Color(.9f, .9f, .9f, 1f);
-
-            Selection.activeObject = gameObject;
-        }
-
+        
         /// <summary>
         /// Creates new layer inside of Canvas.
         /// </summary>

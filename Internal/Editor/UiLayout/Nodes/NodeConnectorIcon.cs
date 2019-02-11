@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityExpansion.Editor;
 
-namespace UnityExpansionInternal.UiFlow
+namespace UnityExpansionInternal.UiLayoutEditor
 {
     public class NodeConnectorIcon : EditorLayoutObject
     {
@@ -100,7 +100,7 @@ namespace UnityExpansionInternal.UiFlow
             int fromX = GetPositionGlobalX() + Width / 2;
             int fromY = GetPositionGlobalY() + Height / 2;
 
-            ((InternalUiFlowEditor)Layout).Curves.AddToFrontground(InternalUiFlowEditorCurve.Type.Horizontal, fromX, fromY, toX, toY, 3, ColorCurrent);
+            ((UiLayoutEditor)Layout).Curves.AddToFrontground(UiLayoutEditorCurve.Type.Horizontal, fromX, fromY, toX, toY, 3, ColorCurrent);
         }
 
         private void MouseHandlerPress()

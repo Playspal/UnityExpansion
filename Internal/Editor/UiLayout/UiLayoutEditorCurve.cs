@@ -1,9 +1,9 @@
 ﻿using UnityEditor;
 using UnityEngine;
 
-namespace UnityExpansionInternal.UiFlow
+namespace UnityExpansionInternal.UiLayoutEditor
 {
-    public class InternalUiFlowEditorCurve
+    public class UiLayoutEditorCurve
     {
         public enum Type
         {
@@ -22,7 +22,7 @@ namespace UnityExpansionInternal.UiFlow
         private Color _color = Color.red;
         private int _thickness = 1;
 
-        public InternalUiFlowEditorCurve(Type type, int x1, int y1, int x2, int y2)
+        public UiLayoutEditorCurve(Type type, int x1, int y1, int x2, int y2)
         {
             CurveType = type;
 

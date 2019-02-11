@@ -1,6 +1,6 @@
 ﻿using UnityExpansion.Editor;
 
-namespace UnityExpansionInternal.UiFlow
+namespace UnityExpansionInternal.UiLayoutEditor
 {
     public class NodeConnectorOutput : NodeConnector
     {

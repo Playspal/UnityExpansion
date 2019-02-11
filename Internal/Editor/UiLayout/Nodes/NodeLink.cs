@@ -1,11 +1,11 @@
 ﻿using UnityEngine;
 using UnityExpansion.Editor;
 
-namespace UnityExpansionInternal.UiFlow
+namespace UnityExpansionInternal.UiLayoutEditor
 {
     public class NodeLink
     {
-        public InternalUiFlowEditor FlowEditor { get; private set; }
+        public UiLayoutEditor FlowEditor { get; private set; }
 
         public readonly Node NodeA;
         public readonly Node NodeB;
@@ -15,7 +15,7 @@ namespace UnityExpansionInternal.UiFlow
 
         public NodeLink(EditorLayout layout, Node a, Node b)
         {
-            FlowEditor = layout as InternalUiFlowEditor;
+            FlowEditor = layout as UiLayoutEditor;
 
             NodeA = a;
             NodeB = b;
@@ -44,24 +44,24 @@ namespace UnityExpansionInternal.UiFlow
         {
             FlowEditor.Curves.AddToBackground
             (
-                InternalUiFlowEditorCurve.Type.Vertical,
+                UiLayoutEditorCurve.Type.Vertical,
                 _iconA.GetPositionGlobalX() + _iconA.Width / 2 - 1,
                 _iconA.GetPositionGlobalY() + 14,
                 _iconB.GetPositionGlobalX() + _iconB.Width / 2 + 1,
                 _iconB.GetPositionGlobalY(),
                 4,
-                Color.white.Parse(InternalUiFlowEditorConfig.COLOR_NODE_BACKGROUND_BORDER)
+                Color.white.Parse(UiLayoutEditorConfig.COLOR_NODE_BACKGROUND_BORDER)
             );
 
             FlowEditor.Curves.AddToBackground
             (
-                InternalUiFlowEditorCurve.Type.Vertical,
+                UiLayoutEditorCurve.Type.Vertical,
                 _iconA.GetPositionGlobalX() + _iconA.Width / 2 + 1,
                 _iconA.GetPositionGlobalY() + 14,
                 _iconB.GetPositionGlobalX() + _iconB.Width / 2 - 1,
                 _iconB.GetPositionGlobalY(),
                 4,
-                Color.white.Parse(InternalUiFlowEditorConfig.COLOR_NODE_BACKGROUND_BORDER)
+                Color.white.Parse(UiLayoutEditorConfig.COLOR_NODE_BACKGROUND_BORDER)
             );
         }
     }
