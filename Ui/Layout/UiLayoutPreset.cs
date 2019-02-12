@@ -1,7 +1,9 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 namespace UnityExpansion.UI
 {
+    [Serializable]
     public class UiLayoutPreset
     {
         /// <summary>

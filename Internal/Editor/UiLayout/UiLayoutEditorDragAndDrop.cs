@@ -71,7 +71,7 @@ namespace UnityExpansionInternal.UiLayoutEditor
 
                             if (_layoutEditor.Selection.Target != null)
                             {
-                                for (int i = 0; i < _layoutEditor.Selection.Target.Presets.Count; i++)
+                                for (int i = 0; i < _layoutEditor.Selection.Target.Presets.Length; i++)
                                 {
                                     if(_layoutEditor.Selection.Target.Presets[i].AssetPath == _preset.AssetPath)
                                     {

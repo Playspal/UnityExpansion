@@ -7,13 +7,17 @@ namespace UnityExpansionInternal.UiLayoutEditor
 {
     public class Node : EditorLayoutObject
     {
-        protected EditorLayoutObjectTexture _textureBackground;
+        public InternalUiLayoutData.NodeData NodeData { get; private set; }
+
+        public string ID { get { return NodeData.ID; } }
 
         public Color ColorMain { get; private set; }
         public Color ColorDark { get; private set; }
         public Color ColorLight { get; private set; }
         public Color ColorBackground { get; private set; }
         public Color ColorBackgroundBorder { get; private set; }
+
+        protected EditorLayoutObjectTexture _textureBackground;
 
         private List<NodeLink> _links = new List<NodeLink>();
 
@@ -28,6 +32,11 @@ namespace UnityExpansionInternal.UiLayoutEditor
             _textureBackground.SetParent(this);
 
             SetupColors();
+        }
+
+        public void SetNodeData(InternalUiLayoutData.NodeData nodeData)
+        {
+            NodeData = nodeData;
         }
 
         public virtual void SetAsRootNode()
@@ -91,7 +100,19 @@ namespace UnityExpansionInternal.UiLayoutEditor
                 _links[i].Render();
             }
 
+
             base.Render();
+        }
+
+        public override void Update()
+        {
+            base.Update();
+
+            if(NodeData != null)
+            {
+                NodeData.X = X;
+                NodeData.Y = Y;
+            }
         }
     }
 }

@@ -1,36 +1,58 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityExpansion.UI;
 
 [Serializable]
 public class InternalUiLayoutData : MonoBehaviour
 {
+    [Serializable]
+    public enum NodeType
+    {
+        Undefined,
+        LayoutElementRoot,
+        LayoutElement
+    }
+
+    [Serializable]
     public class NodeData
     {
-        public string AssetPath { get; set; }
-        public int X { get; set; }
-        public int Y { get; set; }
+        [SerializeField]
+        public string ID;
+
+        [SerializeField]
+        public NodeType Type = NodeType.Undefined;
+
+        [SerializeField]
+        public UiLayoutPreset LayoutPreset;
+
+        [SerializeField]
+        public int X;
+
+        [SerializeField]
+        public int Y;
     }
 
     [SerializeField]
     public List<NodeData> Nodes = new List<NodeData>();
 
-    public void AddNodeData(string path, int x, int y)
+    public void AddNodeData(NodeData nodeData)
     {
-        NodeData nodeData = GetNodeData(path);
-
-        if (nodeData == null)
-        {
-            nodeData = new NodeData();
-            nodeData.AssetPath = path;
-        }
-
-        nodeData.X = x;
-        nodeData.Y = y;
+        Nodes.Add(nodeData);
     }
 
-    public NodeData GetNodeData(string path)
+    public NodeData CreateNodeDataLayoutElementRoot()
     {
-        return Nodes.Find(x => x.AssetPath == path);
+        return new NodeData { Type = NodeType.LayoutElementRoot };
+    }
+
+    public NodeData CreateNodeDataLayoutElement()
+    {
+        return new NodeData { Type = NodeType.LayoutElement };
+    }
+
+    public NodeData Find(string id)
+    {
+        return Nodes.Find(x => x.ID == id);
     }
 }

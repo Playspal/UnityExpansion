@@ -12,6 +12,12 @@ namespace UnityExpansion.UI
         /// List of layout elements attached to this layout.
         /// </summary>
         [SerializeField]
-        public List<UiLayoutPreset> Presets = new List<UiLayoutPreset>();
+        public UiLayoutPreset[] Presets = new UiLayoutPreset[0];
+
+        public void AddPreset(UiLayoutPreset preset)
+        {
+            Array.Resize<UiLayoutPreset>(ref Presets, Presets.Length + 1);
+            Presets[Presets.Length - 1] = preset;
+        }
     }
 }

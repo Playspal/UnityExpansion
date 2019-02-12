@@ -29,7 +29,7 @@ namespace UnityExpansionInternal.UiLayoutEditor
                 {
                     Target = Selection.activeGameObject.GetComponent<UiLayout>();
                     Data = Target.gameObject.GetOrAddComponent<InternalUiLayoutData>();
-                    Data.hideFlags = HideFlags.HideInInspector;
+                    //Data.hideFlags = HideFlags.HideInInspector;
                 }
 
                 _selection = Selection.activeGameObject;

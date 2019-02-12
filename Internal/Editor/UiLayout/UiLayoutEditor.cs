@@ -40,6 +40,8 @@ namespace UnityExpansionInternal.UiLayoutEditor
 
             Selection = new UiLayoutEditorSelection();
             Curves = new UiLayoutEditorCurves();
+
+            Refresh();
         }
 
         protected override void OnGUI()
@@ -65,57 +67,72 @@ namespace UnityExpansionInternal.UiLayoutEditor
 
         private void Refresh()
         {
-            int x = 0;
-            int y = 0;
-
-            for (int i = 0; i < Selection.Target.Presets.Count; i++)
+            if(Selection.Target == null)
             {
-                UiLayoutPreset preset = Selection.Target.Presets[i];
+                return;
+            }
 
-                GameObject gameObject = AssetDatabase.LoadAssetAtPath<GameObject>(preset.AssetPath);
-                NodeLayoutElement node = SetupElementRecursively(gameObject, null, x, y) as NodeLayoutElement;
+            for (int i = 0; i < Selection.Data.Nodes.Count; i++)
+            {
+                InternalUiLayoutData.NodeData nodeData = Selection.Data.Nodes[i];
 
-                node.SetLayoutPreset(preset);
-                node.SetAsRootNode();
-
-                if (preset.SignalsShow.Length > 0)
+                switch (nodeData.Type)
                 {
-                    NodeLayoutElement nodeLayoutElement = node as NodeLayoutElement;
-
-                    NodeSignal signal = CreateNodeSignal(x, y);
-
-                    signal.SetSignal(preset.SignalsShow[0]);
-                    signal.OutputOnReceive.ConnectTo(nodeLayoutElement.BlockShowAndHide.InputShow);
+                    case InternalUiLayoutData.NodeType.LayoutElementRoot:
+                        SetupLayoutElementRoot(nodeData);
+                        break;
                 }
-
-                if (preset.SignalsHide.Length > 0)
-                {
-                    NodeLayoutElement nodeLayoutElement = node as NodeLayoutElement;
-
-                    NodeSignal signal = CreateNodeSignal(x, y);
-
-                    signal.SetSignal(preset.SignalsHide[0]);
-                    signal.OutputOnReceive.ConnectTo(nodeLayoutElement.BlockShowAndHide.InputHide);
-                }
-
-                x += 500;
             }
         }
 
-        private Node SetupElementRecursively(GameObject gameObject, Node parentNode, int x, int y)
+        private void SetupLayoutElementRoot(InternalUiLayoutData.NodeData nodeData)
+        {
+            GameObject gameObject = AssetDatabase.LoadAssetAtPath<GameObject>(nodeData.LayoutPreset.AssetPath);
+            UiLayoutElement layoutElement = gameObject.GetComponent<UiLayoutElement>();
+
+            if (layoutElement != null)
+            {
+                NodeLayoutElement node = CreateNode(layoutElement as UiLayoutElement, null, nodeData.X, nodeData.Y);
+
+                node.SetNodeData(nodeData);
+                node.SetLayoutPreset(nodeData.LayoutPreset);
+                node.SetAsRootNode();
+
+                for (int i = 0; i < gameObject.transform.childCount; i++)
+                {
+                    SetupLayoutElementRecursively(gameObject.transform.GetChild(i).gameObject, node);
+                }
+            }
+        }
+
+        private Node SetupLayoutElementRecursively(GameObject gameObject, Node parentNode)
         {
             UiLayoutElement layoutElement = gameObject.GetComponent<UiLayoutElement>();
 
             if (layoutElement != null)
             {
-                parentNode = CreateNode(layoutElement as UiLayoutElement, parentNode, x, y);
-                y += parentNode.Height + 40;
+                string id = parentNode.ID + "/" + gameObject.name;
+
+                InternalUiLayoutData.NodeData nodeData = Selection.Data.Find(id);
+
+                if(nodeData == null)
+                {
+                    nodeData = Selection.Data.CreateNodeDataLayoutElement();
+
+                    nodeData.ID = id;
+                    nodeData.X = parentNode.X;
+                    nodeData.Y = parentNode.Y + 100;
+
+                    Selection.Data.AddNodeData(nodeData);
+                }
+
+                parentNode = CreateNode(layoutElement as UiLayoutElement, parentNode, nodeData.X, nodeData.Y);
+                parentNode.SetNodeData(nodeData);
             }
 
             for (int i = 0; i < gameObject.transform.childCount; i++)
             {
-                SetupElementRecursively(gameObject.transform.GetChild(i).gameObject, parentNode, x, y);
-                y += 340;
+                SetupLayoutElementRecursively(gameObject.transform.GetChild(i).gameObject, parentNode);
             }
 
             return parentNode;
@@ -160,11 +177,18 @@ namespace UnityExpansionInternal.UiLayoutEditor
 
         private void OnDragAndDrop(UiLayoutPreset layoutPreset)
         {
-            Selection.Target.Presets.Add(layoutPreset);
-            Refresh();
+            Selection.Target.AddPreset(layoutPreset);
 
-            //Node node = SetupElementRecursively(layoutElement.gameObject, null, Mouse.X - CanvasX, Mouse.Y - CanvasY);
-            //node.SetAsRootNode();
+            InternalUiLayoutData.NodeData nodeData = Selection.Data.CreateNodeDataLayoutElementRoot();
+
+            nodeData.ID = layoutPreset.AssetPath;
+            nodeData.LayoutPreset = layoutPreset;
+            nodeData.X = Mouse.X - CanvasX;
+            nodeData.Y = Mouse.Y - CanvasY;
+
+            Selection.Data.AddNodeData(nodeData);
+
+            Refresh();
         }
 
         private void OnWindowResize()
