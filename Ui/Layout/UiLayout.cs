@@ -9,6 +9,12 @@ namespace UnityExpansion.UI
     public class UiLayout : UiObject
     {
         /// <summary>
+        /// Signals that will be dispatched when layout will be created or enabled.
+        /// </summary>
+        [SerializeField]
+        public string[] SignalsOnEnable = new string[0];
+
+        /// <summary>
         /// List of layout elements attached to this layout.
         /// </summary>
         [SerializeField]
