@@ -14,7 +14,7 @@ namespace UnityExpansionInternal.UiLayoutEditor
 
         public string Signal { get; private set; }
 
-        public NodeSignal(EditorLayout layout) : base(layout, 200, 70)
+        public NodeSignal(InternalUiLayoutData.NodeData nodeData, EditorLayout layout) : base(nodeData, layout, 200, 70)
         {
             BlockHeader = new NodeBlockHeader(layout, this);
             BlockHeader.SetParent(this);

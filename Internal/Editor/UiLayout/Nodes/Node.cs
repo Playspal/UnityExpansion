@@ -7,7 +7,7 @@ namespace UnityExpansionInternal.UiLayoutEditor
 {
     public class Node : EditorLayoutObject
     {
-        public InternalUiLayoutData.NodeData NodeData { get; private set; }
+        public readonly InternalUiLayoutData.NodeData NodeData;
 
         public string ID { get { return NodeData.ID; } }
 
@@ -17,12 +17,20 @@ namespace UnityExpansionInternal.UiLayoutEditor
         public Color ColorBackground { get; private set; }
         public Color ColorBackgroundBorder { get; private set; }
 
+        public List<NodeConnectorInput> Input { get; private set; }
+        public List<NodeConnectorOutput> Output { get; private set; }
+
         protected EditorLayoutObjectTexture _textureBackground;
 
         private List<NodeLink> _links = new List<NodeLink>();
 
-        public Node(EditorLayout layout, int width, int height) : base (layout, width, height)
+        public Node(InternalUiLayoutData.NodeData nodeData, EditorLayout layout, int width, int height) : base (layout, width, height)
         {
+            NodeData = nodeData;
+
+            Input = new List<NodeConnectorInput>();
+            Output = new List<NodeConnectorOutput>();
+
             ColorBackground = Color.red.Parse(UiLayoutEditorConfig.COLOR_NODE_BACKGROUND);
             ColorBackgroundBorder = Color.red.Parse(UiLayoutEditorConfig.COLOR_NODE_BACKGROUND_BORDER);
 
@@ -32,16 +40,6 @@ namespace UnityExpansionInternal.UiLayoutEditor
             _textureBackground.SetParent(this);
 
             SetupColors();
-        }
-
-        public void SetNodeData(InternalUiLayoutData.NodeData nodeData)
-        {
-            NodeData = nodeData;
-        }
-
-        public virtual void SetAsRootNode()
-        {
-
         }
 
         public virtual void AddLink(Node node)
@@ -62,14 +60,14 @@ namespace UnityExpansionInternal.UiLayoutEditor
             ColorDark = Color.red;
             ColorLight = Color.red;
 
-            if (this is NodeLayoutElement)
-            {
-                SetupColors(UiLayoutEditorConfig.COLOR_BLOCK_MAIN, UiLayoutEditorConfig.COLOR_BLOCK_DARK, UiLayoutEditorConfig.COLOR_BLOCK_LIGHT);
-            }
-
-            if (this is NodeLayoutElementScreen)
+            if (this is NodeLayoutElementRoot)
             {
                 SetupColors(UiLayoutEditorConfig.COLOR_SCREEN_MAIN, UiLayoutEditorConfig.COLOR_SCREEN_DARK, UiLayoutEditorConfig.COLOR_SCREEN_LIGHT);
+            }
+
+            else if (this is NodeLayoutElement)
+            {
+                SetupColors(UiLayoutEditorConfig.COLOR_BLOCK_MAIN, UiLayoutEditorConfig.COLOR_BLOCK_DARK, UiLayoutEditorConfig.COLOR_BLOCK_LIGHT);
             }
 
             if (this is NodeSignal)

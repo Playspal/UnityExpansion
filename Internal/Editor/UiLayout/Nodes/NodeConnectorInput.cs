@@ -6,6 +6,7 @@ namespace UnityExpansionInternal.UiLayoutEditor
     {
         public NodeConnectorInput(EditorLayout layout, Node node, string label) : base(layout, node, Type.Input, label)
         {
+            node.Input.Add(this);
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 using UnityExpansion.Editor;
 using UnityExpansion.UI;
@@ -12,9 +13,8 @@ namespace UnityExpansionInternal.UiLayoutEditor
         public readonly NodeBlockShowAndHide BlockShowAndHide;
 
         public UiLayoutElement LayoutElement { get; private set; }
-        public UiLayoutPreset LayoutPreset { get; private set; }
 
-        public NodeLayoutElement(EditorLayout layout) : base(layout, 300, 90)
+        public NodeLayoutElement(InternalUiLayoutData.NodeData nodeData, EditorLayout layout) : base(nodeData, layout, 300, 90)
         {
             BlockHeader = new NodeBlockHeader(layout, this);
             BlockHeader.SetParent(this);
@@ -25,43 +25,39 @@ namespace UnityExpansionInternal.UiLayoutEditor
 
             BlockShowAndHide.InputShow.OnConnected += (NodeConnector nodeConnector) =>
             {
-                if (LayoutPreset != null)
+                if(LayoutElement != null)
                 {
-                    LayoutPreset.SignalsShow = UiLayoutEditorUtils.SignalsAdd(LayoutPreset.SignalsShow, nodeConnector.Data);
+                    LayoutElement.SignalsShow = UiLayoutEditorUtils.SignalsAdd(LayoutElement.SignalsShow, nodeConnector.Data);
+                    EditorUtility.SetDirty(LayoutElement);
                 }
             };
 
             BlockShowAndHide.InputShow.OnDisconnected += (NodeConnector nodeConnector) =>
             {
-                if (LayoutPreset != null)
+                if (LayoutElement != null)
                 {
-                    LayoutPreset.SignalsShow = UiLayoutEditorUtils.SignalsRemove(LayoutPreset.SignalsShow, nodeConnector.Data);
+                    LayoutElement.SignalsShow = UiLayoutEditorUtils.SignalsRemove(LayoutElement.SignalsShow, nodeConnector.Data);
+                    EditorUtility.SetDirty(LayoutElement);
                 }
             };
 
             BlockShowAndHide.InputHide.OnConnected += (NodeConnector nodeConnector) =>
             {
-                if (LayoutPreset != null)
+                if (LayoutElement != null)
                 {
-                    LayoutPreset.SignalsHide = UiLayoutEditorUtils.SignalsAdd(LayoutPreset.SignalsHide, nodeConnector.Data);
+                    LayoutElement.SignalsHide = UiLayoutEditorUtils.SignalsAdd(LayoutElement.SignalsHide, nodeConnector.Data);
+                    EditorUtility.SetDirty(LayoutElement);
                 }
             };
 
             BlockShowAndHide.InputHide.OnDisconnected += (NodeConnector nodeConnector) =>
             {
-                if (LayoutPreset != null)
+                if (LayoutElement != null)
                 {
-                    LayoutPreset.SignalsHide = UiLayoutEditorUtils.SignalsRemove(LayoutPreset.SignalsHide, nodeConnector.Data);
+                    LayoutElement.SignalsHide = UiLayoutEditorUtils.SignalsRemove(LayoutElement.SignalsHide, nodeConnector.Data);
+                    EditorUtility.SetDirty(LayoutElement);
                 }
             };
-        }
-
-        public override void SetAsRootNode()
-        {
-            base.SetAsRootNode();
-
-            BlockShowAndHide.InputShow.Label.SetText("Instantiate and Show");
-            BlockShowAndHide.InputHide.Label.SetText("Hide and Destroy");
         }
 
         public void SetLayoutElement(UiLayoutElement layoutElement)
@@ -69,11 +65,12 @@ namespace UnityExpansionInternal.UiLayoutEditor
             LayoutElement = layoutElement;
 
             BlockHeader.SetTitle(LayoutElement.name);
-        }
 
-        public void SetLayoutPreset(UiLayoutPreset layoutPreset)
-        {
-            LayoutPreset = layoutPreset;
+            BlockShowAndHide.OutputOnShow.SetData(ID + "OnShow");
+            BlockShowAndHide.OutputOnHide.SetData(ID + "OnHide");
+
+            BlockShowAndHide.InputShow.SetData(LayoutElement.SignalsShow);
+            BlockShowAndHide.InputHide.SetData(LayoutElement.SignalsHide);
         }
     }
 }

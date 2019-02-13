@@ -22,16 +22,6 @@ namespace UnityExpansion.UI
         public UiLayoutElement Instance { get; private set; }
 
         /// <summary>
-        /// Signal to show preset's instance
-        /// </summary>
-        public string[] SignalsShow = new string[0];
-
-        /// <summary>
-        /// Signal to hide preset's instance
-        /// </summary>
-        public string[] SignalsHide = new string[0];
-
-        /// <summary>
         /// Preset position in UiLayoutEditor screen.
         /// </summary>
         public Vector2 EditorPosition = new Vector2();

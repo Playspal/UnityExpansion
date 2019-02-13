@@ -61,6 +61,18 @@ namespace UnityExpansionInternal.UiLayoutEditor
             Data = value;
         }
 
+        public void SetData(string[] values)
+        {
+            if(values == null || values.Length == 0)
+            {
+                Data = null;
+            }
+            else
+            {
+                Data = values[0];
+            }
+        }
+
         public void ConnectTo(NodeConnector target)
         {
             ConnectionCreate(this, target);

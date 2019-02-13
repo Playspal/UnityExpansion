@@ -24,6 +24,30 @@ namespace UnityExpansion.UI
         public string AnimationHide = string.Empty;
 
         /// <summary>
+        /// Signal to show element.
+        /// </summary>
+        [SerializeField]
+        public string[] SignalsShow = new string[0];
+
+        /// <summary>
+        /// Signal to hide element.
+        /// </summary>
+        [SerializeField]
+        public string[] SignalsHide = new string[0];
+
+        /// <summary>
+        /// Signals that will be dispanched when element is shown.
+        /// </summary>
+        [SerializeField]
+        public string[] SignalsOnShow = new string[0];
+
+        /// <summary>
+        /// Signals that will be dispanched when element is hiden.
+        /// </summary>
+        [SerializeField]
+        public string[] SignalsOnHide = new string[0];
+
+        /// <summary>
         /// Invokes right after element show begin.
         /// </summary>
         public event Action OnShowBegin;

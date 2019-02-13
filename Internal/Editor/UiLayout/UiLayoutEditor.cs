@@ -85,18 +85,52 @@ namespace UnityExpansionInternal.UiLayoutEditor
                         break;
                 }
             }
+
+            for(int i = 0; i < _nodes.Count; i++)
+            {
+                Node nodeA = _nodes[i];
+
+                for (int j = 0; j < nodeA.Output.Count; j++)
+                {
+                    NodeConnectorOutput connectorOutput = nodeA.Output[j];
+
+                    if(string.IsNullOrEmpty(connectorOutput.Data))
+                    {
+                        continue;
+                    }
+
+                    for (int n = 0; n < _nodes.Count; n++)
+                    {
+                        Node nodeB = _nodes[n];
+
+                        if(nodeA == nodeB)
+                        {
+                            continue;
+                        }
+
+                        for(int m = 0; m < nodeB.Input.Count; m++)
+                        {
+                            NodeConnectorInput connectorInput = nodeB.Input[m];
+
+                            if (connectorOutput.Data == connectorInput.Data)
+                            {
+                                NodeConnector.ConnectionCreate(connectorOutput, connectorInput);
+                            }
+                        }
+                    }
+                }
+            }
         }
 
         private void SetupLayoutEventOnEnable()
         {
-            string id = "uiLayoutOnEnable";
+            string id = Selection.Target.SignalOnEnable.Name;
 
             InternalUiLayoutData.NodeData nodeData = Selection.Data.Find(id);
 
             if (nodeData == null)
             {
                 nodeData = Selection.Data.CreateNodeDataLayoutElement();
-
                 nodeData.ID = id;
                 nodeData.X = 0;
                 nodeData.Y = 0;
@@ -104,8 +138,7 @@ namespace UnityExpansionInternal.UiLayoutEditor
                 Selection.Data.AddNodeData(nodeData);
             }
 
-            NodeLayoutEvent node = CreateNodeLayoutEvent(NodeLayoutEvent.Type.OnEnable, nodeData.X, nodeData.Y);
-            node.SetNodeData(nodeData);            
+            NodeLayoutEvent node = CreateNodeLayoutEvent(nodeData, NodeLayoutEvent.Type.OnEnable, nodeData.X, nodeData.Y);
         }
 
         private void SetupLayoutElementRoot(InternalUiLayoutData.NodeData nodeData)
@@ -115,11 +148,7 @@ namespace UnityExpansionInternal.UiLayoutEditor
 
             if (layoutElement != null)
             {
-                NodeLayoutElement node = CreateNode(layoutElement as UiLayoutElement, null, nodeData.X, nodeData.Y);
-
-                node.SetNodeData(nodeData);
-                node.SetLayoutPreset(nodeData.LayoutPreset);
-                node.SetAsRootNode();
+                NodeLayoutElementRoot node = CreateNodeLayoutElementRoot(nodeData, layoutElement as UiLayoutElement, nodeData.X, nodeData.Y);
 
                 for (int i = 0; i < gameObject.transform.childCount; i++)
                 {
@@ -134,7 +163,7 @@ namespace UnityExpansionInternal.UiLayoutEditor
 
             if (layoutElement != null)
             {
-                string id = parentNode.ID + "/" + gameObject.name;
+                string id = parentNode.ID + gameObject.name;
 
                 InternalUiLayoutData.NodeData nodeData = Selection.Data.Find(id);
 
@@ -149,8 +178,7 @@ namespace UnityExpansionInternal.UiLayoutEditor
                     Selection.Data.AddNodeData(nodeData);
                 }
 
-                parentNode = CreateNode(layoutElement as UiLayoutElement, parentNode, nodeData.X, nodeData.Y);
-                parentNode.SetNodeData(nodeData);
+                parentNode = CreateNodeLayoutElement(nodeData, layoutElement as UiLayoutElement, parentNode, nodeData.X, nodeData.Y);
             }
 
             for (int i = 0; i < gameObject.transform.childCount; i++)
@@ -161,45 +189,53 @@ namespace UnityExpansionInternal.UiLayoutEditor
             return parentNode;
         }
 
-        private NodeLayoutElement CreateNode(UiLayoutElement element, Node parentNode, int x, int y)
+        private NodeLayoutElement CreateNodeLayoutElement(InternalUiLayoutData.NodeData nodeData, UiLayoutElement element, Node parentNode, int x, int y)
         {
-            NodeLayoutElement node = new NodeLayoutElement(this);
+            NodeLayoutElement node = new NodeLayoutElement(nodeData, this);
             node.SetLayoutElement(element);
-            node.X = x;
-            node.Y = y;
 
-            AddNode(node);
+            AddNode(node, x, y);
             CreateLink(parentNode, node);
 
             return node;
         }
 
-        private NodeSignal CreateNodeSignal(int x, int y)
+        private NodeLayoutElementRoot CreateNodeLayoutElementRoot(InternalUiLayoutData.NodeData nodeData, UiLayoutElement element, int x, int y)
         {
-            NodeSignal node = new NodeSignal(this);
-            node.X = x;
-            node.Y = y;
+            NodeLayoutElementRoot node = new NodeLayoutElementRoot(nodeData, this);
+            node.SetLayoutElement(element);
 
-            AddNode(node);
+            AddNode(node, x, y);
 
             return node;
         }
 
-        private NodeLayoutEvent CreateNodeLayoutEvent(NodeLayoutEvent.Type eventType, int x, int y)
+        private NodeSignal CreateNodeSignal(InternalUiLayoutData.NodeData nodeData, int x, int y)
         {
-            NodeLayoutEvent node = new NodeLayoutEvent(this, eventType);
+            NodeSignal node = new NodeSignal(nodeData, this);
+
+            AddNode(node, x, y);
+
+            return node;
+        }
+
+        private NodeLayoutEvent CreateNodeLayoutEvent(InternalUiLayoutData.NodeData nodeData, NodeLayoutEvent.Type eventType, int x, int y)
+        {
+            NodeLayoutEvent node = new NodeLayoutEvent(nodeData, this, eventType);
 
             node.SetUiLayout(Selection.Target);
-            node.X = x;
-            node.Y = y;
 
-            AddNode(node);
+
+            AddNode(node, x, y);
 
             return node;
         }
 
-        private void AddNode(Node node)
+        private void AddNode(Node node, int x, int y)
         {
+            node.X = x;
+            node.Y = y;
+
             _nodes.Add(node);
         }
 
@@ -216,8 +252,9 @@ namespace UnityExpansionInternal.UiLayoutEditor
             Selection.Target.AddPreset(layoutPreset);
 
             InternalUiLayoutData.NodeData nodeData = Selection.Data.CreateNodeDataLayoutElementRoot();
+            GameObject gameObject = AssetDatabase.LoadAssetAtPath<GameObject>(layoutPreset.AssetPath);
 
-            nodeData.ID = layoutPreset.AssetPath;
+            nodeData.ID = "__" + (gameObject.GetInstanceID() < 0 ? "n" : "p") + Mathf.Abs(gameObject.GetInstanceID());// layoutPreset.AssetPath;
             nodeData.LayoutPreset = layoutPreset;
             nodeData.X = Mouse.X - CanvasX;
             nodeData.Y = Mouse.Y - CanvasY;

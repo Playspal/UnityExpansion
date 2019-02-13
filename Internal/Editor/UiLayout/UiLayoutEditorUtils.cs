@@ -14,7 +14,8 @@ namespace UnityExpansionInternal.UiLayoutEditor
             string a = "";
             string b = "";
 
-            string[] output = new string[signals.Length + 1];
+            //string[] output = new string[signals.Length + 1];
+            List<string> output = new List<string>();
 
             bool signalAlreadyInArray = false;
 
@@ -24,8 +25,7 @@ namespace UnityExpansionInternal.UiLayoutEditor
             {
                 if (!string.IsNullOrEmpty(signals[i]))
                 {
-                    output[n] = signals[i];
-                    n++;
+                    output.Add(signals[i]);
                 }
                 a += output[i] + ", ";
 
@@ -40,12 +40,12 @@ namespace UnityExpansionInternal.UiLayoutEditor
 
             if (!signalAlreadyInArray)
             {
-                output[output.Length - 1] = signal;
+                output.Add(signal);
             }
 
             UnityEngine.Debug.LogError(a);
 
-            return output;
+            return output.ToArray();
         }
 
         public static string[] SignalsRemove(string[] signals, string signal)

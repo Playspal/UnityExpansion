@@ -21,7 +21,7 @@ namespace UnityExpansionInternal.UiLayoutEditor
         private EditorLayoutObjectTexture _textureHeader;
         private EditorLayoutObjectText _title;
 
-        public NodeLayoutEvent(EditorLayout layout, Type eventType) : base(layout, 200, 50)
+        public NodeLayoutEvent(InternalUiLayoutData.NodeData nodeData, EditorLayout layout, Type eventType) : base(nodeData, layout, 200, 50)
         {
             EventType = eventType;
 
@@ -74,8 +74,8 @@ namespace UnityExpansionInternal.UiLayoutEditor
         public void SetUiLayout(UiLayout uiLayout)
         {
             UiLayout = uiLayout;
+            OutputOnEvent.SetData(UiLayout.SignalOnEnable.Name);
         }
-
 
         private void MouseHandlerPress()
         {
