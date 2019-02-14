@@ -1,9 +1,6 @@
-﻿using System.Collections.Generic;
-
-using UnityEditor;
+﻿using UnityEditor;
 using UnityEngine;
 
-using UnityExpansion;
 using UnityExpansion.Editor;
 using UnityExpansion.UI;
 
@@ -15,9 +12,8 @@ namespace UnityExpansionInternal.UiLayoutEditor
 
         public UiLayoutEditorSelection Selection { get; private set; }
         public UiLayoutEditorCurves Curves { get; private set; }
-
-        private List<Node> _nodes = new List<Node>();
-
+        public Nodes Nodes { get; private set; }
+        
         private UiLayoutEditorDragAndDrop _dragAndDrop;
         private UiLayoutEditorBackground _background;
         private EditorLayoutObjectText _message;
@@ -40,6 +36,7 @@ namespace UnityExpansionInternal.UiLayoutEditor
 
             Selection = new UiLayoutEditorSelection();
             Curves = new UiLayoutEditorCurves();
+            Nodes = new Nodes();
 
             Refresh();
         }
@@ -72,6 +69,8 @@ namespace UnityExpansionInternal.UiLayoutEditor
                 return;
             }
 
+            Nodes.Clear();
+
             SetupLayoutEventOnEnable();
 
             for (int i = 0; i < Selection.Data.Nodes.Count; i++)
@@ -86,37 +85,40 @@ namespace UnityExpansionInternal.UiLayoutEditor
                 }
             }
 
-            for(int i = 0; i < _nodes.Count; i++)
+            RefreshConnections();
+        }
+
+        private void RefreshConnections()
+        {
+            for (int i = 0; i < Nodes.Items.Count; i++)
             {
-                Node nodeA = _nodes[i];
+                Node node = Nodes.Items[i];
 
-                for (int j = 0; j < nodeA.Output.Count; j++)
+                for (int n = 0; n < node.Output.Count; n++)
                 {
-                    NodeConnectorOutput connectorOutput = nodeA.Output[j];
+                    RefreshConnection(node.Output[n]);
+                }
+            }
+        }
 
-                    if(string.IsNullOrEmpty(connectorOutput.Data))
+        private void RefreshConnection(NodeConnectorOutput connectorOutput)
+        {
+            if (string.IsNullOrEmpty(connectorOutput.Data))
+            {
+                return;
+            }
+
+            for (int i = 0; i < Nodes.Items.Count; i++)
+            {
+                Node node = Nodes.Items[i];
+
+                for (int n = 0; n < node.Input.Count; n++)
+                {
+                    NodeConnectorInput connectorInput = node.Input[n];
+
+                    if (connectorOutput.Data == connectorInput.Data)
                     {
-                        continue;
-                    }
-
-                    for (int n = 0; n < _nodes.Count; n++)
-                    {
-                        Node nodeB = _nodes[n];
-
-                        if(nodeA == nodeB)
-                        {
-                            continue;
-                        }
-
-                        for(int m = 0; m < nodeB.Input.Count; m++)
-                        {
-                            NodeConnectorInput connectorInput = nodeB.Input[m];
-
-                            if (connectorOutput.Data == connectorInput.Data)
-                            {
-                                NodeConnector.ConnectionCreate(connectorOutput, connectorInput);
-                            }
-                        }
+                        NodeConnector.ConnectionCreate(connectorOutput, connectorInput);
                     }
                 }
             }
@@ -132,13 +134,11 @@ namespace UnityExpansionInternal.UiLayoutEditor
             {
                 nodeData = Selection.Data.CreateNodeDataLayoutElement();
                 nodeData.ID = id;
-                nodeData.X = 0;
-                nodeData.Y = 0;
 
                 Selection.Data.AddNodeData(nodeData);
             }
 
-            NodeLayoutEvent node = CreateNodeLayoutEvent(nodeData, NodeLayoutEvent.Type.OnEnable, nodeData.X, nodeData.Y);
+            NodeLayoutEvent node = Nodes.CreateNodeLayoutEvent(nodeData, NodeLayoutEvent.Type.OnEnable);
         }
 
         private void SetupLayoutElementRoot(InternalUiLayoutData.NodeData nodeData)
@@ -148,7 +148,7 @@ namespace UnityExpansionInternal.UiLayoutEditor
 
             if (layoutElement != null)
             {
-                NodeLayoutElementRoot node = CreateNodeLayoutElementRoot(nodeData, layoutElement as UiLayoutElement, nodeData.X, nodeData.Y);
+                NodeLayoutElementRoot node = Nodes.CreateNodeLayoutElementRoot(nodeData, layoutElement);
 
                 for (int i = 0; i < gameObject.transform.childCount; i++)
                 {
@@ -178,7 +178,7 @@ namespace UnityExpansionInternal.UiLayoutEditor
                     Selection.Data.AddNodeData(nodeData);
                 }
 
-                parentNode = CreateNodeLayoutElement(nodeData, layoutElement as UiLayoutElement, parentNode, nodeData.X, nodeData.Y);
+                parentNode = Nodes.CreateNodeLayoutElement(nodeData, layoutElement as UiLayoutElement, parentNode);
             }
 
             for (int i = 0; i < gameObject.transform.childCount; i++)
@@ -189,64 +189,6 @@ namespace UnityExpansionInternal.UiLayoutEditor
             return parentNode;
         }
 
-        private NodeLayoutElement CreateNodeLayoutElement(InternalUiLayoutData.NodeData nodeData, UiLayoutElement element, Node parentNode, int x, int y)
-        {
-            NodeLayoutElement node = new NodeLayoutElement(nodeData, this);
-            node.SetLayoutElement(element);
-
-            AddNode(node, x, y);
-            CreateLink(parentNode, node);
-
-            return node;
-        }
-
-        private NodeLayoutElementRoot CreateNodeLayoutElementRoot(InternalUiLayoutData.NodeData nodeData, UiLayoutElement element, int x, int y)
-        {
-            NodeLayoutElementRoot node = new NodeLayoutElementRoot(nodeData, this);
-            node.SetLayoutElement(element);
-
-            AddNode(node, x, y);
-
-            return node;
-        }
-
-        private NodeSignal CreateNodeSignal(InternalUiLayoutData.NodeData nodeData, int x, int y)
-        {
-            NodeSignal node = new NodeSignal(nodeData, this);
-
-            AddNode(node, x, y);
-
-            return node;
-        }
-
-        private NodeLayoutEvent CreateNodeLayoutEvent(InternalUiLayoutData.NodeData nodeData, NodeLayoutEvent.Type eventType, int x, int y)
-        {
-            NodeLayoutEvent node = new NodeLayoutEvent(nodeData, this, eventType);
-
-            node.SetUiLayout(Selection.Target);
-
-
-            AddNode(node, x, y);
-
-            return node;
-        }
-
-        private void AddNode(Node node, int x, int y)
-        {
-            node.X = x;
-            node.Y = y;
-
-            _nodes.Add(node);
-        }
-
-        private void CreateLink(Node a, Node b)
-        {
-            if(a != null && b != null)
-            {
-                a.AddLink(b);
-            }
-        }
-
         private void OnDragAndDrop(UiLayoutPreset layoutPreset)
         {
             Selection.Target.AddPreset(layoutPreset);
@@ -254,7 +196,7 @@ namespace UnityExpansionInternal.UiLayoutEditor
             InternalUiLayoutData.NodeData nodeData = Selection.Data.CreateNodeDataLayoutElementRoot();
             GameObject gameObject = AssetDatabase.LoadAssetAtPath<GameObject>(layoutPreset.AssetPath);
 
-            nodeData.ID = "__" + (gameObject.GetInstanceID() < 0 ? "n" : "p") + Mathf.Abs(gameObject.GetInstanceID());// layoutPreset.AssetPath;
+            nodeData.ID = "__" + (gameObject.GetInstanceID() < 0 ? "n" : "p") + Mathf.Abs(gameObject.GetInstanceID());
             nodeData.LayoutPreset = layoutPreset;
             nodeData.X = Mouse.X - CanvasX;
             nodeData.Y = Mouse.Y - CanvasY;

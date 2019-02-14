@@ -28,6 +28,9 @@ namespace UnityExpansionInternal.UiLayoutEditor
         {
             NodeData = nodeData;
 
+            X = nodeData.X;
+            Y = nodeData.Y;
+
             Input = new List<NodeConnectorInput>();
             Output = new List<NodeConnectorOutput>();
 
