@@ -10,6 +10,7 @@ public class InternalUiLayoutData : MonoBehaviour
     public enum NodeType
     {
         Undefined,
+        Signal,
         LayoutElementRoot,
         LayoutElement
     }
@@ -49,6 +50,11 @@ public class InternalUiLayoutData : MonoBehaviour
     public NodeData CreateNodeDataLayoutElement()
     {
         return new NodeData { Type = NodeType.LayoutElement };
+    }
+
+    public NodeData CreateNodeDataSignal()
+    {
+        return new NodeData { Type = NodeType.Signal };
     }
 
     public NodeData Find(string id)

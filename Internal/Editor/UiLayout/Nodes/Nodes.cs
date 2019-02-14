@@ -16,7 +16,16 @@ namespace UnityExpansionInternal.UiLayoutEditor
 
         public void Clear()
         {
+            Debug.LogError("!CLEAR 1 > " + Items.Count);
+
+            for(int i = 0; i < Items.Count; i++)
+            {
+                Items[i].Destroy();
+            }
+
             Items.Clear();
+
+            Debug.LogError("!CLEAR 2 > " + Items.Count);
         }
 
         public NodeLayoutElementRoot CreateNodeLayoutElementRoot(InternalUiLayoutData.NodeData nodeData, UiLayoutElement element)

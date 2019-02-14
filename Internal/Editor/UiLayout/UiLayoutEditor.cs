@@ -38,6 +38,13 @@ namespace UnityExpansionInternal.UiLayoutEditor
             Curves = new UiLayoutEditorCurves();
             Nodes = new Nodes();
 
+            Mouse.OnClickRight += () =>
+            {
+                GenericMenu menu = new GenericMenu();
+                menu.AddItem(new GUIContent("Add signal"), true, OnSignalCreate);
+                menu.ShowAsContext();
+            };
+
             Refresh();
         }
 
@@ -82,6 +89,10 @@ namespace UnityExpansionInternal.UiLayoutEditor
                     case InternalUiLayoutData.NodeType.LayoutElementRoot:
                         SetupLayoutElementRoot(nodeData);
                         break;
+
+                    case InternalUiLayoutData.NodeType.Signal:
+                        SetupSignal(nodeData);
+                        break;
                 }
             }
 
@@ -122,6 +133,13 @@ namespace UnityExpansionInternal.UiLayoutEditor
                     }
                 }
             }
+        }
+
+        private void SetupSignal(InternalUiLayoutData.NodeData nodeData)
+        {
+            string id = "__newSignal"; // TODO: generate random one
+
+            NodeSignal node = Nodes.CreateNodeSignal(nodeData);
         }
 
         private void SetupLayoutEventOnEnable()
@@ -187,6 +205,19 @@ namespace UnityExpansionInternal.UiLayoutEditor
             }
 
             return parentNode;
+        }
+
+        private void OnSignalCreate()
+        {
+            InternalUiLayoutData.NodeData nodeData = Selection.Data.CreateNodeDataSignal();
+
+            nodeData.ID = "__signal" + Random.Range(1000, 9999);
+            nodeData.X = Mouse.X - CanvasX;
+            nodeData.Y = Mouse.Y - CanvasY;
+
+            Selection.Data.AddNodeData(nodeData);
+
+            Refresh();
         }
 
         private void OnDragAndDrop(UiLayoutPreset layoutPreset)

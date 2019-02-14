@@ -12,8 +12,10 @@ namespace UnityExpansion.Editor
     {
         public event Action OnPress;
         public event Action OnRelease;
-        public event Action OnClick;
         public event Action OnMove;
+
+        public event Action OnClickLeft;
+        public event Action OnClickRight;
 
         public event Action OnDragByButtonLeft;
         public event Action OnDragByButtonRight;
@@ -138,11 +140,11 @@ namespace UnityExpansion.Editor
 
         private void OnMouseDown()
         {
+            PressedX = X;
+            PressedY = Y;
+
             if (Event.current.button == 0)
             {
-                PressedX = X;
-                PressedY = Y;
-
                 IsPressedButtonLeft = true;
                 OnPress.InvokeIfNotNull();
             }
@@ -162,13 +164,18 @@ namespace UnityExpansion.Editor
 
                 if (X == PressedX && Y == PressedY)
                 {
-                    OnClick.InvokeIfNotNull();
+                    OnClickLeft.InvokeIfNotNull();
                 }
             }
 
             if (Event.current.button == 1)
             {
                 IsPressedButtonRight = false;
+
+                if (X == PressedX && Y == PressedY)
+                {
+                    OnClickRight.InvokeIfNotNull();
+                }
             }
         }
 
