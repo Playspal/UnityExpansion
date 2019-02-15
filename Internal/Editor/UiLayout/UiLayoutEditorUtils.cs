@@ -11,10 +11,6 @@ namespace UnityExpansionInternal.UiLayoutEditor
                 return signals;
             }
 
-            string a = "";
-            string b = "";
-
-            //string[] output = new string[signals.Length + 1];
             List<string> output = new List<string>();
 
             bool signalAlreadyInArray = false;
@@ -27,7 +23,6 @@ namespace UnityExpansionInternal.UiLayoutEditor
                 {
                     output.Add(signals[i]);
                 }
-                a += output[i] + ", ";
 
                 if (signals[i] == signal)
                 {
@@ -36,14 +31,10 @@ namespace UnityExpansionInternal.UiLayoutEditor
                 }
             }
 
-            a += signal;
-
             if (!signalAlreadyInArray)
             {
                 output.Add(signal);
             }
-
-            UnityEngine.Debug.LogError(a);
 
             return output.ToArray();
         }

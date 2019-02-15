@@ -96,45 +96,50 @@ namespace UnityExpansionInternal.UiLayoutEditor
                 }
             }
 
-            RefreshConnections();
-        }
 
-        private void RefreshConnections()
-        {
-            for (int i = 0; i < Nodes.Items.Count; i++)
+            for (int i = 0; i < Selection.Target.Actions.Length; i++)
             {
-                Node node = Nodes.Items[i];
+                NodeConnectorOutput output = null;
+                NodeConnectorInput input = null;
 
-                for (int n = 0; n < node.Output.Count; n++)
+                UiLayout.UiAction action = Selection.Target.Actions[i];
+
+                for (int j = 0; j < Nodes.Items.Count; j++)
                 {
-                    RefreshConnection(node.Output[n]);
-                }
-            }
-        }
+                    Node node = Nodes.Items[j];
 
-        private void RefreshConnection(NodeConnectorOutput connectorOutput)
-        {
-            if (string.IsNullOrEmpty(connectorOutput.Data))
-            {
-                return;
-            }
-
-            for (int i = 0; i < Nodes.Items.Count; i++)
-            {
-                Node node = Nodes.Items[i];
-
-                for (int n = 0; n < node.Input.Count; n++)
-                {
-                    NodeConnectorInput connectorInput = node.Input[n];
-
-                    if (connectorOutput.Data == connectorInput.Data)
+                    for (int n = 0; n < node.Output.Count; n++)
                     {
-                        NodeConnector.ConnectionCreate(connectorOutput, connectorInput);
+                        if
+                        (
+                            node.Output[n].DataID == action.SenderID &&
+                            node.Output[n].DataMethod == action.SenderMethod
+                        )
+                        {
+                            output = node.Output[n];
+                        }
+                    }
+
+                    for (int n = 0; n < node.Input.Count; n++)
+                    {
+                        if
+                        (
+                            node.Input[n].DataID == action.TargetID &&
+                            node.Input[n].DataMethod == action.TargetMethod
+                        )
+                        {
+                            input = node.Input[n];
+                        }
                     }
                 }
+
+                if(output != null && input != null)
+                {
+                    NodeConnector.ConnectionCreate(output, input);
+                }
             }
         }
-
+        
         private void SetupSignal(InternalUiLayoutData.NodeData nodeData)
         {
             string id = "__newSignal"; // TODO: generate random one
@@ -144,7 +149,7 @@ namespace UnityExpansionInternal.UiLayoutEditor
 
         private void SetupLayoutEventOnEnable()
         {
-            string id = Selection.Target.SignalOnEnable.Name;
+            string id = Selection.Target.UniqueID + "OnEnable";
 
             InternalUiLayoutData.NodeData nodeData = Selection.Data.Find(id);
 
@@ -181,15 +186,12 @@ namespace UnityExpansionInternal.UiLayoutEditor
 
             if (layoutElement != null)
             {
-                string id = parentNode.ID + gameObject.name;
-
-                InternalUiLayoutData.NodeData nodeData = Selection.Data.Find(id);
+                InternalUiLayoutData.NodeData nodeData = Selection.Data.Find(layoutElement.UniqueID);
 
                 if(nodeData == null)
                 {
                     nodeData = Selection.Data.CreateNodeDataLayoutElement();
-
-                    nodeData.ID = id;
+                    nodeData.ID = layoutElement.UniqueID;
                     nodeData.X = parentNode.X;
                     nodeData.Y = parentNode.Y + 100;
 
@@ -226,8 +228,9 @@ namespace UnityExpansionInternal.UiLayoutEditor
 
             InternalUiLayoutData.NodeData nodeData = Selection.Data.CreateNodeDataLayoutElementRoot();
             GameObject gameObject = AssetDatabase.LoadAssetAtPath<GameObject>(layoutPreset.AssetPath);
+            UiLayoutElement element = gameObject.GetComponent<UiLayoutElement>();
 
-            nodeData.ID = "__" + (gameObject.GetInstanceID() < 0 ? "n" : "p") + Mathf.Abs(gameObject.GetInstanceID());
+            nodeData.ID = element.UniqueID;
             nodeData.LayoutPreset = layoutPreset;
             nodeData.X = Mouse.X - CanvasX;
             nodeData.Y = Mouse.Y - CanvasY;

@@ -19,7 +19,8 @@ namespace UnityExpansionInternal.UiLayoutEditor
         public readonly Node Node;
         public readonly Type ConnectorType;
 
-        public string Data { get; private set; }
+        public string DataID { get; private set; }
+        public string DataMethod { get; private set; }
 
         public NodeConnector Connected { get; private set; }
 
@@ -56,26 +57,10 @@ namespace UnityExpansionInternal.UiLayoutEditor
             Label.Y = -1;
         }
 
-        public void SetData(string value)
+        public void SetData(string id, string method)
         {
-            Data = value;
-        }
-
-        public void SetData(string[] values)
-        {
-            if(values == null || values.Length == 0)
-            {
-                Data = null;
-            }
-            else
-            {
-                Data = values[0];
-            }
-        }
-
-        public void ConnectTo(NodeConnector target)
-        {
-            ConnectionCreate(this, target);
+            DataID = id;
+            DataMethod = method;
         }
 
         public override void Render()
@@ -107,10 +92,15 @@ namespace UnityExpansionInternal.UiLayoutEditor
             output.Connected = input;
             output.Icon.SetColor(color);
             output.OnConnected.InvokeIfNotNull(input);
+
+            UiLayoutEditor.Instance.Selection.Target.ActionAdd(output.DataID, output.DataMethod, input.DataID, input.DataMethod);
         }
 
         public static void ConnectionRemove(NodeConnector a, NodeConnector b)
         {
+            NodeConnectorInput input = (a.ConnectorType == Type.Input ? a : b) as NodeConnectorInput;
+            NodeConnectorOutput output = (a.ConnectorType == Type.Output ? a : b) as NodeConnectorOutput;
+
             a.OnDisconnected.InvokeIfNotNull(a.Connected);
             a.Connected = null;
             a.Icon.ResetColor();
@@ -118,6 +108,8 @@ namespace UnityExpansionInternal.UiLayoutEditor
             b.OnDisconnected.InvokeIfNotNull(b.Connected);
             b.Connected = null;
             b.Icon.ResetColor();
+
+            UiLayoutEditor.Instance.Selection.Target.ActionRemove(output.DataID, output.DataMethod, input.DataID, input.DataMethod);
         }
     }
 }

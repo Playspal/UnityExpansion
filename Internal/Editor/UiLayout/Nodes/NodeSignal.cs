@@ -32,7 +32,7 @@ namespace UnityExpansionInternal.UiLayoutEditor
         {
             Signal = signal;
             BlockHeader.SetTitle(InternalSignalsFile.GetSignalName(Signal));
-            OutputOnReceive.SetData(signal);
+            //OutputOnReceive.SetData(signal);
         }
     }
 }

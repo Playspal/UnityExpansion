@@ -12,9 +12,15 @@ namespace UnityExpansion.UI
     public class UiLayoutElement : UiObject
     {
         /// <summary>
-        /// Gets the unique ID of element.
+        /// Gets the parent UiLayout.
         /// </summary>
-        public string ID { get { return (gameObject.GetInstanceID() < 0 ? "n" : "p") + Mathf.Abs(gameObject.GetInstanceID()); } }
+        public UiLayout ParentUiLayout
+        {
+            get
+            {
+                return GetComponentInParent<UiLayout>();
+            }
+        }
 
         /// <summary>
         /// Name of show animation clip
@@ -29,30 +35,6 @@ namespace UnityExpansion.UI
         public string AnimationHide = string.Empty;
 
         /// <summary>
-        /// Signal to show element.
-        /// </summary>
-        [SerializeField]
-        public string[] SignalsShow = new string[0];
-
-        /// <summary>
-        /// Signal to hide element.
-        /// </summary>
-        [SerializeField]
-        public string[] SignalsHide = new string[0];
-
-        /// <summary>
-        /// Signals that will be dispanched when element is shown.
-        /// </summary>
-        [SerializeField]
-        public string[] SignalsOnShow = new string[0];
-
-        /// <summary>
-        /// Signals that will be dispanched when element is hiden.
-        /// </summary>
-        [SerializeField]
-        public string[] SignalsOnHide = new string[0];
-
-        /// <summary>
         /// Invokes right after element show begin.
         /// </summary>
         public event Action OnShowBegin;
@@ -61,7 +43,7 @@ namespace UnityExpansion.UI
         /// Invokes after element is shown.
         /// If element have show animation, OnShow will be invoked after animation will be played.
         /// </summary>
-        public event Action OnShow;
+        public event Action OnShowEnd;
 
         /// <summary>
         /// Invokes right after element hide begin.
@@ -72,7 +54,7 @@ namespace UnityExpansion.UI
         /// Invokes after element is hiden.
         /// If element have hide animation, OnHide will be invoked after animation will be played.
         /// </summary>
-        public event Action OnHide;
+        public event Action OnHideEnd;
 
         // Current visibility. Sets to true right before show animations and sets to false before hide animations
         // Used to prevent start animation if it is already started
@@ -259,6 +241,7 @@ namespace UnityExpansion.UI
         /// </summary>
         protected virtual void ShowBegin()
         {
+            ParentUiLayout.ActionProcess(UniqueID);
             OnShowBegin.InvokeIfNotNull();
 
             _isShown = true;
@@ -270,7 +253,8 @@ namespace UnityExpansion.UI
         /// </summary>
         protected virtual void ShowEnd()
         {
-            OnShow.InvokeIfNotNull();
+            ParentUiLayout.ActionProcess(UniqueID);
+            OnShowEnd.InvokeIfNotNull();
         }
 
         /// <summary>
@@ -279,6 +263,7 @@ namespace UnityExpansion.UI
         /// </summary>
         protected virtual void HideBegin()
         {
+            ParentUiLayout.ActionProcess(UniqueID);
             OnHideBegin.InvokeIfNotNull();
 
             _isShown = false;
@@ -290,9 +275,11 @@ namespace UnityExpansion.UI
         /// </summary>
         protected virtual void HideEnd()
         {
-            OnHide.InvokeIfNotNull();
+            ParentUiLayout.ActionProcess(UniqueID);
+            OnHideEnd.InvokeIfNotNull();
 
             SetActive(false);
+            Destroy();
         }
     }
 }

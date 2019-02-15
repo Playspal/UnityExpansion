@@ -1,33 +1,44 @@
-﻿
-using System;
+﻿using System;
 using System.Collections.Generic;
-
+using System.Diagnostics;
 using UnityEngine;
 using UnityExpansion.Services;
+using UnityExpansion.Utilities;
 
 namespace UnityExpansion.UI
 {
     [Serializable]
     public class UiLayout : UiObject
     {
-        public class Listener
+        [Serializable]
+        public class UiAction
         {
-            // n123.OnShow -> n456.Success
-            // n123.OnShow -> n456.Animation.Play.AnimationName
-            // n123.OnShow -> n456.Animation.Stop
-            // n123.Animation.AnimationName.OnComplete
+            public string SenderID;
+            public string SenderMethod;
 
-            string OutputElementID;
-            string OutputElementMethod;
+            public string TargetID;
+            public string TargetMethod;
+
+            public UiAction(string senderID, string senderMethod, string targetID, string targetMethod)
+            {
+                SenderID = senderID;
+                SenderMethod = senderMethod;
+
+                TargetID = targetID;
+                TargetMethod = targetMethod;
+            }
+
+            public bool Equals(UiAction target)
+            {
+                return
+                (
+                    SenderID == target.SenderID &&
+                    SenderMethod == target.SenderMethod &&
+                    TargetID == target.TargetID &&
+                    TargetMethod == target.TargetMethod
+                );
+            }
         }
-
-        public Signal SignalOnEnable = new Signal("__uiLayoutOnEnable");
-
-        /// <summary>
-        /// Signals that will be dispatched when layout will be created or enabled.
-        /// </summary>
-        [SerializeField]
-        public string[] SignalsOnEnable = new string[0];
 
         /// <summary>
         /// List of layout elements attached to this layout.
@@ -35,38 +46,114 @@ namespace UnityExpansion.UI
         [SerializeField]
         public UiLayoutPreset[] Presets = new UiLayoutPreset[0];
 
+        /// <summary>
+        /// List of actions registered on this layout.
+        /// </summary>
+        [SerializeField]
+        public UiAction[] Actions = new UiAction[0];
+
         public void AddPreset(UiLayoutPreset preset)
         {
-            Array.Resize<UiLayoutPreset>(ref Presets, Presets.Length + 1);
-            Presets[Presets.Length - 1] = preset;
+            Presets = Presets.Push(preset);
+        }
+
+        public void ActionAdd(string senderID, string senderMethod, string targetID, string targetMethod)
+        {
+            ActionAdd(new UiAction(senderID, senderMethod, targetID, targetMethod));
+        }
+
+        public void ActionAdd(UiAction uiAction)
+        {
+            for (int i = 0; i < Actions.Length; i++)
+            {
+                if(Actions[i].Equals(uiAction))
+                {
+                    return;
+                }
+            }
+
+            Actions = Actions.Push(uiAction);
+        }
+
+        public void ActionRemove(string senderID, string senderMethod, string targetID, string targetMethod)
+        {
+            for(int i = 0; i < Actions.Length; i++)
+            {
+                if
+                (
+                    Actions[i].SenderID == senderID &&
+                    Actions[i].SenderMethod == senderMethod &&
+                    Actions[i].TargetID == targetID &&
+                    Actions[i].TargetMethod == targetMethod
+                )
+                {
+                    ActionRemove(Actions[i]);
+                }
+            }
+        }
+        
+        public void ActionRemove(UiAction uiAction)
+        {
+            Actions = Actions.Remove(uiAction);
+        }
+
+        public void ActionExecute(UiAction uiAction)
+        {
+            UiLayoutElement[] elements = GetComponentsInChildren<UiLayoutElement>();
+
+            for(int i = 0; i < elements.Length; i++)
+            {
+                if(elements[i].UniqueID == uiAction.TargetID)
+                {
+                    UtilityReflection.ExecuteMethod(elements[i], uiAction.TargetMethod);
+                }
+            }
+
+            for(int i = 0; i < Presets.Length; i++)
+            {
+                if (Presets[i].Prefab.UniqueID == uiAction.TargetID)
+                {
+                    if(Presets[i].Instance == null)
+                    {
+                        Presets[i].Instantiate(RectTransform);
+                    }
+
+                    UtilityReflection.ExecuteMethod(Presets[i].Instance, uiAction.TargetMethod);
+                }
+            }
+        }
+
+        [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.NoInlining)]
+        public void ActionProcess(string senderID)
+        {
+            StackTrace stackTrace = new StackTrace(new StackFrame(1));
+            string methodName = stackTrace.GetFrame(0).GetMethod().Name;
+            
+            for(int i = 0; i < Actions.Length; i++)
+            {
+                if(Actions[i].SenderID == senderID && Actions[i].SenderMethod == methodName)
+                {
+                    ActionExecute(Actions[i]);
+                }
+            }
         }
 
         protected override void Start()
         {
-            Debug.LogError("Start");
             base.Start();
 
             for(int i = 0; i < Presets.Length; i++)
             {
-                SetupPreset(Presets[i]);
+                Presets[i].Load();
+                //SetupPreset(Presets[i]);
             }
 
-            Debug.LogError("OnEnable");
-            Signals.Dispatch("__uiLayoutOnEnable");
-            Test();
-
-            // 123.OnShow -> 123.Hide
-            // 123.AnimationName.OnComplete -> 123.Hide
+            ActionProcess(UniqueID);
         }
 
-        [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.NoInlining)]
-        public void Test()
-        {
-            var st = new System.Diagnostics.StackTrace(new System.Diagnostics.StackFrame(1));
-            Debug.LogError(st.GetFrame(0).GetMethod().Name);
-        }
         private void SetupPreset(UiLayoutPreset preset)
         {
+            /*
             GameObject gameObject = Resources.Load<GameObject>(preset.PrefabPath);
             UiLayoutElement layoutElement = gameObject.GetComponent<UiLayoutElement>();
 
@@ -84,6 +171,7 @@ namespace UnityExpansion.UI
                     }
                 );
             }
+            */
         }
     }
 }

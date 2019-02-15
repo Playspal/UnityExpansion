@@ -119,5 +119,20 @@ namespace UnityExpansion.Utilities
 
             return null;
         }
+
+        /// <summary>
+        /// Executes specified method.
+        /// </summary>
+        public static void ExecuteMethod(object target, string name, object[] parameters = null)
+        {
+            Type type = target.GetType();
+
+            MethodInfo method = type.GetMethod(name);
+
+            if (method != null)
+            {
+                method.Invoke(target, parameters);
+            }
+        }
     }
 }

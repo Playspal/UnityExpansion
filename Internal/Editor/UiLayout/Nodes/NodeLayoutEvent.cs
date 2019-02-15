@@ -29,22 +29,6 @@ namespace UnityExpansionInternal.UiLayoutEditor
             OutputOnEvent.SetParent(this);
             OutputOnEvent.Y = Height / 2 - 6;
 
-            OutputOnEvent.OnConnected += (NodeConnector nodeConnector) =>
-            {
-                if (UiLayout != null)
-                {
-                    UiLayout.SignalsOnEnable = UiLayoutEditorUtils.SignalsAdd(UiLayout.SignalsOnEnable, nodeConnector.Data);
-                }
-            };
-
-            OutputOnEvent.OnDisconnected += (NodeConnector nodeConnector) =>
-            {
-                if (UiLayout != null)
-                {
-                    UiLayout.SignalsOnEnable = UiLayoutEditorUtils.SignalsRemove(UiLayout.SignalsOnEnable, nodeConnector.Data);
-                }
-            };
-
             _textureBackground = new EditorLayoutObjectTexture(layout, Width - 2, 6);
             _textureBackground.X = _textureBackground.Y = 1;
             _textureBackground.Fill(ColorMain);
@@ -74,7 +58,7 @@ namespace UnityExpansionInternal.UiLayoutEditor
         public void SetUiLayout(UiLayout uiLayout)
         {
             UiLayout = uiLayout;
-            OutputOnEvent.SetData(UiLayout.SignalOnEnable.Name);
+            OutputOnEvent.SetData(uiLayout.UniqueID, "Start");
         }
 
         private void MouseHandlerPress()

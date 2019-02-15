@@ -28,42 +28,6 @@ namespace UnityExpansionInternal.UiLayoutEditor
             BlockAnimation.SetParent(this);
             BlockAnimation.Y = BlockShowAndHide.Y + BlockShowAndHide.Height + 10;
 
-            BlockShowAndHide.InputShow.OnConnected += (NodeConnector nodeConnector) =>
-            {
-                if(LayoutElement != null)
-                {
-                    LayoutElement.SignalsShow = UiLayoutEditorUtils.SignalsAdd(LayoutElement.SignalsShow, nodeConnector.Data);
-                    EditorUtility.SetDirty(LayoutElement);
-                }
-            };
-
-            BlockShowAndHide.InputShow.OnDisconnected += (NodeConnector nodeConnector) =>
-            {
-                if (LayoutElement != null)
-                {
-                    LayoutElement.SignalsShow = UiLayoutEditorUtils.SignalsRemove(LayoutElement.SignalsShow, nodeConnector.Data);
-                    EditorUtility.SetDirty(LayoutElement);
-                }
-            };
-
-            BlockShowAndHide.InputHide.OnConnected += (NodeConnector nodeConnector) =>
-            {
-                if (LayoutElement != null)
-                {
-                    LayoutElement.SignalsHide = UiLayoutEditorUtils.SignalsAdd(LayoutElement.SignalsHide, nodeConnector.Data);
-                    EditorUtility.SetDirty(LayoutElement);
-                }
-            };
-
-            BlockShowAndHide.InputHide.OnDisconnected += (NodeConnector nodeConnector) =>
-            {
-                if (LayoutElement != null)
-                {
-                    LayoutElement.SignalsHide = UiLayoutEditorUtils.SignalsRemove(LayoutElement.SignalsHide, nodeConnector.Data);
-                    EditorUtility.SetDirty(LayoutElement);
-                }
-            };
-
             SetSize(Width, BlockAnimation.Y + BlockAnimation.Height + 10);
         }
 
@@ -71,13 +35,13 @@ namespace UnityExpansionInternal.UiLayoutEditor
         {
             LayoutElement = layoutElement;
 
-            BlockHeader.SetTitle(LayoutElement.name);
+            BlockHeader.SetTitle(LayoutElement.name + " " + layoutElement.UniqueID);
 
-            BlockShowAndHide.OutputOnShow.SetData(ID + "OnShow");
-            BlockShowAndHide.OutputOnHide.SetData(ID + "OnHide");
+            BlockShowAndHide.OutputOnShow.SetData(layoutElement.UniqueID, "OnShow");
+            BlockShowAndHide.OutputOnHide.SetData(layoutElement.UniqueID, "OnHide");
 
-            BlockShowAndHide.InputShow.SetData(LayoutElement.SignalsShow);
-            BlockShowAndHide.InputHide.SetData(LayoutElement.SignalsHide);
+            BlockShowAndHide.InputShow.SetData(layoutElement.UniqueID, "Show");
+            BlockShowAndHide.InputHide.SetData(layoutElement.UniqueID, "Hide");
         }
     }
 }
