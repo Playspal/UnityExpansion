@@ -99,13 +99,21 @@ namespace UnityExpansionInternal.UiLayoutEditor
             ((UiLayoutEditor)Layout).Curves.AddToBackground(UiLayoutEditorCurve.Type.Vertical, fromX, fromY, toX, toY, 5, ColorBackground);
         }
 
+        public override void SetSize(int width, int height)
+        {
+            base.SetSize(width, height);
+
+            _textureBackground.SetSize(Width, Height);
+            _textureBackground.Fill(ColorBackground);
+            _textureBackground.DrawBorder(1, ColorBackgroundBorder);
+        }
+
         public override void Render()
         {
             for (int i = 0; i < _links.Count; i++)
             {
                 _links[i].Render();
             }
-
 
             base.Render();
         }

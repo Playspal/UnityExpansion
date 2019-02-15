@@ -12,6 +12,11 @@ namespace UnityExpansion.UI
     public class UiLayoutElement : UiObject
     {
         /// <summary>
+        /// Gets the unique ID of element.
+        /// </summary>
+        public string ID { get { return (gameObject.GetInstanceID() < 0 ? "n" : "p") + Mathf.Abs(gameObject.GetInstanceID()); } }
+
+        /// <summary>
         /// Name of show animation clip
         /// </summary>
         [HideInInspector]

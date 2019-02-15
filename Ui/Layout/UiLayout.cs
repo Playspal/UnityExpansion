@@ -1,4 +1,5 @@
-﻿using System;
+﻿
+using System;
 using System.Collections.Generic;
 
 using UnityEngine;
@@ -9,6 +10,17 @@ namespace UnityExpansion.UI
     [Serializable]
     public class UiLayout : UiObject
     {
+        public class Listener
+        {
+            // n123.OnShow -> n456.Success
+            // n123.OnShow -> n456.Animation.Play.AnimationName
+            // n123.OnShow -> n456.Animation.Stop
+            // n123.Animation.AnimationName.OnComplete
+
+            string OutputElementID;
+            string OutputElementMethod;
+        }
+
         public Signal SignalOnEnable = new Signal("__uiLayoutOnEnable");
 
         /// <summary>
@@ -41,8 +53,18 @@ namespace UnityExpansion.UI
 
             Debug.LogError("OnEnable");
             Signals.Dispatch("__uiLayoutOnEnable");
+            Test();
+
+            // 123.OnShow -> 123.Hide
+            // 123.AnimationName.OnComplete -> 123.Hide
         }
 
+        [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.NoInlining)]
+        public void Test()
+        {
+            var st = new System.Diagnostics.StackTrace(new System.Diagnostics.StackFrame(1));
+            Debug.LogError(st.GetFrame(0).GetMethod().Name);
+        }
         private void SetupPreset(UiLayoutPreset preset)
         {
             GameObject gameObject = Resources.Load<GameObject>(preset.PrefabPath);

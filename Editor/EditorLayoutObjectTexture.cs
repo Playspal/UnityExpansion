@@ -11,6 +11,13 @@ namespace UnityExpansion.Editor
             Texture = new Texture2D(Width, Height);
         }
 
+        public override void SetSize(int width, int height)
+        {
+            base.SetSize(width, height);
+
+            Texture = new Texture2D(Width, Height);
+        }
+
         public override void Render()
         {
             base.Render();

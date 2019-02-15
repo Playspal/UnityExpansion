@@ -11,6 +11,7 @@ namespace UnityExpansionInternal.UiLayoutEditor
     {
         public readonly NodeBlockHeader BlockHeader;
         public readonly NodeBlockShowAndHide BlockShowAndHide;
+        public readonly NodeBlockAnimation BlockAnimation;
 
         public UiLayoutElement LayoutElement { get; private set; }
 
@@ -21,7 +22,11 @@ namespace UnityExpansionInternal.UiLayoutEditor
 
             BlockShowAndHide = new NodeBlockShowAndHide(layout, this);
             BlockShowAndHide.SetParent(this);
-            BlockShowAndHide.Y = 30;
+            BlockShowAndHide.Y = BlockHeader.Y + BlockHeader.Height + 10;
+
+            BlockAnimation = new NodeBlockAnimation(layout, this);
+            BlockAnimation.SetParent(this);
+            BlockAnimation.Y = BlockShowAndHide.Y + BlockShowAndHide.Height + 10;
 
             BlockShowAndHide.InputShow.OnConnected += (NodeConnector nodeConnector) =>
             {
@@ -58,6 +63,8 @@ namespace UnityExpansionInternal.UiLayoutEditor
                     EditorUtility.SetDirty(LayoutElement);
                 }
             };
+
+            SetSize(Width, BlockAnimation.Y + BlockAnimation.Height + 10);
         }
 
         public void SetLayoutElement(UiLayoutElement layoutElement)
