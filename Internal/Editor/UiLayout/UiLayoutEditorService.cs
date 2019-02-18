@@ -40,7 +40,7 @@ namespace UnityExpansionInternal.UiLayoutEditor
             {
                 _duplicated = false;
 
-                if (Selection.activeObject != null)
+                if (Selection.activeGameObject != null)
                 {
                     UiLayoutObject layoutObject = Selection.activeGameObject.GetComponent<UiLayoutObject>();
 
