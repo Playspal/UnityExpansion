@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityExpansion.UI;
+using UnityExpansion.Utilities;
 
 namespace UnityExpansionInternal.UiLayoutEditor
 {
@@ -63,21 +64,12 @@ namespace UnityExpansionInternal.UiLayoutEditor
 
         public static void LayoutObjectGenerateUniqueID(UiLayoutObject layoutObject)
         {
-            LayoutObjectSetUniqueID
-            (
-                layoutObject,
-                "lo" + Random.Range(1000000, 9999999)//(layoutObject.GetInstanceID() < 0 ? "n" : "p") + Mathf.Abs(layoutObject.GetInstanceID())
-            );
+            LayoutObjectSetUniqueID(layoutObject, "n" + Random.Range(1000000, 9999999));
         }
 
         public static void LayoutObjectSetUniqueID(UiLayoutObject layoutObject, string uniqueID)
         {
-            UnityExpansion.Utilities.UtilityReflection.SetMemberValue
-            (
-                layoutObject,
-                "_uniqueID",
-                uniqueID
-            );
+            UtilityReflection.SetMemberValue(layoutObject, "_uniqueID", uniqueID);
         }
     }
 }

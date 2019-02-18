@@ -39,9 +39,6 @@ public class InternalUiLayoutData : MonoBehaviour
     [SerializeField]
     public List<NodeData> Nodes = new List<NodeData>();
 
-    [SerializeField]
-    public List<UnityEngine.Object> RegisteredLayoutObjects = new List<UnityEngine.Object>();
-
     public void AddNodeData(NodeData nodeData)
     {
         Nodes.Add(nodeData);
@@ -61,28 +58,7 @@ public class InternalUiLayoutData : MonoBehaviour
     {
         return new NodeData { Type = NodeType.SystemEvent };
     }
-
-    public void Register(UiLayoutObject layoutObject)
-    {
-
-
-        /*
-        if(!RegisteredLayoutObjects.Contains(layoutObject))
-        {
-            Debug.LogError("REGISTERED " + layoutObject.name);
-
-            UnityExpansion.Utilities.UtilityReflection.SetMemberValue
-            (
-                layoutObject,
-                "_uniqueID",
-                (layoutObject.GetInstanceID() < 0 ? "n" : "p") + Mathf.Abs(layoutObject.GetInstanceID())
-            );
-
-            RegisteredLayoutObjects.Add(layoutObject);
-        }
-        */
-    }
-
+    
     public NodeData Find(string id)
     {
         return Nodes.Find(x => x.ID == id);

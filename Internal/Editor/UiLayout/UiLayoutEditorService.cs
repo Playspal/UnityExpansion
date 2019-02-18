@@ -46,7 +46,7 @@ namespace UnityExpansionInternal.UiLayoutEditor
 
                     if (layoutObject != null)
                     {
-                        UiLayoutEditorUtils.LayoutObjectGenerateUniqueID(layoutObject);
+                        UiLayoutEditorUtils.LayoutObjectSetUniqueID(layoutObject, null);
                     }
                 }
             }

@@ -95,9 +95,6 @@ namespace UnityExpansionInternal.UiLayoutEditor
             {
                 SetupSystemEvent(layoutEvents[i]);
             }
-            //
-
-            //SetupLayoutEventOnEnable();
 
             for (int i = 0; i < Selection.Data.Nodes.Count; i++)
             {
@@ -174,7 +171,6 @@ namespace UnityExpansionInternal.UiLayoutEditor
             {
                 return;
             }
-
 
             CheckID(layoutObject);
 
