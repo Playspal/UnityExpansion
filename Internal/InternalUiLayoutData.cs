@@ -64,6 +64,9 @@ public class InternalUiLayoutData : MonoBehaviour
 
     public void Register(UiLayoutObject layoutObject)
     {
+
+
+        /*
         if(!RegisteredLayoutObjects.Contains(layoutObject))
         {
             Debug.LogError("REGISTERED " + layoutObject.name);
@@ -77,6 +80,7 @@ public class InternalUiLayoutData : MonoBehaviour
 
             RegisteredLayoutObjects.Add(layoutObject);
         }
+        */
     }
 
     public NodeData Find(string id)

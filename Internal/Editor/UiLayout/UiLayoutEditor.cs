@@ -157,7 +157,7 @@ namespace UnityExpansionInternal.UiLayoutEditor
 
         private void ValidateObjects()
         {
-            Selection.Data.Register(Selection.Target);
+            CheckID(Selection.Target);
 
             for(int i = 0; i < Selection.Target.Presets.Length; i++)
             {
@@ -175,12 +175,20 @@ namespace UnityExpansionInternal.UiLayoutEditor
                 return;
             }
 
-            
-            Selection.Data.Register(layoutObject);
+
+            CheckID(layoutObject);
 
             for (int i = 0; i < layoutObject.transform.childCount; i++)
             {
                 ValidateObject(layoutObject.transform.GetChild(i).GetComponent<UiLayoutObject>());
+            }
+        }
+
+        private void CheckID(UiLayoutObject layoutObject)
+        {
+            if (string.IsNullOrEmpty(layoutObject.UniqueID))
+            {
+                UiLayoutEditorUtils.LayoutObjectGenerateUniqueID(layoutObject);
             }
         }
         

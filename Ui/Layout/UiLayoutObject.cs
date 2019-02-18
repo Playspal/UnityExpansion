@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace UnityExpansion.UI
@@ -8,7 +7,7 @@ namespace UnityExpansion.UI
     /// Base class for all layout objects.
     /// </summary>
     [ExecuteInEditMode]
-    [System.Serializable]
+    [Serializable]
     public class UiLayoutObject : UiObject
     {
         /// <summary>
@@ -26,8 +25,5 @@ namespace UnityExpansion.UI
         //[SerializeField, HideInInspector]
         [SerializeField]
         private string _uniqueID;
-
-        [SerializeField]
-        public List<UiLayoutObject> RegisteredChilds = new List<UiLayoutObject>();
     }
 }

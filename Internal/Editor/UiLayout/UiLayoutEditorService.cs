@@ -1,47 +1,55 @@
 ﻿using UnityEditor;
 using UnityEngine;
-[InitializeOnLoad]
-public class UiLayoutEditorService
+
+using UnityExpansion.UI;
+
+namespace UnityExpansionInternal.UiLayoutEditor
 {
-    static UiLayoutEditorService()
+    [InitializeOnLoad]
+    public class UiLayoutEditorService
     {
-        EditorApplication.update += Update;
-        SceneView.onSceneGUIDelegate += OnSceneGUI;
-        EditorApplication.hierarchyWindowItemOnGUI += AAA;
-    }
+        // TODO: use unity native constancts instead this
+        private const string COMMAND_NAME_DUPLICATE = "Duplicate";
+        private const string COMMAND_NAME_PASTE = "Paste";
 
-    static void AAA(int instanceID, Rect selectionRect)
-    {
-        Event e = Event.current;
+        // Duplication trigger
+        private static bool _duplicated = false;
 
-        if (e != null)
+        static UiLayoutEditorService()
         {
-            if ((e.type == EventType.ValidateCommand) && ((e.commandName == "Duplicate") || (e.commandName == "Paste")))
+            EditorApplication.update += Update;
+            EditorApplication.hierarchyWindowItemOnGUI += OnGUI;
+        }
+
+        private static void OnGUI(int instanceID, Rect selectionRect)
+        {
+            Event currentEvent = Event.current;
+
+            if (currentEvent != null && currentEvent.type == EventType.ValidateCommand)
             {
-                e.Use();
-                Debug.LogError("!!!!! > " + Selection.activeObject);
+                if (currentEvent.commandName == COMMAND_NAME_DUPLICATE || currentEvent.commandName == COMMAND_NAME_PASTE)
+                {
+                    _duplicated = true;
+                }
             }
         }
-    }
 
-    static void OnSceneGUI(SceneView sceneView)
-    {
-        return;
-        Event e = Event.current;
-
-        if (e != null)
+        private static void Update()
         {
-            Debug.LogError("!!! " + e.commandName);
-            if ((e.type == EventType.ValidateCommand)
-                && ((e.commandName == "Duplicate") || (e.commandName == "Paste")))
+            if (_duplicated)
             {
-                Debug.LogError("!!!!!");
+                _duplicated = false;
+
+                if (Selection.activeObject != null)
+                {
+                    UiLayoutObject layoutObject = Selection.activeGameObject.GetComponent<UiLayoutObject>();
+
+                    if (layoutObject != null)
+                    {
+                        UiLayoutEditorUtils.LayoutObjectGenerateUniqueID(layoutObject);
+                    }
+                }
             }
         }
-    }
-
-    static void Update()
-    {
-
     }
 }
