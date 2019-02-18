@@ -3,6 +3,7 @@ using UnityEngine;
 
 using UnityExpansion.Editor;
 using UnityExpansion.UI;
+using UnityExpansion.Utilities;
 
 namespace UnityExpansionInternal.UiLayoutEditor
 {
@@ -41,7 +42,7 @@ namespace UnityExpansionInternal.UiLayoutEditor
             Mouse.OnClickRight += () =>
             {
                 GenericMenu menu = new GenericMenu();
-                menu.AddItem(new GUIContent("Add signal"), true, OnSignalCreate);
+                menu.AddItem(new GUIContent("Add signal"), true, ()=> { });
                 menu.ShowAsContext();
             };
 
@@ -76,9 +77,27 @@ namespace UnityExpansionInternal.UiLayoutEditor
                 return;
             }
 
+            ValidateObjects();
+
             Nodes.Clear();
 
-            SetupLayoutEventOnEnable();
+            //
+            string[] layoutMethods = UtilityReflection.GetMethodsWithAttribute(Selection.Target, typeof(UiLayoutMethod));
+            
+            for (int i = 0; i < layoutMethods.Length; i++)
+            {
+                SetupSystemMethod(layoutMethods[i]);
+            }
+
+            string[] layoutEvents = UtilityReflection.GetEventsWithAttribute(Selection.Target, typeof(UiLayoutEvent));
+
+            for(int i = 0; i < layoutEvents.Length; i++)
+            {
+                SetupSystemEvent(layoutEvents[i]);
+            }
+            //
+
+            //SetupLayoutEventOnEnable();
 
             for (int i = 0; i < Selection.Data.Nodes.Count; i++)
             {
@@ -88,10 +107,6 @@ namespace UnityExpansionInternal.UiLayoutEditor
                 {
                     case InternalUiLayoutData.NodeType.LayoutElementRoot:
                         SetupLayoutElementRoot(nodeData);
-                        break;
-
-                    case InternalUiLayoutData.NodeType.Signal:
-                        SetupSignal(nodeData);
                         break;
                 }
             }
@@ -139,43 +154,81 @@ namespace UnityExpansionInternal.UiLayoutEditor
                 }
             }
         }
-        
-        private void SetupSignal(InternalUiLayoutData.NodeData nodeData)
-        {
-            string id = "__newSignal"; // TODO: generate random one
 
-            NodeSignal node = Nodes.CreateNodeSignal(nodeData);
+        private void ValidateObjects()
+        {
+            Selection.Data.Register(Selection.Target);
+
+            for(int i = 0; i < Selection.Target.Presets.Length; i++)
+            {
+                ValidateObject(Selection.Target.Presets[i].Prefab);
+            }
+
+            // TODO: remove presets with missing prefabs
+            // TODO: actions with missing prefabs
         }
 
-        private void SetupLayoutEventOnEnable()
+        private void ValidateObject(UiLayoutObject layoutObject)
         {
-            string id = Selection.Target.UniqueID + "OnEnable";
+            if(layoutObject == null)
+            {
+                return;
+            }
+
+            
+            Selection.Data.Register(layoutObject);
+
+            for (int i = 0; i < layoutObject.transform.childCount; i++)
+            {
+                ValidateObject(layoutObject.transform.GetChild(i).GetComponent<UiLayoutObject>());
+            }
+        }
+        
+        private void SetupSystemMethod(string methodName)
+        {
+            string id = Selection.Target.UniqueID + "." + methodName;
 
             InternalUiLayoutData.NodeData nodeData = Selection.Data.Find(id);
 
             if (nodeData == null)
             {
-                nodeData = Selection.Data.CreateNodeDataLayoutElement();
+                nodeData = Selection.Data.CreateNodeDataSystemEvent();
                 nodeData.ID = id;
 
                 Selection.Data.AddNodeData(nodeData);
             }
 
-            NodeLayoutEvent node = Nodes.CreateNodeLayoutEvent(nodeData, NodeLayoutEvent.Type.OnEnable);
+            NodeSystemMethod node = Nodes.CreateNodeSystemMethod(nodeData, Selection.Target, methodName);
+        }
+
+        private void SetupSystemEvent(string eventName)
+        {
+            string id = Selection.Target.UniqueID + "." + eventName;
+
+            InternalUiLayoutData.NodeData nodeData = Selection.Data.Find(id);
+
+            if (nodeData == null)
+            {
+                nodeData = Selection.Data.CreateNodeDataSystemEvent();
+                nodeData.ID = id;
+
+                Selection.Data.AddNodeData(nodeData);
+            }
+
+            NodeSystemEvent node = Nodes.CreateNodeSystemEvent(nodeData, Selection.Target, eventName);
         }
 
         private void SetupLayoutElementRoot(InternalUiLayoutData.NodeData nodeData)
         {
-            GameObject gameObject = AssetDatabase.LoadAssetAtPath<GameObject>(nodeData.LayoutPreset.AssetPath);
-            UiLayoutElement layoutElement = gameObject.GetComponent<UiLayoutElement>();
+            UiLayoutElement layoutElement = nodeData.LayoutPreset.Prefab;
 
             if (layoutElement != null)
             {
                 NodeLayoutElementRoot node = Nodes.CreateNodeLayoutElementRoot(nodeData, layoutElement);
 
-                for (int i = 0; i < gameObject.transform.childCount; i++)
+                for (int i = 0; i < layoutElement.transform.childCount; i++)
                 {
-                    SetupLayoutElementRecursively(gameObject.transform.GetChild(i).gameObject, node);
+                    SetupLayoutElementRecursively(layoutElement.transform.GetChild(i).gameObject, node);
                 }
             }
         }
@@ -209,28 +262,15 @@ namespace UnityExpansionInternal.UiLayoutEditor
             return parentNode;
         }
 
-        private void OnSignalCreate()
-        {
-            InternalUiLayoutData.NodeData nodeData = Selection.Data.CreateNodeDataSignal();
-
-            nodeData.ID = "__signal" + Random.Range(1000, 9999);
-            nodeData.X = Mouse.X - CanvasX;
-            nodeData.Y = Mouse.Y - CanvasY;
-
-            Selection.Data.AddNodeData(nodeData);
-
-            Refresh();
-        }
-
         private void OnDragAndDrop(UiLayoutPreset layoutPreset)
         {
             Selection.Target.AddPreset(layoutPreset);
 
             InternalUiLayoutData.NodeData nodeData = Selection.Data.CreateNodeDataLayoutElementRoot();
-            GameObject gameObject = AssetDatabase.LoadAssetAtPath<GameObject>(layoutPreset.AssetPath);
-            UiLayoutElement element = gameObject.GetComponent<UiLayoutElement>();
+            //GameObject gameObject = AssetDatabase.LoadAssetAtPath<GameObject>(layoutPreset.AssetPath);
+            //UiLayoutElement element = gameObject.GetComponent<UiLayoutElement>();
 
-            nodeData.ID = element.UniqueID;
+            nodeData.ID = layoutPreset.Prefab.UniqueID;
             nodeData.LayoutPreset = layoutPreset;
             nodeData.X = Mouse.X - CanvasX;
             nodeData.Y = Mouse.Y - CanvasY;

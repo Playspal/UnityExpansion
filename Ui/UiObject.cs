@@ -13,17 +13,7 @@ namespace UnityExpansion.UI
     [AddComponentMenu("Expansion/UiObject", 1)]
     public class UiObject : MonoBehaviour
     {
-        /// <summary>
-        /// Automatically generated unique ID of the object.
-        /// </summary>
-        public string UniqueID
-        {
-            get
-            {
-                ValidateUniqueID();
-                return _uniqueID;
-            }
-        }
+
 
         /// <summary>
         /// Is game object destroyed.
@@ -181,13 +171,6 @@ namespace UnityExpansion.UI
         }
 
         /// <summary>
-        /// Unique ID of this object.
-        /// Normally id generated once when object created.
-        /// </summary>
-        [SerializeField, HideInInspector]
-        private string _uniqueID;
-
-        /// <summary>
         /// Destroys game object.
         /// </summary>
         public void Destroy()
@@ -286,27 +269,12 @@ namespace UnityExpansion.UI
         /// MonoBehavior OnValidate handler.
         /// In inherited classes always use base.OnValidate() when overriding this method.
         /// </summary>
-        protected virtual void OnValidate()
-        {
-            ValidateUniqueID();
-        }
+        protected virtual void OnValidate() { }
 
         /// <summary>
         /// MonoBehavior Reset handler.
         /// In inherited classes always use base.Reset() when overriding this method.
         /// </summary>
-        protected virtual void Reset()
-        {
-            ValidateUniqueID();
-        }
-
-        // Generates uniqueID.
-        private void ValidateUniqueID()
-        {
-            if (string.IsNullOrEmpty(_uniqueID))
-            {
-                _uniqueID = (gameObject.GetInstanceID() < 0 ? "n" : "p") + Mathf.Abs(gameObject.GetInstanceID());
-            }
-        }
+        protected virtual void Reset() { }
     }
 }

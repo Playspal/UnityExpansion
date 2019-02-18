@@ -1,34 +1,17 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityExpansion.Editor;
 using UnityExpansion.UI;
 
 namespace UnityExpansionInternal.UiLayoutEditor
 {
-    public class NodeLayoutEvent : Node
+    public class NodeSystem : Node
     {
-        public enum Type
-        {
-            OnEnable
-        }
-
-        public readonly Type EventType;
-        public readonly NodeConnectorOutput OutputOnEvent;
-
-        public UiLayout UiLayout { get; private set; }
-
         private EditorLayoutObjectTexture _textureHeader;
         private EditorLayoutObjectText _title;
+        private NodeConnector _connector;
 
-        public NodeLayoutEvent(InternalUiLayoutData.NodeData nodeData, EditorLayout layout, Type eventType) : base(nodeData, layout, 200, 50)
+        public NodeSystem(InternalUiLayoutData.NodeData nodeData, EditorLayout layout) : base(nodeData, layout, 200, 50)
         {
-            EventType = eventType;
-
-            OutputOnEvent = new NodeConnectorOutput(layout, this, string.Empty);
-            OutputOnEvent.SetParent(this);
-            OutputOnEvent.Y = Height / 2 - 6;
-
             _textureBackground = new EditorLayoutObjectTexture(layout, Width - 2, 6);
             _textureBackground.X = _textureBackground.Y = 1;
             _textureBackground.Fill(ColorMain);
@@ -39,7 +22,7 @@ namespace UnityExpansionInternal.UiLayoutEditor
             _title.SetAlignment(TextAnchor.MiddleCenter);
             _title.SetFontStyle(FontStyle.Bold);
             _title.SetColor(ColorMain);
-            _title.SetText("ON ENABLE");
+            _title.SetText("...");
             _title.SetParent(this);
             _title.Y = 5;
 
@@ -55,15 +38,19 @@ namespace UnityExpansionInternal.UiLayoutEditor
             Layout.Mouse.OnRelease -= MouseHandlerRelease;
         }
 
-        public void SetUiLayout(UiLayout uiLayout)
+        protected void SetTitle(string value)
         {
-            UiLayout = uiLayout;
-            OutputOnEvent.SetData(uiLayout.UniqueID, "Start");
+            _title.SetText(value);
+        }
+
+        protected void SetConnector(NodeConnector connector)
+        {
+            _connector = connector;
         }
 
         private void MouseHandlerPress()
         {
-            if (HitTest(Layout.Mouse.X, Layout.Mouse.Y) && !OutputOnEvent.Icon.HitTest(Layout.Mouse.X, Layout.Mouse.Y))
+            if (HitTest(Layout.Mouse.X, Layout.Mouse.Y) && !_connector.Icon.HitTest(Layout.Mouse.X, Layout.Mouse.Y))
             {
                 DragStart(false);
             }

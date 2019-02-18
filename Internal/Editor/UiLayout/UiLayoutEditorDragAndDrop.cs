@@ -66,14 +66,13 @@ namespace UnityExpansionInternal.UiLayoutEditor
                             bool isUnique = true;
 
                             _preset = new UiLayoutPreset();
-                            _preset.AssetPath = prefabPath;
-                            _preset.PrefabPath = match.Groups[1].Value;
+                            _preset.Prefab = layoutElement;
 
                             if (_layoutEditor.Selection.Target != null)
                             {
                                 for (int i = 0; i < _layoutEditor.Selection.Target.Presets.Length; i++)
                                 {
-                                    if(_layoutEditor.Selection.Target.Presets[i].AssetPath == _preset.AssetPath)
+                                    if (_layoutEditor.Selection.Target.Presets[i].Prefab == _preset.Prefab)
                                     {
                                         isUnique = false;
                                         break;

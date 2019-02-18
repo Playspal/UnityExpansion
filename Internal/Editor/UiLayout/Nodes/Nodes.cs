@@ -58,12 +58,20 @@ namespace UnityExpansionInternal.UiLayoutEditor
             return node;
         }
 
-        public NodeLayoutEvent CreateNodeLayoutEvent(InternalUiLayoutData.NodeData nodeData, NodeLayoutEvent.Type eventType)
+        public NodeSystemEvent CreateNodeSystemEvent(InternalUiLayoutData.NodeData nodeData, UiLayout uiLayout, string eventName)
         {
-            NodeLayoutEvent node = new NodeLayoutEvent(nodeData, UiLayoutEditor.Instance, eventType);
+            NodeSystemEvent node = new NodeSystemEvent(nodeData, UiLayoutEditor.Instance);
+            node.SetData(uiLayout, eventName);
 
-            node.SetUiLayout(UiLayoutEditor.Instance.Selection.Target);
+            Add(node);
 
+            return node;
+        }
+
+        public NodeSystemMethod CreateNodeSystemMethod(InternalUiLayoutData.NodeData nodeData, UiLayout uiLayout, string methodName)
+        {
+            NodeSystemMethod node = new NodeSystemMethod(nodeData, UiLayoutEditor.Instance);
+            node.SetData(uiLayout, methodName);
 
             Add(node);
 

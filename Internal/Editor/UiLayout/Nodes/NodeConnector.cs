@@ -22,6 +22,8 @@ namespace UnityExpansionInternal.UiLayoutEditor
         public string DataID { get; private set; }
         public string DataMethod { get; private set; }
 
+        public int Weight { get; private set; }
+
         public NodeConnector Connected { get; private set; }
 
         public NodeConnectorIcon Icon { get; private set; }
@@ -33,6 +35,8 @@ namespace UnityExpansionInternal.UiLayoutEditor
         {
             Node = node;
             ConnectorType = type;
+
+            Weight = 0;
 
             SetupIcon();
             SetupLabel(label);
@@ -55,6 +59,11 @@ namespace UnityExpansionInternal.UiLayoutEditor
             Label.SetParent(this);
             Label.X = 10;
             Label.Y = -1;
+        }
+
+        public void SetWeight(int value)
+        {
+            Weight = value;
         }
 
         public void SetData(string id, string method)

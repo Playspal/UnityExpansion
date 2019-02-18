@@ -156,8 +156,8 @@ namespace UnityExpansion.UI.Animation
 
             if(element != null)
             {
-                element.OnShowBegin += OnParentLayoutElementShowBegin;
-                element.OnHideBegin += OnParentLayoutElementHideBegin;
+                element.OnShow += OnParentLayoutElementShowBegin;
+                element.OnHide += OnParentLayoutElementHideBegin;
             }
         }
 

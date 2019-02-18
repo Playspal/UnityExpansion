@@ -9,7 +9,7 @@ namespace UnityExpansion.UI
     /// Base ui layout element. Provides functionality to play show and hide animation clips.
     /// </summary>
     /// <seealso cref="UnityExpansion.UI.UiObject" />
-    public class UiLayoutElement : UiObject
+    public class UiLayoutElement : UiLayoutObject
     {
         /// <summary>
         /// Gets the parent UiLayout.
@@ -37,24 +37,14 @@ namespace UnityExpansion.UI
         /// <summary>
         /// Invokes right after element show begin.
         /// </summary>
-        public event Action OnShowBegin;
-
-        /// <summary>
-        /// Invokes after element is shown.
-        /// If element have show animation, OnShow will be invoked after animation will be played.
-        /// </summary>
-        public event Action OnShowEnd;
+        [UiLayoutEvent (Group = "Default", Order = 1)]
+        public event Action OnShow;
 
         /// <summary>
         /// Invokes right after element hide begin.
         /// </summary>
-        public event Action OnHideBegin;
-
-        /// <summary>
-        /// Invokes after element is hiden.
-        /// If element have hide animation, OnHide will be invoked after animation will be played.
-        /// </summary>
-        public event Action OnHideEnd;
+        [UiLayoutEvent(Group = "Default", Order = 2)]
+        public event Action OnHide;
 
         // Current visibility. Sets to true right before show animations and sets to false before hide animations
         // Used to prevent start animation if it is already started
@@ -124,6 +114,7 @@ namespace UnityExpansion.UI
         /// Shows this element.
         /// If element have child tweens that presents show animation, they will be played.
         /// </summary>
+        [UiLayoutMethod(Group = "Default", Order = 1)]
         public void Show()
         {
             if (IsDestroyed || _isShown)
@@ -172,6 +163,7 @@ namespace UnityExpansion.UI
         /// Hides this element.
         /// If element have child tweens that presents hide animation, they will be played.
         /// </summary>
+        [UiLayoutMethod(Group = "Default", Order = 2)]
         public void Hide()
         {
             if (IsDestroyed || !_isShown)
@@ -242,7 +234,7 @@ namespace UnityExpansion.UI
         protected virtual void ShowBegin()
         {
             ParentUiLayout.ActionProcess(UniqueID);
-            OnShowBegin.InvokeIfNotNull();
+            OnShow.InvokeIfNotNull();
 
             _isShown = true;
         }
@@ -254,7 +246,6 @@ namespace UnityExpansion.UI
         protected virtual void ShowEnd()
         {
             ParentUiLayout.ActionProcess(UniqueID);
-            OnShowEnd.InvokeIfNotNull();
         }
 
         /// <summary>
@@ -264,7 +255,7 @@ namespace UnityExpansion.UI
         protected virtual void HideBegin()
         {
             ParentUiLayout.ActionProcess(UniqueID);
-            OnHideBegin.InvokeIfNotNull();
+            OnHide.InvokeIfNotNull();
 
             _isShown = false;
         }
@@ -276,7 +267,6 @@ namespace UnityExpansion.UI
         protected virtual void HideEnd()
         {
             ParentUiLayout.ActionProcess(UniqueID);
-            OnHideEnd.InvokeIfNotNull();
 
             SetActive(false);
             Destroy();

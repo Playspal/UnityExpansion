@@ -8,7 +8,7 @@ using UnityExpansion.Utilities;
 namespace UnityExpansion.UI
 {
     [Serializable]
-    public class UiLayout : UiObject
+    public class UiLayout : UiLayoutObject
     {
         [Serializable]
         public class UiAction
@@ -39,6 +39,9 @@ namespace UnityExpansion.UI
                 );
             }
         }
+
+        [UiLayoutEvent]
+        public event Action OnStart;
 
         /// <summary>
         /// List of layout elements attached to this layout.
@@ -144,11 +147,12 @@ namespace UnityExpansion.UI
 
             for(int i = 0; i < Presets.Length; i++)
             {
-                Presets[i].Load();
                 //SetupPreset(Presets[i]);
             }
 
             ActionProcess(UniqueID);
+
+            OnStart.InvokeIfNotNull();
         }
 
         private void SetupPreset(UiLayoutPreset preset)
@@ -172,6 +176,22 @@ namespace UnityExpansion.UI
                 );
             }
             */
+        }
+
+        /// <summary>
+        /// Disables all mouse events.
+        /// </summary>
+        [UiLayoutMethod]
+        public void MouseDisable()
+        {
+        }
+
+        /// <summary>
+        /// Enables all mouse events if it was disabled before.
+        /// </summary>
+        [UiLayoutMethod]
+        public void MouseEnable()
+        {
         }
     }
 }

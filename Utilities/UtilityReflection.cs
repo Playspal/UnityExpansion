@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Reflection;
 
 namespace UnityExpansion.Utilities
@@ -74,24 +75,34 @@ namespace UnityExpansion.Utilities
         /// <param name="value">New value</param>
         public static void SetMemberValue(object target, string name, object value)
         {
+            // Hint: The only way to get a private field that is declared in a base class from a derived type is to go up the class hierarchy.
+            // See the "type = type.BaseType;" line in the while loop to understand it.
+
+            BindingFlags bindingFlags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.GetField | BindingFlags.GetProperty;
+
             Type type = target.GetType();
 
-            BindingFlags bindFlags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static;
-
-            PropertyInfo propertyInfo = type.GetProperty(name, bindFlags);
-            FieldInfo fieldInfo = type.GetField(name, bindFlags);
-
-            if (propertyInfo != null && propertyInfo.CanWrite)
+            while (type != null)
             {
-                propertyInfo.SetValue(target, Convert.ChangeType(value, propertyInfo.PropertyType), null);
-            }
+                PropertyInfo propertyInfo = type.GetProperty(name, bindingFlags);
+                FieldInfo fieldInfo = type.GetField(name, bindingFlags);
 
-            if (fieldInfo != null)
-            {
-                fieldInfo.SetValue(target, Convert.ChangeType(value, fieldInfo.FieldType));
+                if (propertyInfo != null && propertyInfo.CanWrite)
+                {
+                    propertyInfo.SetValue(target, Convert.ChangeType(value, propertyInfo.PropertyType), null);
+                    break;
+                }
+
+                if (fieldInfo != null)
+                {
+                    fieldInfo.SetValue(target, Convert.ChangeType(value, fieldInfo.FieldType));
+                    break;
+                }
+
+                type = type.BaseType;
             }
         }
-
+        
         /// <summary>
         /// Gets value of specified object's property or field.
         /// </summary>
@@ -133,6 +144,88 @@ namespace UnityExpansion.Utilities
             {
                 method.Invoke(target, parameters);
             }
+        }
+
+        /// <summary>
+        /// Gets array of methods names that have specified attribute.
+        /// </summary>
+        /// <returns>Array of names</returns>
+        public static string[] GetMethodsWithAttribute(object target, Type attributeType)
+        {
+            List<string> output = new List<string>();
+
+            Type type = target.GetType();
+            MethodInfo[] methods = type.GetMethods();
+
+            for (int i = 0; i < methods.Length; i++)
+            {
+                if (methods[i].GetCustomAttributes(attributeType, true).Length > 0)
+                {
+                    output.Add(methods[i].Name);
+                }
+            }
+
+            return output.ToArray();
+        }
+
+        public static string[] GetEventsWithAttribute(object target, Type attributeType)
+        {
+            List<string> output = new List<string>();
+
+            Type type = target.GetType();
+            EventInfo[] events = type.GetEvents();
+
+            for (int i = 0; i < events.Length; i++)
+            {
+                if (events[i].GetCustomAttributes(attributeType, true).Length > 0)
+                {
+                    output.Add(events[i].Name);
+                }
+            }
+
+            return output.ToArray();
+        }
+
+        public static Attribute GetMethodAttribute(object target, string name, Type attributeType)
+        {
+            Type type = target.GetType();
+            MethodInfo method = type.GetMethod(name);
+
+            if (method != null)
+            {
+                object[] attributes = method.GetCustomAttributes(attributeType, true);
+
+                for (int i = 0; i < attributes.Length; i++)
+                {
+                    if (attributes[i].GetType() == attributeType)
+                    {
+                        return attributes[i] as Attribute;
+                    }
+                }
+            }
+
+            return null;
+        }
+
+        public static Attribute GetEventAttribute(object target, string name, Type attributeType)
+        {
+            Type type = target.GetType();
+            EventInfo method = type.GetEvent(name);
+
+            if (method != null)
+            {
+                object[] attributes = method.GetCustomAttributes(attributeType, true);
+
+                for (int i = 0; i < attributes.Length; i++)
+                {
+                    if (attributes[i].GetType() == attributeType)
+                    {
+                        return attributes[i] as Attribute;
+                    }
+                }
+            }
+
+            return null;
         }
     }
 }
