@@ -125,7 +125,7 @@ namespace UnityExpansionInternal.UiLayoutEditor
                         if
                         (
                             node.Output[n].DataID == action.SenderID &&
-                            node.Output[n].DataMethod == action.SenderMethod
+                            node.Output[n].DataMethod == action.SenderEvent
                         )
                         {
                             output = node.Output[n];

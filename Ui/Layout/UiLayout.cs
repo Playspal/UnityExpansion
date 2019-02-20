@@ -17,7 +17,7 @@ namespace UnityExpansion.UI
         public class UiAction
         {
             public string SenderID;
-            public string SenderMethod;
+            public string SenderEvent;
 
             public string TargetID;
             public string TargetMethod;
@@ -25,7 +25,7 @@ namespace UnityExpansion.UI
             public UiAction(string senderID, string senderMethod, string targetID, string targetMethod)
             {
                 SenderID = senderID;
-                SenderMethod = senderMethod;
+                SenderEvent = senderMethod;
 
                 TargetID = targetID;
                 TargetMethod = targetMethod;
@@ -36,7 +36,7 @@ namespace UnityExpansion.UI
                 return
                 (
                     SenderID == target.SenderID &&
-                    SenderMethod == target.SenderMethod &&
+                    SenderEvent == target.SenderEvent &&
                     TargetID == target.TargetID &&
                     TargetMethod == target.TargetMethod
                 );
@@ -63,8 +63,6 @@ namespace UnityExpansion.UI
         /// </summary>
         [SerializeField]
         public UiAction[] Actions = new UiAction[0];
-
-
 
         public void AddPreset(UiLayoutPreset preset)
         {
@@ -96,7 +94,7 @@ namespace UnityExpansion.UI
                 if
                 (
                     Actions[i].SenderID == senderID &&
-                    Actions[i].SenderMethod == senderMethod &&
+                    Actions[i].SenderEvent == senderMethod &&
                     Actions[i].TargetID == targetID &&
                     Actions[i].TargetMethod == targetMethod
                 )
@@ -137,33 +135,95 @@ namespace UnityExpansion.UI
             }
         }
 
-        [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.NoInlining)]
-        public void ActionProcess(string senderID)
-        {
-            StackTrace stackTrace = new StackTrace(new StackFrame(1));
-            string methodName = stackTrace.GetFrame(0).GetMethod().Name;
-            
-            for(int i = 0; i < Actions.Length; i++)
-            {
-                if(Actions[i].SenderID == senderID && Actions[i].SenderMethod == methodName)
-                {
-                    ActionExecute(Actions[i]);
-                }
-            }
-        }
-
         protected override void Start()
         {
             base.Start();
 
-            for(int i = 0; i < Presets.Length; i++)
+            SetupElement(this);
+
+            for (int i = 0; i < Presets.Length; i++)
             {
                 //SetupPreset(Presets[i]);
             }
 
-            ActionProcess(UniqueID);
-
             OnStart.InvokeIfNotNull();
+        }
+
+        protected override void Update()
+        {
+            base.Update();
+
+            if(Input.GetKeyUp(KeyCode.Space))
+            {
+                OnStart.InvokeIfNotNull();
+            }
+        }
+
+        private void SetupElement(UiLayoutObject layoutObject)
+        {
+            for(int i = 0; i < Actions.Length; i++)
+            {
+                if(Actions[i].SenderID == layoutObject.UniqueID)
+                {
+                    SetupElementEventHandler(layoutObject, Actions[i]);
+                }
+            }
+        }
+
+        private void SetupElementEventHandler(UiLayoutObject layoutObject, UiAction action)
+        {
+            UtilityReflection.AddEventHandler
+            (
+                layoutObject,
+                action.SenderEvent,
+                () =>
+                {
+                    UnityEngine.Debug.LogError(layoutObject.UniqueID + " >> " + action.SenderEvent);
+                    InvokeMethod(layoutObject.UniqueID, action.TargetMethod);
+                }
+            );
+        }
+
+        private void InvokeMethod(string uniqueID, string methodName)
+        {
+            UiLayoutObject[] layoutObjects = GetComponentsInChildren<UiLayoutObject>();
+
+            for(int i = 0; i < layoutObjects.Length; i++)
+            {
+                if(layoutObjects[i].UniqueID == uniqueID)
+                {
+                    UtilityReflection.ExecuteMethod(layoutObjects[i], methodName);
+                    break;
+                }
+            }
+        }
+
+        private UiLayoutPreset FindPreset(string uniqueID)
+        {
+            for (int i = 0; i < Presets.Length; i++)
+            {
+                if (Presets[i].Prefab.UniqueID == uniqueID)
+                {
+                    return Presets[i];
+                }
+            }
+
+            return null;
+        }
+
+        private UiLayoutObject FindObjectInInstances(string uniqueID)
+        {
+            UiLayoutObject[] layoutObjects = GetComponentsInChildren<UiLayoutObject>();
+
+            for (int i = 0; i < layoutObjects.Length; i++)
+            {
+                if (layoutObjects[i].UniqueID == uniqueID)
+                {
+                    return layoutObjects[i];
+                }
+            }
+
+            return null;
         }
 
         private void SetupPreset(UiLayoutPreset preset)

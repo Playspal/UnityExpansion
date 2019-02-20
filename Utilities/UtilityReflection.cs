@@ -146,6 +146,17 @@ namespace UnityExpansion.Utilities
             }
         }
 
+        public static void AddEventHandler(object target, string eventName, Action handler)
+        {
+            Type type = target.GetType();
+            EventInfo eventInfo = type.GetEvent(eventName);
+
+            if(eventInfo != null)
+            {
+                eventInfo.AddEventHandler(target, handler);
+            }
+        }
+
         /// <summary>
         /// Gets array of methods names that have specified attribute.
         /// </summary>

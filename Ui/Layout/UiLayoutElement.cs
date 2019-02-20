@@ -233,7 +233,6 @@ namespace UnityExpansion.UI
         /// </summary>
         protected virtual void ShowBegin()
         {
-            ParentUiLayout.ActionProcess(UniqueID);
             OnShow.InvokeIfNotNull();
 
             _isShown = true;
@@ -245,7 +244,6 @@ namespace UnityExpansion.UI
         /// </summary>
         protected virtual void ShowEnd()
         {
-            ParentUiLayout.ActionProcess(UniqueID);
         }
 
         /// <summary>
@@ -254,7 +252,6 @@ namespace UnityExpansion.UI
         /// </summary>
         protected virtual void HideBegin()
         {
-            ParentUiLayout.ActionProcess(UniqueID);
             OnHide.InvokeIfNotNull();
 
             _isShown = false;
@@ -266,8 +263,6 @@ namespace UnityExpansion.UI
         /// </summary>
         protected virtual void HideEnd()
         {
-            ParentUiLayout.ActionProcess(UniqueID);
-
             SetActive(false);
             Destroy();
         }
