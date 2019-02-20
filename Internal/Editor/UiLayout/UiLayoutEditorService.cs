@@ -5,6 +5,11 @@ using UnityExpansion.UI;
 
 namespace UnityExpansionInternal.UiLayoutEditor
 {
+    /// <summary>
+    /// This class start background service that track duplication
+    /// of UiLayoutObject and resetting their ID's in editor mode.
+    /// This is required to avoid having several UiLayoutObjects with same ID.
+    /// </summary>
     [InitializeOnLoad]
     public class UiLayoutEditorService
     {
@@ -42,11 +47,11 @@ namespace UnityExpansionInternal.UiLayoutEditor
 
                 if (Selection.activeGameObject != null)
                 {
-                    UiLayoutObject layoutObject = Selection.activeGameObject.GetComponent<UiLayoutObject>();
+                    UiLayoutObject[] layoutObjects = Selection.activeGameObject.GetComponentsInChildren<UiLayoutObject>();
 
-                    if (layoutObject != null)
+                    for(int i = 0; i < layoutObjects.Length; i++)
                     {
-                        UiLayoutEditorUtils.LayoutObjectSetUniqueID(layoutObject, null);
+                        UiLayoutEditorUtils.LayoutObjectSetUniqueID(layoutObjects[i], null);
                     }
                 }
             }

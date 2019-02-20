@@ -4,13 +4,13 @@ using UnityEditor;
 using UnityEngine;
 using UnityExpansion.Editor;
 using UnityExpansion.UI;
+using UnityExpansion.UI.Animation;
 
 namespace UnityExpansionInternal.UiLayoutEditor
 {
     public class NodeLayoutElement : Node
     {
         public readonly NodeBlockHeader BlockHeader;
-        public readonly NodeBlockShowAndHide BlockShowAndHide;
         public readonly NodeBlockAnimation BlockAnimation;
 
         public UiLayoutElement LayoutElement { get; private set; }
@@ -22,15 +22,10 @@ namespace UnityExpansionInternal.UiLayoutEditor
             BlockHeader = new NodeBlockHeader(layout, this);
             BlockHeader.SetParent(this);
 
-            BlockShowAndHide = new NodeBlockShowAndHide(layout, this);
-            BlockShowAndHide.SetParent(this);
-            BlockShowAndHide.Y = BlockHeader.Y + BlockHeader.Height + 10;
-
             BlockAnimation = new NodeBlockAnimation(layout, this);
             BlockAnimation.SetParent(this);
-            BlockAnimation.Y = BlockShowAndHide.Y + BlockShowAndHide.Height + 10;
-
-            SetSize(Width, BlockAnimation.Y + BlockAnimation.Height + 10);
+            BlockAnimation.Y = BlockHeader.Y + BlockHeader.Height + 10;
+            BlockAnimation.SetActive(false);
         }
 
         public void SetLayoutElement(UiLayoutElement layoutElement)
@@ -39,11 +34,11 @@ namespace UnityExpansionInternal.UiLayoutEditor
 
             BlockHeader.SetTitle(LayoutElement.name + " " + layoutElement.UniqueID + " " + layoutElement.GetInstanceID().ToString());
 
-            BlockShowAndHide.OutputOnShow.SetData(layoutElement.UniqueID, "OnShow");
-            BlockShowAndHide.OutputOnHide.SetData(layoutElement.UniqueID, "OnHide");
-
-            BlockShowAndHide.InputShow.SetData(layoutElement.UniqueID, "Show");
-            BlockShowAndHide.InputHide.SetData(layoutElement.UniqueID, "Hide");
+            if(layoutElement.GetComponent<UiAnimation>() != null)
+            {
+                BlockAnimation.SetActive(true);
+                BlockAnimation.SetAnimation(layoutElement.GetComponent<UiAnimation>());
+            }
 
             string[] outputs = UnityExpansion.Utilities.UtilityReflection.GetMethodsWithAttribute(layoutElement, typeof(UiLayoutMethod));
 
@@ -87,15 +82,34 @@ namespace UnityExpansionInternal.UiLayoutEditor
 
         private void Refresh()
         {
-            int y = BlockHeader.Y + BlockHeader.Height + 10;
+            int padding = 10;
+            int y = BlockHeader.Y + BlockHeader.Height + padding;
 
-            y += 150;
-            // TODO: put predefined blocks here
 
             for (int i = 0; i < _groups.Count; i++)
             {
-                _groups[i].Y = y;
-                y += _groups[i].Height + 10;
+                if (_groups[i].IsMainGroup)
+                {
+                    _groups[i].Y = y;
+                    y += _groups[i].Height + padding;
+
+                    break;
+                }
+            }
+
+            if (BlockAnimation.IsActive)
+            {
+                BlockAnimation.Y = y;
+                y += BlockAnimation.Height + padding;
+            }
+
+            for (int i = 0; i < _groups.Count; i++)
+            {
+                if (!_groups[i].IsMainGroup)
+                {
+                    _groups[i].Y = y;
+                    y += _groups[i].Height + padding;
+                }
             }
 
             SetSize(Width, y);

@@ -9,6 +9,11 @@ namespace UnityExpansion.UI.Animation
     public class UiAnimationClip
     {
         /// <summary>
+        /// Unique ID of animation clip.
+        /// </summary>
+        public string ID { get { return _id; } }
+
+        /// <summary>
         /// The name.
         /// </summary>
         public string Name = "Animation Clip";
@@ -43,6 +48,18 @@ namespace UnityExpansion.UI.Animation
         /// Loop animation clip.
         /// </summary>
         public bool Loop = false;
+
+        // Unique ID of animation clip.
+        [SerializeField, HideInInspector]
+        private string _id;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="UiAnimationClip"/> class.
+        /// </summary>
+        public UiAnimationClip()
+        {
+            _id = "a" + new System.Random().Next(1000000, 9999999).ToString();
+        }
 
         /// <summary>
         /// Gets animation clip duration.

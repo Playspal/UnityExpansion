@@ -1,12 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
+
 using UnityEngine;
-using UnityExpansion.Services;
 using UnityExpansion.Utilities;
 
 namespace UnityExpansion.UI
 {
+    /// <summary>
+    /// Main ui layout class.
+    /// Provides functionality of ui flow made in visual editor.
+    /// </summary>
     [Serializable]
     public class UiLayout : UiLayoutObject
     {
@@ -40,6 +43,12 @@ namespace UnityExpansion.UI
             }
         }
 
+        // Most methods and event can be automatically used in UiLayoutEditor by attributes,
+        // but some system methods should be predefined because of specific.
+        // Normally you don't need to care about it. Just bit of explanation.
+        public const string PREDEFINED_METHOD_ANIMATION_PLAY = "__animation.Play";
+        public const string PREDEFINED_EVENT_ANIMATION_ON_COMPLETE = "__animation.OnComplete";
+
         [UiLayoutEvent]
         public event Action OnStart;
 
@@ -54,6 +63,8 @@ namespace UnityExpansion.UI
         /// </summary>
         [SerializeField]
         public UiAction[] Actions = new UiAction[0];
+
+
 
         public void AddPreset(UiLayoutPreset preset)
         {

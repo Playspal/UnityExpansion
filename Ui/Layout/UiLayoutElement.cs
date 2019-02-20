@@ -1,5 +1,5 @@
 ﻿using System;
-
+using System.Collections.Generic;
 using UnityEngine;
 using UnityExpansion.UI.Animation;
 
@@ -37,13 +37,13 @@ namespace UnityExpansion.UI
         /// <summary>
         /// Invokes right after element show begin.
         /// </summary>
-        [UiLayoutEvent (Group = "Default", Order = 1)]
+        [UiLayoutEvent (Group = UiLayoutAttribute.GROUP_MAIN, Order = 1)]
         public event Action OnShow;
 
         /// <summary>
         /// Invokes right after element hide begin.
         /// </summary>
-        [UiLayoutEvent(Group = "Default", Order = 2)]
+        [UiLayoutEvent(Group = UiLayoutAttribute.GROUP_MAIN, Order = 2)]
         public event Action OnHide;
 
         // Current visibility. Sets to true right before show animations and sets to false before hide animations
@@ -114,7 +114,7 @@ namespace UnityExpansion.UI
         /// Shows this element.
         /// If element have child tweens that presents show animation, they will be played.
         /// </summary>
-        [UiLayoutMethod(Group = "Default", Order = 1)]
+        [UiLayoutMethod(Group = UiLayoutAttribute.GROUP_MAIN, Order = 1)]
         public void Show()
         {
             if (IsDestroyed || _isShown)
@@ -163,7 +163,7 @@ namespace UnityExpansion.UI
         /// Hides this element.
         /// If element have child tweens that presents hide animation, they will be played.
         /// </summary>
-        [UiLayoutMethod(Group = "Default", Order = 2)]
+        [UiLayoutMethod(Group = UiLayoutAttribute.GROUP_MAIN, Order = 2)]
         public void Hide()
         {
             if (IsDestroyed || !_isShown)

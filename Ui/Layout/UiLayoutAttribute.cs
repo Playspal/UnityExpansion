@@ -11,7 +11,7 @@ namespace UnityExpansion.UI
         /// <summary>
         /// Group name.
         /// </summary>
-        public string Group = "Custom methods";
+        public string Group = UiLayoutAttribute.GROUP_CUSTOM;
 
         /// <summary>
         /// Order in group.
@@ -28,11 +28,17 @@ namespace UnityExpansion.UI
         /// <summary>
         /// Group name.
         /// </summary>
-        public string Group = "Custom methods";
+        public string Group = UiLayoutAttribute.GROUP_CUSTOM;
 
         /// <summary>
         /// Order in group.
         /// </summary>
         public int Order = 0;
+    }
+
+    public class UiLayoutAttribute : Attribute
+    {
+        public const string GROUP_MAIN = "Main";
+        public const string GROUP_CUSTOM = "Custom methods and events";
     }
 }

@@ -5,6 +5,7 @@ namespace UnityExpansion.UI
 {
     /// <summary>
     /// Base class for all layout objects.
+    /// Basically used to hierarchy and store persistant ID of any layout object.
     /// </summary>
     [ExecuteInEditMode]
     [Serializable]
@@ -22,8 +23,7 @@ namespace UnityExpansion.UI
         /// Unique ID of this object.
         /// Generated automatically by UiLayoutEditor for system needs.
         /// </summary>
-        //[SerializeField, HideInInspector]
-        [SerializeField]
+        [SerializeField, HideInInspector]
         private string _uniqueID;
     }
 }

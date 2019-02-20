@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityExpansion.Editor;
+using UnityExpansion.UI;
 
 namespace UnityExpansionInternal.UiLayoutEditor
 {
@@ -8,6 +9,8 @@ namespace UnityExpansionInternal.UiLayoutEditor
     {
         public readonly Node Node;
         public readonly string GroupName;
+
+        public readonly bool IsMainGroup;
 
         private EditorLayoutObjectText _title;
         private EditorLayoutObjectTexture _hline;
@@ -20,18 +23,23 @@ namespace UnityExpansionInternal.UiLayoutEditor
             Node = node;
             GroupName = name;
 
-            _hline = new EditorLayoutObjectTexture(layout, Width, 1);
-            _hline.Fill(node.ColorBackgroundBorder);
-            _hline.SetParent(this);
+            IsMainGroup = GroupName == UiLayoutAttribute.GROUP_MAIN;
 
-            _title = new EditorLayoutObjectText(layout, Width, 20);
-            _title.SetAlignment(UnityEngine.TextAnchor.MiddleLeft);
-            _title.SetFontStyle(UnityEngine.FontStyle.Bold);
-            _title.SetColor(UiLayoutEditorConfig.COLOR_NODE_LABEL);
-            _title.SetText(GroupName);
-            _title.SetParent(this);
-            _title.Y = _hline.Height + 5;
-            _title.X = 9;
+            if (!IsMainGroup)
+            {
+                _hline = new EditorLayoutObjectTexture(layout, Width, 1);
+                _hline.Fill(node.ColorBackgroundBorder);
+                _hline.SetParent(this);
+
+                _title = new EditorLayoutObjectText(layout, Width, 20);
+                _title.SetAlignment(UnityEngine.TextAnchor.MiddleLeft);
+                _title.SetFontStyle(UnityEngine.FontStyle.Bold);
+                _title.SetColor(UiLayoutEditorConfig.COLOR_NODE_LABEL);
+                _title.SetText(GroupName);
+                _title.SetParent(this);
+                _title.Y = _hline.Height + 5;
+                _title.X = 9;
+            }
 
             Refresh();
         }
@@ -64,7 +72,7 @@ namespace UnityExpansionInternal.UiLayoutEditor
 
         private void Refresh()
         {
-            int offset = _title.Y + _title.Height + 5;
+            int offset = IsMainGroup ? 0 : _title.Y + _title.Height + 5;
             int height = offset;
 
             for (int i = 0; i < _input.Count; i++)
