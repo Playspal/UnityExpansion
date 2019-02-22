@@ -156,9 +156,9 @@ namespace UnityExpansionInternal.UiLayoutEditor
         {
             CheckID(Selection.Target);
 
-            for(int i = 0; i < Selection.Target.Presets.Length; i++)
+            for(int i = 0; i < Selection.Target.Prefabs.Count; i++)
             {
-                ValidateObject(Selection.Target.Presets[i].Prefab);
+                ValidateObject(Selection.Target.Prefabs[i]);
             }
 
             // TODO: remove presets with missing prefabs
@@ -224,7 +224,7 @@ namespace UnityExpansionInternal.UiLayoutEditor
 
         private void SetupLayoutElementRoot(InternalUiLayoutData.NodeData nodeData)
         {
-            UiLayoutElement layoutElement = nodeData.LayoutPreset.Prefab;
+            UiLayoutElement layoutElement = nodeData.LayoutPrefab;
 
             if (layoutElement != null)
             {
@@ -266,16 +266,16 @@ namespace UnityExpansionInternal.UiLayoutEditor
             return parentNode;
         }
 
-        private void OnDragAndDrop(UiLayoutPreset layoutPreset)
+        private void OnDragAndDrop(UiLayoutElement layoutElement)
         {
-            Selection.Target.AddPreset(layoutPreset);
+            Selection.Target.Prefabs.Add(layoutElement);
 
             InternalUiLayoutData.NodeData nodeData = Selection.Data.CreateNodeDataLayoutElementRoot();
             //GameObject gameObject = AssetDatabase.LoadAssetAtPath<GameObject>(layoutPreset.AssetPath);
             //UiLayoutElement element = gameObject.GetComponent<UiLayoutElement>();
 
-            nodeData.ID = layoutPreset.Prefab.UniqueID;
-            nodeData.LayoutPreset = layoutPreset;
+            nodeData.ID = layoutElement.UniqueID;
+            nodeData.LayoutPrefab = layoutElement;
             nodeData.X = Mouse.X - CanvasX;
             nodeData.Y = Mouse.Y - CanvasY;
 

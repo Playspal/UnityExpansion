@@ -50,7 +50,8 @@ namespace UnityExpansion.UI.Animation
         public bool Loop = false;
 
         // Unique ID of animation clip.
-        [SerializeField, HideInInspector]
+        //[SerializeField, HideInInspector]
+        [SerializeField]
         private string _id;
 
         /// <summary>

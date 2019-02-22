@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 
 using UnityEngine;
+using UnityExpansion.UI.Animation;
 using UnityExpansion.Utilities;
 
 namespace UnityExpansion.UI
@@ -10,7 +12,6 @@ namespace UnityExpansion.UI
     /// Main ui layout class.
     /// Provides functionality of ui flow made in visual editor.
     /// </summary>
-    [Serializable]
     public class UiLayout : UiLayoutObject
     {
         [Serializable]
@@ -56,18 +57,13 @@ namespace UnityExpansion.UI
         /// List of layout elements attached to this layout.
         /// </summary>
         [SerializeField]
-        public UiLayoutPreset[] Presets = new UiLayoutPreset[0];
+        public List<UiLayoutElement> Prefabs = new List<UiLayoutElement>();
 
         /// <summary>
         /// List of actions registered on this layout.
         /// </summary>
         [SerializeField]
         public UiAction[] Actions = new UiAction[0];
-
-        public void AddPreset(UiLayoutPreset preset)
-        {
-            Presets = Presets.Push(preset);
-        }
 
         public void ActionAdd(string senderID, string senderMethod, string targetID, string targetMethod)
         {
@@ -109,42 +105,11 @@ namespace UnityExpansion.UI
             Actions = Actions.Remove(uiAction);
         }
 
-        public void ActionExecute(UiAction uiAction)
-        {
-            UiLayoutElement[] elements = GetComponentsInChildren<UiLayoutElement>();
-
-            for(int i = 0; i < elements.Length; i++)
-            {
-                if(elements[i].UniqueID == uiAction.TargetID)
-                {
-                    UtilityReflection.ExecuteMethod(elements[i], uiAction.TargetMethod);
-                }
-            }
-
-            for(int i = 0; i < Presets.Length; i++)
-            {
-                if (Presets[i].Prefab.UniqueID == uiAction.TargetID)
-                {
-                    if(Presets[i].Instance == null)
-                    {
-                        Presets[i].Instantiate(RectTransform);
-                    }
-
-                    UtilityReflection.ExecuteMethod(Presets[i].Instance, uiAction.TargetMethod);
-                }
-            }
-        }
-
         protected override void Start()
         {
             base.Start();
 
             SetupElement(this);
-
-            for (int i = 0; i < Presets.Length; i++)
-            {
-                //SetupPreset(Presets[i]);
-            }
 
             OnStart.InvokeIfNotNull();
         }
@@ -161,13 +126,31 @@ namespace UnityExpansion.UI
 
         private void SetupElement(UiLayoutObject layoutObject)
         {
-            for(int i = 0; i < Actions.Length; i++)
+            UnityEngine.Debug.LogError("SetupElement > " + layoutObject.name);
+
+            UiAnimation animation = layoutObject.GetComponent<UiAnimation>();
+
+            for (int i = 0; i < Actions.Length; i++)
             {
                 if(Actions[i].SenderID == layoutObject.UniqueID)
                 {
                     SetupElementEventHandler(layoutObject, Actions[i]);
                 }
+
+                if(animation != null)
+                {
+                    for(int n = 0; n < animation.AnimationClips.Count; n++)
+                    {
+                        UiAnimationClip animationClip = animation.AnimationClips[n];
+
+                        if (Actions[i].SenderID == layoutObject.UniqueID + "." + animationClip.ID)
+                        {
+                            SetupAnimationHandler(layoutObject, animation, Actions[i]);
+                        }
+                    }
+                }
             }
+            
         }
 
         private void SetupElementEventHandler(UiLayoutObject layoutObject, UiAction action)
@@ -178,33 +161,56 @@ namespace UnityExpansion.UI
                 action.SenderEvent,
                 () =>
                 {
-                    UnityEngine.Debug.LogError(layoutObject.UniqueID + " >> " + action.SenderEvent);
-                    InvokeMethod(layoutObject.UniqueID, action.TargetMethod);
+                    InvokeMethod(action.TargetID, action.TargetMethod);
                 }
             );
         }
 
-        private void InvokeMethod(string uniqueID, string methodName)
+        private void SetupAnimationHandler(UiLayoutObject layoutObject, UiAnimation animation, UiAction action)
         {
-            UiLayoutObject[] layoutObjects = GetComponentsInChildren<UiLayoutObject>();
+            UnityEngine.Debug.LogError(" >> SetupAnimationHandler");
 
-            for(int i = 0; i < layoutObjects.Length; i++)
+            animation.OnComplete += (UiAnimationClip clip) =>
             {
-                if(layoutObjects[i].UniqueID == uniqueID)
+                UnityEngine.Debug.LogError(" >> " + layoutObject.name + " > " + layoutObject.UniqueID + "." + clip.ID);
+                if (action.SenderID == layoutObject.UniqueID + "." + clip.ID)
                 {
-                    UtilityReflection.ExecuteMethod(layoutObjects[i], methodName);
-                    break;
+                    InvokeMethod(action.TargetID, action.TargetMethod);
                 }
-            }
+            };
         }
 
-        private UiLayoutPreset FindPreset(string uniqueID)
+        private void InvokeMethod(string uniqueID, string methodName)
         {
-            for (int i = 0; i < Presets.Length; i++)
+            UiLayoutObject layoutObject = FindObjectInInstances(uniqueID);
+
+            if (layoutObject == null)
             {
-                if (Presets[i].Prefab.UniqueID == uniqueID)
+                UiLayoutElement layoutPrefab = FindPrefab(uniqueID);
+                
+                if (layoutPrefab != null)
                 {
-                    return Presets[i];
+                    // TODO: use container here instead of "this"
+                    layoutObject = Instantiate(layoutPrefab, this);
+                }
+            }
+
+            if(layoutObject != null)
+            {
+                UtilityReflection.ExecuteMethod(layoutObject, methodName);
+                
+            }
+
+            UnityEngine.Debug.LogError("methodName > " + methodName);
+        }
+
+        private UiLayoutElement FindPrefab(string uniqueID)
+        {
+            for (int i = 0; i < Prefabs.Count; i++)
+            {
+                if (Prefabs[i].UniqueID == uniqueID)
+                {
+                    return Prefabs[i];
                 }
             }
 
@@ -226,43 +232,25 @@ namespace UnityExpansion.UI
             return null;
         }
 
-        private void SetupPreset(UiLayoutPreset preset)
+        private UiLayoutElement Instantiate(UiLayoutElement prefab, UiLayoutObject container)
         {
-            /*
-            GameObject gameObject = Resources.Load<GameObject>(preset.PrefabPath);
-            UiLayoutElement layoutElement = gameObject.GetComponent<UiLayoutElement>();
+            UiLayoutElement layoutObject = GameObject.Instantiate(prefab, container.RectTransform);
 
-            for (int n = 0; n < layoutElement.SignalsShow.Length; n++)
-            {
-                Debug.LogError("!!!" + layoutElement.SignalsShow[n] + " / " + gameObject);
+            SetupElement(layoutObject);
 
-                Signals.AddListener
-                (
-                    layoutElement.SignalsShow[n],
-                    () =>
-                    {
-                        Debug.LogError("OnSignal");
-                        Instantiate<UiLayoutElement>(layoutElement, RectTransform);
-                    }
-                );
-            }
-            */
+            return layoutObject;
         }
 
         /// <summary>
         /// Disables all mouse events.
         /// </summary>
         [UiLayoutMethod]
-        public void MouseDisable()
-        {
-        }
+        public void MouseDisable() { }
 
         /// <summary>
         /// Enables all mouse events if it was disabled before.
         /// </summary>
         [UiLayoutMethod]
-        public void MouseEnable()
-        {
-        }
+        public void MouseEnable() { UnityEngine.Debug.LogError("NNN"); }
     }
 }

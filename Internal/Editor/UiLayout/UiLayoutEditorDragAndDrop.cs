@@ -9,13 +9,13 @@ namespace UnityExpansionInternal.UiLayoutEditor
 {
     public class UiLayoutEditorDragAndDrop
     {
-        public event Action<UiLayoutPreset> OnSuccess;
+        public event Action<UiLayoutElement> OnSuccess;
 
         private UiLayoutEditor _layoutEditor;
         private EditorLayoutObjectTexture _preview;
         private EditorLayoutObjectText _message;
 
-        private UiLayoutPreset _preset;
+        private UiLayoutElement _prefab;
 
         private bool _isValid = false;
 
@@ -65,14 +65,13 @@ namespace UnityExpansionInternal.UiLayoutEditor
                         {
                             bool isUnique = true;
 
-                            _preset = new UiLayoutPreset();
-                            _preset.Prefab = layoutElement;
+                            _prefab = layoutElement;
 
                             if (_layoutEditor.Selection.Target != null)
                             {
-                                for (int i = 0; i < _layoutEditor.Selection.Target.Presets.Length; i++)
+                                for (int i = 0; i < _layoutEditor.Selection.Target.Prefabs.Count; i++)
                                 {
-                                    if (_layoutEditor.Selection.Target.Presets[i].Prefab == _preset.Prefab)
+                                    if (_layoutEditor.Selection.Target.Prefabs[i] == _prefab)
                                     {
                                         isUnique = false;
                                         break;
@@ -123,7 +122,7 @@ namespace UnityExpansionInternal.UiLayoutEditor
         {
             if (_isValid)
             {
-                OnSuccess(_preset);
+                OnSuccess(_prefab);
             }
 
             PreviewHide();
@@ -163,7 +162,7 @@ namespace UnityExpansionInternal.UiLayoutEditor
             _message.SetActive(false);
 
             _isValid = false;
-            _preset = null;
+            _prefab = null;
 
             DragAndDrop.visualMode = DragAndDropVisualMode.Generic;
         }

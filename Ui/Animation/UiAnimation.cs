@@ -100,6 +100,7 @@ namespace UnityExpansion.UI.Animation
             }
 
             OnComplete.InvokeIfNotNull(_activeAnimation);
+            Debug.LogError("OnComplete " + _activeAnimation.Name);
 
             IsPlaying = false;
             Time = 0;

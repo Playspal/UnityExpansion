@@ -37,7 +37,7 @@ namespace UnityExpansionInternal.UiLayoutEditor
             if(layoutElement.GetComponent<UiAnimation>() != null)
             {
                 BlockAnimation.SetActive(true);
-                BlockAnimation.SetAnimation(layoutElement.GetComponent<UiAnimation>());
+                BlockAnimation.SetAnimation(layoutElement, layoutElement.GetComponent<UiAnimation>());
             }
 
             string[] outputs = UnityExpansion.Utilities.UtilityReflection.GetMethodsWithAttribute(layoutElement, typeof(UiLayoutMethod));

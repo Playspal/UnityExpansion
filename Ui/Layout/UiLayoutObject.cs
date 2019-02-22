@@ -7,7 +7,6 @@ namespace UnityExpansion.UI
     /// Base class for all layout objects.
     /// Basically used to hierarchy and store persistant ID of any layout object.
     /// </summary>
-    [ExecuteInEditMode]
     [Serializable]
     public class UiLayoutObject : UiObject
     {

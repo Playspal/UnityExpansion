@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using UnityExpansion.Editor;
+using UnityExpansion.UI;
 using UnityExpansion.UI.Animation;
 
 namespace UnityExpansionInternal.UiLayoutEditor
@@ -30,11 +31,11 @@ namespace UnityExpansionInternal.UiLayoutEditor
             _title.X = 9;
         }
 
-        public void SetAnimation(UiAnimation uiAnimation)
+        public void SetAnimation(UiLayoutElement layoutElement, UiAnimation uiAnimation)
         {
             for(int i = 0; i < uiAnimation.AnimationClips.Count; i++)
             {
-                AddAnimation(uiAnimation.AnimationClips[i]);
+                AddAnimation(layoutElement, uiAnimation.AnimationClips[i]);
             }
 
             if (_items.Count > 0)
@@ -43,9 +44,9 @@ namespace UnityExpansionInternal.UiLayoutEditor
             }
         }
 
-        private void AddAnimation(UiAnimationClip clip)
+        private void AddAnimation(UiLayoutElement layoutElement, UiAnimationClip clip)
         {
-            NodeBlockAnimationItem item = new NodeBlockAnimationItem(Layout, Node, clip);
+            NodeBlockAnimationItem item = new NodeBlockAnimationItem(Layout, Node, layoutElement, clip);
             item.SetParent(this);
             item.Y = _items.Count * item.Height + _title.Y + _title.Height + 5;
 

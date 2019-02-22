@@ -27,7 +27,7 @@ public class InternalUiLayoutData : MonoBehaviour
         public NodeType Type = NodeType.Undefined;
 
         [SerializeField]
-        public UiLayoutPreset LayoutPreset;
+        public UiLayoutElement LayoutPrefab;
 
         [SerializeField]
         public int X;
