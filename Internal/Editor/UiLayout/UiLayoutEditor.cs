@@ -36,6 +36,8 @@ namespace UnityExpansionInternal.UiLayoutEditor
             _background = new UiLayoutEditorBackground(this);
 
             Selection = new UiLayoutEditorSelection();
+            Selection.OnChanged += OnSelectionChanged;
+
             Curves = new UiLayoutEditorCurves();
             Nodes = new Nodes();
 
@@ -51,8 +53,12 @@ namespace UnityExpansionInternal.UiLayoutEditor
 
         protected override void OnGUI()
         {
+            Selection.Update();
+
             if (Selection.Target == null)
             {
+                _message.X = -CanvasX;
+                _message.Y = WindowHeight / 2 - _message.Height / 2 - CanvasY;
                 _message.SetText("No UiLayout selected");
                 _message.SetActive(true);
 
@@ -70,30 +76,43 @@ namespace UnityExpansionInternal.UiLayoutEditor
             Curves.RenderFrontground();
         }
 
+        private void OnSelectionChanged()
+        {
+            Refresh();
+        }
+
         private void Refresh()
         {
-            if(Selection.Target == null)
+            Nodes.Clear();
+
+            if (Selection.Target == null)
             {
                 return;
             }
-
-            ValidateObjects();
-
-            Nodes.Clear();
 
             //
             string[] layoutMethods = UtilityReflection.GetMethodsWithAttribute(Selection.Target, typeof(UiLayoutMethod));
             
             for (int i = 0; i < layoutMethods.Length; i++)
             {
-                SetupSystemMethod(layoutMethods[i]);
+                UiLayoutMethod attribute = UtilityReflection.GetMethodAttribute(Selection.Target, layoutMethods[i], typeof(UiLayoutMethod)) as UiLayoutMethod;
+
+                if(!attribute.ExcludeFromLayoutObject)
+                {
+                    SetupSystemMethod(layoutMethods[i]);
+                }
             }
 
             string[] layoutEvents = UtilityReflection.GetEventsWithAttribute(Selection.Target, typeof(UiLayoutEvent));
 
             for(int i = 0; i < layoutEvents.Length; i++)
             {
-                SetupSystemEvent(layoutEvents[i]);
+                UiLayoutEvent attribute = UtilityReflection.GetEventAttribute(Selection.Target, layoutEvents[i], typeof(UiLayoutEvent)) as UiLayoutEvent;
+
+                if (!attribute.ExcludeFromLayoutObject)
+                {
+                    SetupSystemEvent(layoutEvents[i]);
+                }
             }
 
             for (int i = 0; i < Selection.Data.Nodes.Count; i++)
@@ -152,45 +171,10 @@ namespace UnityExpansionInternal.UiLayoutEditor
             }
         }
 
-        private void ValidateObjects()
-        {
-            CheckID(Selection.Target);
-
-            for(int i = 0; i < Selection.Target.Prefabs.Count; i++)
-            {
-                ValidateObject(Selection.Target.Prefabs[i]);
-            }
-
-            // TODO: remove presets with missing prefabs
-            // TODO: actions with missing prefabs
-        }
-
-        private void ValidateObject(UiLayoutObject layoutObject)
-        {
-            if(layoutObject == null)
-            {
-                return;
-            }
-
-            CheckID(layoutObject);
-
-            for (int i = 0; i < layoutObject.transform.childCount; i++)
-            {
-                ValidateObject(layoutObject.transform.GetChild(i).GetComponent<UiLayoutObject>());
-            }
-        }
-
-        private void CheckID(UiLayoutObject layoutObject)
-        {
-            if (string.IsNullOrEmpty(layoutObject.UniqueID))
-            {
-                UiLayoutEditorUtils.LayoutObjectGenerateUniqueID(layoutObject);
-            }
-        }
-        
+      
         private void SetupSystemMethod(string methodName)
         {
-            string id = Selection.Target.UniqueID + "." + methodName;
+            string id = Selection.Target.PersistantID + "." + methodName;
 
             InternalUiLayoutData.NodeData nodeData = Selection.Data.Find(id);
 
@@ -207,7 +191,7 @@ namespace UnityExpansionInternal.UiLayoutEditor
 
         private void SetupSystemEvent(string eventName)
         {
-            string id = Selection.Target.UniqueID + "." + eventName;
+            string id = Selection.Target.PersistantID + "." + eventName;
 
             InternalUiLayoutData.NodeData nodeData = Selection.Data.Find(id);
 
@@ -243,12 +227,12 @@ namespace UnityExpansionInternal.UiLayoutEditor
 
             if (layoutElement != null)
             {
-                InternalUiLayoutData.NodeData nodeData = Selection.Data.Find(layoutElement.UniqueID);
+                InternalUiLayoutData.NodeData nodeData = Selection.Data.Find(layoutElement.PersistantID.Value);
 
                 if(nodeData == null)
                 {
                     nodeData = Selection.Data.CreateNodeDataLayoutElement();
-                    nodeData.ID = layoutElement.UniqueID;
+                    nodeData.ID = layoutElement.PersistantID.Value;
                     nodeData.X = parentNode.X;
                     nodeData.Y = parentNode.Y + 100;
 
@@ -274,7 +258,7 @@ namespace UnityExpansionInternal.UiLayoutEditor
             //GameObject gameObject = AssetDatabase.LoadAssetAtPath<GameObject>(layoutPreset.AssetPath);
             //UiLayoutElement element = gameObject.GetComponent<UiLayoutElement>();
 
-            nodeData.ID = layoutElement.UniqueID;
+            nodeData.ID = layoutElement.PersistantID.Value;
             nodeData.LayoutPrefab = layoutElement;
             nodeData.X = Mouse.X - CanvasX;
             nodeData.Y = Mouse.Y - CanvasY;

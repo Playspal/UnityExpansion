@@ -7,7 +7,7 @@ namespace UnityExpansionInternal.UiLayoutEditor
     {
         private Node _parentNode;
 
-        private EditorLayoutObjectTexture _textureBackground;
+        private EditorLayoutObjectTextureCachable _textureBackground;
         private EditorLayoutObjectText _label;
 
         public NodeBlockHeader(EditorLayout layout, Node node) : base(layout, node.Width - 2, 30)
@@ -16,10 +16,15 @@ namespace UnityExpansionInternal.UiLayoutEditor
 
             _parentNode = node;
 
-            _textureBackground = new EditorLayoutObjectTexture(layout, Width, Height);
-            _textureBackground.Fill(node.ColorMain);
-            _textureBackground.DrawBorderBottom(1, node.ColorDark);
+            _textureBackground = new EditorLayoutObjectTextureCachable(layout, Width, Height, "node-header-" + node.ColorMain.ToString());
             _textureBackground.SetParent(this);
+
+            if (!_textureBackground.LoadFromCache())
+            {
+                _textureBackground.Fill(node.ColorMain);
+                _textureBackground.DrawBorderBottom(1, node.ColorDark);
+                _textureBackground.SaveToCache();
+            }
 
             _label = new EditorLayoutObjectText(layout, Width - 18, Height);
             _label.SetFontStyle(FontStyle.Bold);

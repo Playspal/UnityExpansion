@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 
 using UnityEngine;
-using UnityExpansion.UI.Animation;
 using UnityExpansion.Utilities;
 
 namespace UnityExpansion.UI
@@ -12,7 +10,7 @@ namespace UnityExpansion.UI
     /// Main ui layout class.
     /// Provides functionality of ui flow made in visual editor.
     /// </summary>
-    public class UiLayout : UiLayoutObject
+    public class UiLayout : UiLayoutElement
     {
         [Serializable]
         public class UiAction
@@ -27,7 +25,6 @@ namespace UnityExpansion.UI
             {
                 SenderID = senderID;
                 SenderEvent = senderMethod;
-
                 TargetID = targetID;
                 TargetMethod = targetMethod;
             }
@@ -44,14 +41,14 @@ namespace UnityExpansion.UI
             }
         }
 
-        // Most methods and event can be automatically used in UiLayoutEditor by attributes,
-        // but some system methods should be predefined because of specific.
-        // Normally you don't need to care about it. Just bit of explanation.
-        public const string PREDEFINED_METHOD_ANIMATION_PLAY = "__animation.Play";
-        public const string PREDEFINED_EVENT_ANIMATION_ON_COMPLETE = "__animation.OnComplete";
-
         [UiLayoutEvent]
         public event Action OnStart;
+
+        [UiLayoutEvent]
+        public event Action OnTest1;
+
+        [UiLayoutEvent]
+        public event Action OnTest2;
 
         /// <summary>
         /// List of layout elements attached to this layout.
@@ -64,6 +61,8 @@ namespace UnityExpansion.UI
         /// </summary>
         [SerializeField]
         public UiAction[] Actions = new UiAction[0];
+
+        private Dictionary<string, object> _registeredObjects = new Dictionary<string, object>();
 
         public void ActionAdd(string senderID, string senderMethod, string targetID, string targetMethod)
         {
@@ -111,6 +110,15 @@ namespace UnityExpansion.UI
 
             SetupElement(this);
 
+            // Register prefabs
+            for(int i = 0; i < Prefabs.Count; i++)
+            {
+                UiLayoutElement instance = GameObject.Instantiate(Prefabs[i], RectTransform);
+                instance.SetActive(false);
+
+                SetupElement(instance);
+            }
+
             OnStart.InvokeIfNotNull();
         }
 
@@ -118,127 +126,61 @@ namespace UnityExpansion.UI
         {
             base.Update();
 
-            if(Input.GetKeyUp(KeyCode.Space))
+            if (Input.GetKeyUp(KeyCode.Alpha1))
             {
-                OnStart.InvokeIfNotNull();
+                OnTest1.InvokeIfNotNull();
+            }
+
+            if (Input.GetKeyUp(KeyCode.Alpha2))
+            {
+                OnTest2.InvokeIfNotNull();
             }
         }
 
-        private void SetupElement(UiLayoutObject layoutObject)
+        private void SetupElement(UiLayoutElement layoutElement)
         {
-            UnityEngine.Debug.LogError("SetupElement > " + layoutObject.name);
+            // If object have PersistantID than it may be used in ui flow
+            List<CommonPair<string, object>> objectsWithPersistantID = new List<CommonPair<string, object>>();
 
-            UiAnimation animation = layoutObject.GetComponent<UiAnimation>();
-
-            for (int i = 0; i < Actions.Length; i++)
-            {
-                if(Actions[i].SenderID == layoutObject.UniqueID)
-                {
-                    SetupElementEventHandler(layoutObject, Actions[i]);
-                }
-
-                if(animation != null)
-                {
-                    for(int n = 0; n < animation.AnimationClips.Count; n++)
-                    {
-                        UiAnimationClip animationClip = animation.AnimationClips[n];
-
-                        if (Actions[i].SenderID == layoutObject.UniqueID + "." + animationClip.ID)
-                        {
-                            SetupAnimationHandler(layoutObject, animation, Actions[i]);
-                        }
-                    }
-                }
-            }
-            
-        }
-
-        private void SetupElementEventHandler(UiLayoutObject layoutObject, UiAction action)
-        {
-            UtilityReflection.AddEventHandler
+            // Find all objects with PersistantID and register them.
+            PersistantIDExplorer.Explore
             (
-                layoutObject,
-                action.SenderEvent,
-                () =>
-                {
-                    InvokeMethod(action.TargetID, action.TargetMethod);
-                }
+                layoutElement.gameObject,
+                SetupObjectWithPersistandID
             );
         }
 
-        private void SetupAnimationHandler(UiLayoutObject layoutObject, UiAnimation animation, UiAction action)
+        private void SetupObjectWithPersistandID(object targetObject, PersistantID persistantID)
         {
-            UnityEngine.Debug.LogError(" >> SetupAnimationHandler");
+            string id = persistantID.ToString();
 
-            animation.OnComplete += (UiAnimationClip clip) =>
+            for (int i = 0; i < Actions.Length; i++)
             {
-                UnityEngine.Debug.LogError(" >> " + layoutObject.name + " > " + layoutObject.UniqueID + "." + clip.ID);
-                if (action.SenderID == layoutObject.UniqueID + "." + clip.ID)
+                if (Actions[i].SenderID == id)
                 {
-                    InvokeMethod(action.TargetID, action.TargetMethod);
-                }
-            };
-        }
-
-        private void InvokeMethod(string uniqueID, string methodName)
-        {
-            UiLayoutObject layoutObject = FindObjectInInstances(uniqueID);
-
-            if (layoutObject == null)
-            {
-                UiLayoutElement layoutPrefab = FindPrefab(uniqueID);
-                
-                if (layoutPrefab != null)
-                {
-                    // TODO: use container here instead of "this"
-                    layoutObject = Instantiate(layoutPrefab, this);
+                    SetupEventHandler(targetObject, Actions[i]);
                 }
             }
 
-            if(layoutObject != null)
-            {
-                UtilityReflection.ExecuteMethod(layoutObject, methodName);
-                
-            }
-
-            UnityEngine.Debug.LogError("methodName > " + methodName);
+            _registeredObjects.Add(id.ToString(), targetObject);
         }
 
-        private UiLayoutElement FindPrefab(string uniqueID)
+        private void SetupEventHandler(object targetObject, UiAction action)
         {
-            for (int i = 0; i < Prefabs.Count; i++)
-            {
-                if (Prefabs[i].UniqueID == uniqueID)
-                {
-                    return Prefabs[i];
-                }
-            }
-
-            return null;
+            UtilityReflection.AddEventHandler
+            (
+                targetObject,
+                action.SenderEvent,
+                () => InvokeMethod(action.TargetID, action.TargetMethod)
+            );
         }
 
-        private UiLayoutObject FindObjectInInstances(string uniqueID)
+        private void InvokeMethod(string persistantID, string methodName)
         {
-            UiLayoutObject[] layoutObjects = GetComponentsInChildren<UiLayoutObject>();
-
-            for (int i = 0; i < layoutObjects.Length; i++)
+            if (_registeredObjects.ContainsKey(persistantID))
             {
-                if (layoutObjects[i].UniqueID == uniqueID)
-                {
-                    return layoutObjects[i];
-                }
+                UtilityReflection.ExecuteMethod(_registeredObjects[persistantID], methodName);
             }
-
-            return null;
-        }
-
-        private UiLayoutElement Instantiate(UiLayoutElement prefab, UiLayoutObject container)
-        {
-            UiLayoutElement layoutObject = GameObject.Instantiate(prefab, container.RectTransform);
-
-            SetupElement(layoutObject);
-
-            return layoutObject;
         }
 
         /// <summary>

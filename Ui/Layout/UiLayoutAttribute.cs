@@ -14,9 +14,16 @@ namespace UnityExpansion.UI
         public string Group = UiLayoutAttribute.GROUP_CUSTOM;
 
         /// <summary>
-        /// Order in group.
+        /// Methods in editor block sorted by weight.
+        /// Bigger weight - lower position.
         /// </summary>
-        public int Order = 0;
+        public int Weight = 0;
+
+        /// <summary>
+        /// If true method will be not visible as separated block in editor.
+        /// Normally you don't need to change this field.
+        /// </summary>
+        public bool ExcludeFromLayoutObject = false;
     }
 
     /// <summary>
@@ -31,14 +38,29 @@ namespace UnityExpansion.UI
         public string Group = UiLayoutAttribute.GROUP_CUSTOM;
 
         /// <summary>
-        /// Order in group.
+        /// Events in editor block sorted by weight.
+        /// Bigger weight - lower position.
         /// </summary>
-        public int Order = 0;
+        public int Weight = 0;
+
+        /// <summary>
+        /// If true event will be not visible as separated block in editor.
+        /// Normally you don't need to change this field.
+        /// </summary>
+        public bool ExcludeFromLayoutObject = false;
     }
 
     public class UiLayoutAttribute : Attribute
     {
+        /// <summary>
+        /// Main group name.
+        /// It's not reccomended to use this group for custom methods.
+        /// </summary>
         public const string GROUP_MAIN = "Main";
+
+        /// <summary>
+        /// Default group name.
+        /// </summary>
         public const string GROUP_CUSTOM = "Custom methods and events";
     }
 }

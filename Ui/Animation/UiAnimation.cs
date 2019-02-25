@@ -39,24 +39,24 @@ namespace UnityExpansion.UI.Animation
         private UiAnimationClip _activeAnimation = null;
 
         /// <summary>
-        /// Searches animation clip with specified name.
+        /// Searches animation clip with specified name or id.
         /// </summary>
-        /// <param name="name">The name of animation clip</param>
-        /// <returns>Animation clip of null if not found</returns>
-        public UiAnimationClip GetAnimationClipByName(string name)
+        /// <param name="clipNameOrID">The name or id of animation clip</param>
+        /// <returns>Animation clip or null if not found</returns>
+        public UiAnimationClip GetAnimationClip(string clipNameOrID)
         {
-            return AnimationClips.Find(x => x.Name == name);
+            return AnimationClips.Find(x => x.Name == clipNameOrID || x.ID == clipNameOrID);
         }
 
         /// <summary>
-        /// Plays the animation clip with specified name from the beginning.
+        /// Plays the animation clip with specified name or id from the beginning.
         /// </summary>
-        /// <param name="name">The name of animation clip</param>
-        public void Play(string name)
+        /// <param name="nameOrID">The name or id of animation clip</param>
+        public void Play(string clipNameOrID)
         {
-            UiAnimationClip clip = GetAnimationClipByName(name);
+            UiAnimationClip clip = GetAnimationClip(clipNameOrID);
 
-            if(clip != null)
+            if (clip != null)
             {
                 Play(clip);
             }
@@ -100,12 +100,20 @@ namespace UnityExpansion.UI.Animation
             }
 
             OnComplete.InvokeIfNotNull(_activeAnimation);
-            Debug.LogError("OnComplete " + _activeAnimation.Name);
 
             IsPlaying = false;
             Time = 0;
 
             _activeAnimation = null;
+        }
+
+        // Initialization
+        private void Awake()
+        {
+            for (int i = 0; i < AnimationClips.Count; i++)
+            {
+                AnimationClips[i].SetAnimationController(this);
+            }
         }
 
         // Main iteration

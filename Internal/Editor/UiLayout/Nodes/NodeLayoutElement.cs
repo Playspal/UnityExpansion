@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityExpansion.Editor;
 using UnityExpansion.UI;
 using UnityExpansion.UI.Animation;
+using UnityExpansion.Utilities;
 
 namespace UnityExpansionInternal.UiLayoutEditor
 {
@@ -17,7 +18,7 @@ namespace UnityExpansionInternal.UiLayoutEditor
 
         private List<NodeBlockGroup> _groups = new List<NodeBlockGroup>();
 
-        public NodeLayoutElement(InternalUiLayoutData.NodeData nodeData, EditorLayout layout) : base(nodeData, layout, 300, 90)
+        public NodeLayoutElement(InternalUiLayoutData.NodeData nodeData, EditorLayout layout) : base(nodeData, layout, 300, 1)
         {
             BlockHeader = new NodeBlockHeader(layout, this);
             BlockHeader.SetParent(this);
@@ -32,7 +33,7 @@ namespace UnityExpansionInternal.UiLayoutEditor
         {
             LayoutElement = layoutElement;
 
-            BlockHeader.SetTitle(LayoutElement.name + " " + layoutElement.UniqueID + " " + layoutElement.GetInstanceID().ToString());
+            BlockHeader.SetTitle(LayoutElement.name);
 
             if(layoutElement.GetComponent<UiAnimation>() != null)
             {
@@ -40,24 +41,24 @@ namespace UnityExpansionInternal.UiLayoutEditor
                 BlockAnimation.SetAnimation(layoutElement, layoutElement.GetComponent<UiAnimation>());
             }
 
-            string[] outputs = UnityExpansion.Utilities.UtilityReflection.GetMethodsWithAttribute(layoutElement, typeof(UiLayoutMethod));
+            string[] outputs = UtilityReflection.GetMethodsWithAttribute(layoutElement, typeof(UiLayoutMethod));
 
             for (int i = 0; i < outputs.Length; i++)
             {
-                UiLayoutMethod a = UnityExpansion.Utilities.UtilityReflection.GetMethodAttribute(layoutElement, outputs[i], typeof(UiLayoutMethod)) as UiLayoutMethod;
+                UiLayoutMethod a = UtilityReflection.GetMethodAttribute(layoutElement, outputs[i], typeof(UiLayoutMethod)) as UiLayoutMethod;
                 NodeBlockGroup blockGroup = GetGroup(a.Group);
 
-                blockGroup.AddInput(LayoutElement.UniqueID, outputs[i], a.Order);
+                blockGroup.AddInput(LayoutElement.PersistantID.Value, outputs[i], a.Weight);
             }
 
-            string[] inputs = UnityExpansion.Utilities.UtilityReflection.GetEventsWithAttribute(layoutElement, typeof(UiLayoutEvent));
+            string[] inputs = UtilityReflection.GetEventsWithAttribute(layoutElement, typeof(UiLayoutEvent));
 
             for (int i = 0; i < inputs.Length; i++)
             {
-                UiLayoutEvent a = UnityExpansion.Utilities.UtilityReflection.GetEventAttribute(layoutElement, inputs[i], typeof(UiLayoutEvent)) as UiLayoutEvent;
+                UiLayoutEvent a = UtilityReflection.GetEventAttribute(layoutElement, inputs[i], typeof(UiLayoutEvent)) as UiLayoutEvent;
                 NodeBlockGroup blockGroup = GetGroup(a.Group);
 
-                blockGroup.AddOutput(LayoutElement.UniqueID, inputs[i], a.Order);
+                blockGroup.AddOutput(LayoutElement.PersistantID.Value, inputs[i], a.Weight);
             }
 
             Refresh();

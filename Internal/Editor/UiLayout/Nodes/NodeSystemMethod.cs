@@ -18,7 +18,7 @@ namespace UnityExpansionInternal.UiLayoutEditor
 
         public void SetData(UiLayout uiLayout, string methodName)
         {
-            ConnectorInput.SetData(uiLayout.UniqueID, methodName);
+            ConnectorInput.SetData(uiLayout.PersistantID.Value, methodName);
             SetTitle(methodName);
         }
     }

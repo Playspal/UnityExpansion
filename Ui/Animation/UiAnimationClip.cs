@@ -9,9 +9,19 @@ namespace UnityExpansion.UI.Animation
     public class UiAnimationClip
     {
         /// <summary>
+        /// Invokes after animation clip is finished or stopped.
+        /// </summary>
+        public event Action OnComplete;
+
+        /// <summary>
         /// Unique ID of animation clip.
         /// </summary>
-        public string ID { get { return _id; } }
+        public PersistantID ID { get { return _id; } }
+
+        /// <summary>
+        /// Parent animation object.
+        /// </summary>
+        public UiAnimation Animation;
 
         /// <summary>
         /// The name.
@@ -52,14 +62,11 @@ namespace UnityExpansion.UI.Animation
         // Unique ID of animation clip.
         //[SerializeField, HideInInspector]
         [SerializeField]
-        private string _id;
+        private PersistantID _id;
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="UiAnimationClip"/> class.
-        /// </summary>
-        public UiAnimationClip()
+        public void SetAnimationController(UiAnimation animation)
         {
-            _id = "a" + new System.Random().Next(1000000, 9999999).ToString();
+            Animation = animation;
         }
 
         /// <summary>
@@ -76,6 +83,17 @@ namespace UnityExpansion.UI.Animation
             }
 
             return output;
+        }
+
+        /// <summary>
+        /// Plays this clip.
+        /// </summary>
+        public void Play()
+        {
+            if(Animation != null)
+            {
+                Animation.Play(this);
+            }
         }
 
         /// <summary>
@@ -104,6 +122,7 @@ namespace UnityExpansion.UI.Animation
         public void RewindToEnd()
         {
             Rewind(GetDuration());
+            OnComplete.InvokeIfNotNull();
         }
     }
 }

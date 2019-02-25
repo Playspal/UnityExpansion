@@ -6,17 +6,22 @@ namespace UnityExpansionInternal.UiLayoutEditor
 {
     public class NodeSystem : Node
     {
-        private EditorLayoutObjectTexture _textureHeader;
+        private EditorLayoutObjectTextureCachable _textureHeader;
         private EditorLayoutObjectText _title;
         private NodeConnector _connector;
 
         public NodeSystem(InternalUiLayoutData.NodeData nodeData, EditorLayout layout) : base(nodeData, layout, 200, 50)
         {
-            _textureBackground = new EditorLayoutObjectTexture(layout, Width - 2, 6);
-            _textureBackground.X = _textureBackground.Y = 1;
-            _textureBackground.Fill(ColorMain);
-            _textureBackground.DrawBorderBottom(1, ColorDark);
-            _textureBackground.SetParent(this);
+            _textureHeader = new EditorLayoutObjectTextureCachable(layout, Width - 2, 6, "node-system-header");
+            _textureHeader.X = _textureHeader.Y = 1;
+            _textureHeader.SetParent(this);
+
+            if (!_textureHeader.LoadFromCache())
+            {
+                _textureHeader.Fill(ColorMain);
+                _textureHeader.DrawBorderBottom(1, ColorDark);
+                _textureHeader.SaveToCache();
+            }
 
             _title = new EditorLayoutObjectText(layout, Width, Height - 6);
             _title.SetAlignment(TextAnchor.MiddleCenter);

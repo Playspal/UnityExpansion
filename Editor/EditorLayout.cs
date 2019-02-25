@@ -1,6 +1,7 @@
 ﻿using System;
 
 using UnityEditor;
+using UnityEngine;
 
 namespace UnityExpansion.Editor
 {
@@ -18,12 +19,22 @@ namespace UnityExpansion.Editor
         public EditorLayoutObjects Objects { get; private set; }
         public EditorLayoutObject ObjectDragged { get; set; }
 
+        private double _lastRepaintTime;
+
         public virtual void Initialization()
         {
             UpdateSize();
 
             Mouse = new EditorLayoutMouse(this);
             Objects = new EditorLayoutObjects(this);
+        }
+
+        protected virtual void OnDestroy()
+        {
+            Objects.DestroyAllObjects();
+
+            EditorLayoutObjectTextureCachable.ClearCache();
+            Resources.UnloadUnusedAssets();
         }
 
         protected virtual void OnGUI()
@@ -34,6 +45,8 @@ namespace UnityExpansion.Editor
 
             Objects.Render();
             Objects.Update();
+
+            _lastRepaintTime = EditorApplication.timeSinceStartup;
         }
 
         protected virtual void Update()

@@ -4,25 +4,43 @@ namespace UnityExpansion.Editor
 {
     public class EditorLayoutObjectTexture : EditorLayoutObject
     {
-        public Texture2D Texture { get; private set; }
-
+        public Texture2D Texture { get; protected set; }
+        public int Scale { get; protected set; }
         public EditorLayoutObjectTexture(EditorLayout layout, int width, int height) : base(layout, width, height)
         {
-            Texture = new Texture2D(Width, Height);
+            Scale = 1;
+            Clear();
+        }
+
+        public override void Destroy()
+        {
+            base.Destroy();
+
+            Texture2D.DestroyImmediate(Texture, true);
+        }
+
+        public void Clear()
+        {
+            Texture = new Texture2D(Width * Scale, Height * Scale);
+        }
+
+        public void SetScale(int value)
+        {
+            Scale = value;
+            Clear();
         }
 
         public override void SetSize(int width, int height)
         {
             base.SetSize(width, height);
-
-            Texture = new Texture2D(Width, Height);
+            Clear();
         }
 
         public override void Render()
         {
             base.Render();
 
-            Rect bounds = new Rect(GetPositionGlobalX(), GetPositionGlobalY(), Width, Height);
+            Rect bounds = new Rect(GlobalX, GlobalY, Width, Height);
             GUI.DrawTexture(bounds, Texture, ScaleMode.StretchToFill, true, 1f);
         }
 
@@ -31,7 +49,7 @@ namespace UnityExpansion.Editor
         /// </summary>
         public void Fill(Color color)
         {
-            Texture.DrawRect(0, 0, Width, Height, color);
+            Texture.DrawRect(0, 0, Texture.width, Texture.height, color);
         }
 
         /// <summary>
@@ -50,7 +68,7 @@ namespace UnityExpansion.Editor
         /// </summary>
         public void DrawBorderTop(int thickness, Color color)
         {
-            Texture.DrawRect(0, Height - thickness, Width, thickness, color);
+            Texture.DrawRect(0, Texture.height - thickness, Texture.width, thickness, color);
         }
 
         /// <summary>
@@ -58,7 +76,7 @@ namespace UnityExpansion.Editor
         /// </summary>
         public void DrawBorderBottom(int thickness, Color color)
         {
-            Texture.DrawRect(0, 0, Width, thickness, color);
+            Texture.DrawRect(0, 0, Texture.width, thickness, color);
         }
 
         /// <summary>
@@ -66,7 +84,7 @@ namespace UnityExpansion.Editor
         /// </summary>
         public void DrawBorderLeft(int thickness, Color color)
         {
-            Texture.DrawRect(0, 0, thickness, Height, color);
+            Texture.DrawRect(0, 0, thickness, Texture.height, color);
         }
 
         /// <summary>
@@ -74,7 +92,7 @@ namespace UnityExpansion.Editor
         /// </summary>
         public void DrawBorderRight(int thickness, Color color)
         {
-            Texture.DrawRect(Width - thickness, 0, thickness, Height, color);
+            Texture.DrawRect(Texture.width - thickness, 0, thickness, Texture.height, color);
         }
 
         /// <summary>
@@ -90,7 +108,7 @@ namespace UnityExpansion.Editor
         /// </summary>
         public void DrawRhombus(int x, int y, int radius, Color color)
         {
-            Texture.DrawRhombus(x, y, radius, color);
+            Texture.DrawRhombus(x * Scale, y * Scale, radius * Scale, color);
         }
 
         /// <summary>
@@ -98,7 +116,7 @@ namespace UnityExpansion.Editor
         /// </summary>
         public void DrawCircle(int x, int y, int radius, Color color)
         {
-            Texture.DrawCircle(x, y, radius, color);
+            Texture.DrawCircle(x * Scale, y * Scale, radius * Scale, color);
         }
     }
 }

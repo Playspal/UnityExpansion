@@ -1,4 +1,5 @@
-﻿using UnityEditor;
+﻿using System;
+using UnityEditor;
 using UnityEngine;
 using UnityExpansion.UI;
 
@@ -6,10 +7,12 @@ namespace UnityExpansionInternal.UiLayoutEditor
 {
     public class UiLayoutEditorSelection
     {
+        public event Action OnChanged;
+
         public UiLayout Target { get; private set; }
         public InternalUiLayoutData Data { get; private set; }
 
-        private Object _selection = null;
+        private GameObject _selection = null;
 
         public UiLayoutEditorSelection()
         {
@@ -18,7 +21,7 @@ namespace UnityExpansionInternal.UiLayoutEditor
 
         public void Update()
         {
-            if(Selection.activeGameObject != _selection)
+            if (Selection.activeGameObject != _selection)
             {
                 if(Selection.activeGameObject == null || Selection.activeGameObject.GetComponent<UiLayout>() == null)
                 {
@@ -33,6 +36,8 @@ namespace UnityExpansionInternal.UiLayoutEditor
                 }
 
                 _selection = Selection.activeGameObject;
+
+                OnChanged.InvokeIfNotNull();
             }
         }
     }

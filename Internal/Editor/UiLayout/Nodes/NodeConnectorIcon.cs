@@ -8,24 +8,26 @@ namespace UnityExpansionInternal.UiLayoutEditor
     public class NodeConnectorIcon : EditorLayoutObject
     {
         public readonly NodeConnector Connector;
+        public readonly Node Node;
 
         public Color ColorConnected { get; private set; }
         public Color ColorCurrent { get; private set; }
 
-        protected EditorLayoutObjectTexture _texture;
+        protected EditorLayoutObjectTextureCachable _texture;
 
         private bool _curveDragging = false;
 
         public NodeConnectorIcon(EditorLayout layout, Node node, NodeConnector connector) : base(layout, 15, 15)
         {
             Connector = connector;
+            Node = node;
 
             ColorConnected = node.ColorMain;
 
-            _texture = new EditorLayoutObjectTexture(layout, Width, Height);
-            _texture.Fill(new Color(0, 0, 0, 0));
-            _texture.DrawRhombus(7, 7, 9 , node.ColorBackground);
+            _texture = new EditorLayoutObjectTextureCachable(layout, Width, Height, "node-connector-raw");
             _texture.SetParent(this);
+
+            ResetColor();
 
             Layout.Mouse.OnPress += MouseHandlerPress;
             Layout.Mouse.OnRelease += MouseHandlerRelease;
@@ -44,13 +46,22 @@ namespace UnityExpansionInternal.UiLayoutEditor
         public void SetColor(Color color)
         {
             ColorCurrent = color;
-            _texture.DrawRhombus(7, 7, 6, ColorCurrent);
+
+            _texture.SetCacheID("node-connector-" + color.ToString());
+
+            if(!_texture.LoadFromCache())
+            {
+                _texture.SetSize(_texture.Width, _texture.Height);
+                _texture.Fill(new Color(0, 0, 0, 0));
+                _texture.DrawRhombus(7, 7, 9, Node.ColorBackground);
+                _texture.DrawRhombus(7, 7, 6, color);
+                _texture.SaveToCache();
+            }
         }
 
         public void ResetColor()
         {
-            ColorCurrent = Color.white;
-            _texture.DrawRhombus(7, 7, 6, ColorCurrent);
+            SetColor(Color.white);
         }
 
         public void StartConnectionDrag()
@@ -66,12 +77,22 @@ namespace UnityExpansionInternal.UiLayoutEditor
         public override void Render()
         {
             base.Render();
+            RenderCurve();
+        }
 
-            if(_curveDragging)
+        public override void RenderOntsideOfScreen()
+        {
+            base.RenderOntsideOfScreen();
+            RenderCurve();
+        }
+
+        private void RenderCurve()
+        {
+            if (_curveDragging)
             {
                 RenderCurveToMouse();
             }
-            else if(Connector.ConnectorType == NodeConnector.Type.Output && Connector.Connected != null)
+            else if (Connector.ConnectorType == NodeConnector.Type.Output && Connector.Connected != null)
             {
                 RenderCurveToConnection();
             }
@@ -90,15 +111,15 @@ namespace UnityExpansionInternal.UiLayoutEditor
         {
             RenderCurveTo
             (
-                Connector.Connected.Icon.GetPositionGlobalX() + Connector.Connected.Icon.Width / 2,
-                Connector.Connected.Icon.GetPositionGlobalY() + Connector.Connected.Icon.Height / 2
+                Connector.Connected.Icon.GlobalX + Connector.Connected.Icon.Width / 2,
+                Connector.Connected.Icon.GlobalY + Connector.Connected.Icon.Height / 2
             );
         }
 
         private void RenderCurveTo(int toX, int toY)
         {
-            int fromX = GetPositionGlobalX() + Width / 2;
-            int fromY = GetPositionGlobalY() + Height / 2;
+            int fromX = GlobalX + Width / 2;
+            int fromY = GlobalY + Height / 2;
 
             ((UiLayoutEditor)Layout).Curves.AddToFrontground(UiLayoutEditorCurve.Type.Horizontal, fromX, fromY, toX, toY, 3, ColorCurrent);
         }

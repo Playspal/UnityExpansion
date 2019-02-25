@@ -20,7 +20,7 @@ namespace UnityExpansionInternal.UiLayoutEditor
         public List<NodeConnectorInput> Input { get; private set; }
         public List<NodeConnectorOutput> Output { get; private set; }
 
-        protected EditorLayoutObjectTexture _textureBackground;
+        protected EditorLayoutObjectTextureCachable _textureBackground;
 
         private List<NodeLink> _links = new List<NodeLink>();
 
@@ -37,10 +37,15 @@ namespace UnityExpansionInternal.UiLayoutEditor
             ColorBackground = Color.red.Parse(UiLayoutEditorConfig.COLOR_NODE_BACKGROUND);
             ColorBackgroundBorder = Color.red.Parse(UiLayoutEditorConfig.COLOR_NODE_BACKGROUND_BORDER);
 
-            _textureBackground = new EditorLayoutObjectTexture(layout, Width, Height);
-            _textureBackground.Fill(ColorBackground);
-            _textureBackground.DrawBorder(1, ColorBackgroundBorder);
+            _textureBackground = new EditorLayoutObjectTextureCachable(layout, Width, Height, "node-background");
             _textureBackground.SetParent(this);
+
+            if(!_textureBackground.LoadFromCache())
+            {
+                _textureBackground.Fill(ColorBackground);
+                _textureBackground.DrawBorder(1, ColorBackgroundBorder);
+                _textureBackground.SaveToCache();
+            }
 
             SetupColors();
         }
@@ -98,8 +103,8 @@ namespace UnityExpansionInternal.UiLayoutEditor
 
         protected void RenderCurveTo(int toX, int toY)
         {
-            int fromX = GetPositionGlobalX() + Width / 2;
-            int fromY = GetPositionGlobalY() + Height;
+            int fromX = GlobalX + Width / 2;
+            int fromY = GlobalY + Height;
 
             ((UiLayoutEditor)Layout).Curves.AddToBackground(UiLayoutEditorCurve.Type.Vertical, fromX, fromY, toX, toY, 5, ColorBackground);
         }
@@ -109,8 +114,13 @@ namespace UnityExpansionInternal.UiLayoutEditor
             base.SetSize(width, height);
 
             _textureBackground.SetSize(Width, Height);
-            _textureBackground.Fill(ColorBackground);
-            _textureBackground.DrawBorder(1, ColorBackgroundBorder);
+
+            if (!_textureBackground.LoadFromCache())
+            {
+                _textureBackground.Fill(ColorBackground);
+                _textureBackground.DrawBorder(1, ColorBackgroundBorder);
+                _textureBackground.SaveToCache();
+            }
         }
 
         public override void Render()

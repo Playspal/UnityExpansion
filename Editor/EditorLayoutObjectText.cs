@@ -10,6 +10,9 @@ namespace UnityExpansion.Editor
         private Color _color = Color.black;
         private FontStyle _fontStyle = FontStyle.Normal;
         private TextAnchor _aligment = TextAnchor.UpperLeft;
+        private GUIStyle _style;
+
+        private bool _styleUpdated;
 
         public EditorLayoutObjectText(EditorLayout window, int width, int height) : base(window, width, height)
         {
@@ -25,39 +28,44 @@ namespace UnityExpansion.Editor
         public void SetFontStyle(FontStyle fontStyle)
         {
             _fontStyle = fontStyle;
+            _styleUpdated = true;
         }
 
         public void SetColor(string color)
         {
-            ColorUtility.TryParseHtmlString(color, out _color);
+            SetColor(Color.white.Parse(color));
         }
 
         public void SetColor(Color color)
         {
             _color = color;
+            _styleUpdated = true;
         }
 
         public void SetAlignment(TextAnchor textAnchor)
         {
             _aligment = textAnchor;
+            _styleUpdated = true;
         }
 
         public override void Render()
         {
             base.Render();
-            
-            GUILayout.BeginArea(new Rect(GetPositionGlobalX(), GetPositionGlobalY(), Width, Height));
 
-            GUIStyle labelStyle = new GUIStyle(GUI.skin.GetStyle("Label"));
+            if(_style == null)
+            {
+                _style = new GUIStyle(GUI.skin.GetStyle("Label"));
+                _style.fixedHeight = Height;
+            }
 
-            labelStyle.fixedHeight = Height;
-            labelStyle.normal.textColor = _color;
-            labelStyle.fontStyle = _fontStyle;
-            labelStyle.alignment = _aligment;
+            if(_styleUpdated)
+            {
+                _style.normal.textColor = _color;
+                _style.fontStyle = _fontStyle;
+                _style.alignment = _aligment;
+            }
 
-            GUILayout.Label(_text, labelStyle);
-
-            GUILayout.EndArea();
+            GUI.Label(new Rect(GlobalX, GlobalY, Width, Height), _text, _style);
         }
     }
 }

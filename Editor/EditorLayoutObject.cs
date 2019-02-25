@@ -31,6 +31,16 @@ namespace UnityExpansion.Editor
         public int Y { get; set; }
 
         /// <summary>
+        /// Object's local position X.
+        /// </summary>
+        public int GlobalX { get; private set; }
+
+        /// <summary>
+        /// Object's local position Y.
+        /// </summary>
+        public int GlobalY { get; private set; }
+
+        /// <summary>
         /// Object's width.
         /// </summary>
         public int Width { get; protected set; }
@@ -160,7 +170,7 @@ namespace UnityExpansion.Editor
 
             OnResize.InvokeIfNotNull();
         }
-
+        /*
         /// <summary>
         /// Gets the global position X.
         /// </summary>
@@ -176,7 +186,7 @@ namespace UnityExpansion.Editor
         {
             return ParentObject != null ? ParentObject.GetPositionGlobalY() + Y : Layout.CanvasY + Y;
         }
-
+        */
         /// <summary>
         /// Starts dragging by Input.mousePosition.
         /// </summary>
@@ -197,13 +207,13 @@ namespace UnityExpansion.Editor
 
             if (stickToCenter)
             {
-                _dragOffsetX = Layout.Mouse.X - GetPositionGlobalX() - Width / 2;
-                _dragOffsetY = Layout.Mouse.Y - GetPositionGlobalY() - Height / 2;
+                _dragOffsetX = Layout.Mouse.X - GlobalX - Width / 2;
+                _dragOffsetY = Layout.Mouse.Y - GlobalY - Height / 2;
             }
             else
             {
-                _dragOffsetX = Layout.Mouse.X - GetPositionGlobalX();
-                _dragOffsetY = Layout.Mouse.Y - GetPositionGlobalY();
+                _dragOffsetX = Layout.Mouse.X - GlobalX;
+                _dragOffsetY = Layout.Mouse.Y - GlobalY;
             }
         }
 
@@ -234,16 +244,27 @@ namespace UnityExpansion.Editor
         {
             return
             (
-                globalX >= GetPositionGlobalX() &&
-                globalX <= GetPositionGlobalX() + Width &&
-                globalY >= GetPositionGlobalY() &&
-                globalY <= GetPositionGlobalY() + Height
+                globalX >= GlobalX &&
+                globalX <= GlobalX + Width &&
+                globalY >= GlobalY &&
+                globalY <= GlobalY + Height
             );
         }
 
+        /// <summary>
+        /// Renders this instance.
+        /// Called when object bounds is inside visible window area.
+        /// </summary>
         public virtual void Render()
         {
+        }
 
+        /// <summary>
+        /// Renders this instance.
+        /// Called when object bounds is outside visible window area.
+        /// </summary>
+        public virtual void RenderOntsideOfScreen()
+        {
         }
 
         public virtual void Update()
@@ -253,6 +274,14 @@ namespace UnityExpansion.Editor
                 X = Layout.Mouse.X - Layout.CanvasX - _dragOffsetX;
                 Y = Layout.Mouse.Y - Layout.CanvasY - _dragOffsetY;
             }
+
+            RecalculateGlobalPosition();
+        }
+
+        public void RecalculateGlobalPosition()
+        {
+            GlobalX = ParentObject != null ? ParentObject.GlobalX + X : Layout.CanvasX + X;
+            GlobalY = ParentObject != null ? ParentObject.GlobalY + Y : Layout.CanvasY + Y;
         }
     }
 }

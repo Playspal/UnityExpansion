@@ -15,13 +15,13 @@ namespace UnityExpansionInternal.UiLayoutEditor
 
         public NodeBlockAnimationItem(EditorLayout layout, Node node, UiLayoutElement layoutElement, UiAnimationClip clip) : base(layout, node.Width, 20)
         {
-            InputPlay = new NodeConnectorInput(layout, node, "Play");
-            InputPlay.SetData(layoutElement.UniqueID + "." + clip.ID, UiLayout.PREDEFINED_METHOD_ANIMATION_PLAY);
+            InputPlay = new NodeConnectorInput(layout, node, UiLayoutEditorConfig.PREDEFINED_METHOD_ANIMATION_PLAY);
+            InputPlay.SetData(clip.ID.ToString(), UiLayoutEditorConfig.PREDEFINED_METHOD_ANIMATION_PLAY);
             InputPlay.SetParent(this);
             InputPlay.Y = 0;
 
-            OutputOnComplete = new NodeConnectorOutput(layout, node, "OnComplete");
-            OutputOnComplete.SetData(layoutElement.UniqueID + "." + clip.ID, UiLayout.PREDEFINED_EVENT_ANIMATION_ON_COMPLETE);
+            OutputOnComplete = new NodeConnectorOutput(layout, node, UiLayoutEditorConfig.PREDEFINED_EVENT_ANIMATION_ON_COMPLETE);
+            OutputOnComplete.SetData(clip.ID.ToString(), UiLayoutEditorConfig.PREDEFINED_EVENT_ANIMATION_ON_COMPLETE);
             OutputOnComplete.SetParent(this);
             OutputOnComplete.Y = 0;
 

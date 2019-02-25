@@ -58,7 +58,7 @@ public static class ExtensionsTexture2D
     /// <summary>
     /// Draws rectangle in texture.
     /// </summary>
-    public static void DrawRect(this Texture2D texture, int x, int y, int width, int height, Color color)
+    public static void DrawRect(this Texture2D texture, int x, int y, int width, int height, Color color, bool apply = true)
     {
         int fromX = x;
         int fromY = y;
@@ -73,7 +73,10 @@ public static class ExtensionsTexture2D
             }
         }
 
-        texture.Apply();
+        if (apply)
+        {
+            texture.Apply();
+        }
     }
 
     /// <summary>
@@ -90,8 +93,11 @@ public static class ExtensionsTexture2D
             int y1 = y + (radius - i) - 1;
             int y2 = y - (radius - i) + 1;
 
-            texture.DrawRect(xFrom, y1, i * 2 + 1, 1, color);
-            texture.DrawRect(xFrom, y2, i * 2 + 1, 1, color);
+            texture.SetPixel(xFrom, y1, color);
+            texture.SetPixel(xFrom, y2, color);
+
+            texture.DrawRect(xFrom, y1, i * 2 + 1, 1, color, false);
+            texture.DrawRect(xFrom, y2, i * 2 + 1, 1, color, false);
         }
 
         texture.Apply();
@@ -115,7 +121,7 @@ public static class ExtensionsTexture2D
             int xTo = x + xTemp;
             int yTo = y - yTemp;
 
-            texture.DrawRect(xFrom, yFrom, 1, yTemp * 2 + 1, color);
+            texture.DrawRect(xFrom, yFrom, 1, yTemp * 2 + 1, color, false);
         }
 
         texture.Apply();

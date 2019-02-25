@@ -26,6 +26,17 @@ namespace UnityExpansion.Editor
         }
 
         /// <summary>
+        /// Destroys all objects.
+        /// </summary>
+        public void DestroyAllObjects()
+        {
+            for(int i = 0; i < _objects.Count; i++)
+            {
+                _objects[i].Destroy();
+            }
+        }
+
+        /// <summary>
         /// Adds layout object.
         /// </summary>
         public void Add(EditorLayoutObject layoutObject)
@@ -99,19 +110,22 @@ namespace UnityExpansion.Editor
 
         private void RenderRecursively(EditorLayoutObject layoutObject)
         {
-            if (layoutObject.GetPositionGlobalX() > Layout.WindowWidth || layoutObject.GetPositionGlobalX() + layoutObject.Width < 0)
-            {
-                //return;
-            }
-
-            if (layoutObject.GetPositionGlobalY() > Layout.WindowHeight || layoutObject.GetPositionGlobalY() + layoutObject.Height < 0)
-            {
-                //return;
-            }
-
             if (layoutObject.IsActive)
             {
-                layoutObject.Render();
+                if
+                (
+                    layoutObject.GlobalX < Layout.WindowWidth &&
+                    layoutObject.GlobalX + layoutObject.Width > 0 &&
+                    layoutObject.GlobalY < Layout.WindowHeight &&
+                    layoutObject.GlobalY + layoutObject.Height > 0
+                )
+                {
+                    layoutObject.Render();
+                }
+                else
+                {
+                    layoutObject.RenderOntsideOfScreen();
+                }
 
                 for (int i = 0; i < layoutObject.ChildObjects.Count; i++)
                 {
@@ -122,16 +136,6 @@ namespace UnityExpansion.Editor
 
         private void UpdateRecursively(EditorLayoutObject layoutObject)
         {
-            if (layoutObject.GetPositionGlobalX() > Layout.WindowWidth || layoutObject.GetPositionGlobalX() + layoutObject.Width < 0)
-            {
-                //return;
-            }
-
-            if (layoutObject.GetPositionGlobalY() > Layout.WindowHeight || layoutObject.GetPositionGlobalY() + layoutObject.Height < 0)
-            {
-                //return;
-            }
-
             if (layoutObject.IsActive)
             {
                 layoutObject.Update();

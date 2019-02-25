@@ -61,15 +61,5 @@ namespace UnityExpansionInternal.UiLayoutEditor
 
             return output.ToArray();
         }
-
-        public static void LayoutObjectGenerateUniqueID(UiLayoutObject layoutObject)
-        {
-            LayoutObjectSetUniqueID(layoutObject, "n" + Random.Range(1000000, 9999999));
-        }
-
-        public static void LayoutObjectSetUniqueID(UiLayoutObject layoutObject, string uniqueID)
-        {
-            UtilityReflection.SetMemberValue(layoutObject, "_uniqueID", uniqueID);
-        }
     }
 }

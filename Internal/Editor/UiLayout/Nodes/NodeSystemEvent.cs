@@ -18,7 +18,7 @@ namespace UnityExpansionInternal.UiLayoutEditor
 
         public void SetData(UiLayout uiLayout, string eventName)
         {
-            ConnectorOutput.SetData(uiLayout.UniqueID, eventName);
+            ConnectorOutput.SetData(uiLayout.PersistantID.Value, eventName);
             SetTitle(eventName);
         }
     }

@@ -13,6 +13,8 @@ namespace UnityExpansionInternal.UiLayoutEditor
         private NodeLinkIcon _iconA;
         private NodeLinkIcon _iconB;
 
+        private Color _color;
+
         public NodeLink(EditorLayout layout, Node a, Node b)
         {
             FlowEditor = layout as UiLayoutEditor;
@@ -27,9 +29,11 @@ namespace UnityExpansionInternal.UiLayoutEditor
 
             _iconB = new NodeLinkIcon(layout);
             _iconB.X = NodeB.Width / 2 - _iconB.Width / 2;
-            _iconB.Y = -_iconB.Height / 2;
+            _iconB.Y = -_iconB.Height / 2 - 1;
             _iconB.SetParent(NodeB);
             _iconB.SetAsFirstSibling();
+
+            _color = Color.white.Parse(UiLayoutEditorConfig.COLOR_NODE_BACKGROUND_BORDER);
         }
 
         public void SetPosition(int index, int total)
@@ -45,23 +49,34 @@ namespace UnityExpansionInternal.UiLayoutEditor
             FlowEditor.Curves.AddToBackground
             (
                 UiLayoutEditorCurve.Type.Vertical,
-                _iconA.GetPositionGlobalX() + _iconA.Width / 2 - 1,
-                _iconA.GetPositionGlobalY() + 14,
-                _iconB.GetPositionGlobalX() + _iconB.Width / 2 + 1,
-                _iconB.GetPositionGlobalY(),
+                _iconA.GlobalX + _iconA.Width / 2,
+                _iconA.GlobalY + 14,
+                _iconB.GlobalX + _iconB.Width / 2,
+                _iconB.GlobalY + 1,
                 4,
-                Color.white.Parse(UiLayoutEditorConfig.COLOR_NODE_BACKGROUND_BORDER)
+                _color
             );
 
             FlowEditor.Curves.AddToBackground
             (
                 UiLayoutEditorCurve.Type.Vertical,
-                _iconA.GetPositionGlobalX() + _iconA.Width / 2 + 1,
-                _iconA.GetPositionGlobalY() + 14,
-                _iconB.GetPositionGlobalX() + _iconB.Width / 2 - 1,
-                _iconB.GetPositionGlobalY(),
-                4,
-                Color.white.Parse(UiLayoutEditorConfig.COLOR_NODE_BACKGROUND_BORDER)
+                _iconA.GlobalX + _iconA.Width / 2 - 1,
+                _iconA.GlobalY + 14,
+                _iconB.GlobalX + _iconB.Width / 2 + 1,
+                _iconB.GlobalY + 1,
+                2,
+                _color
+            );
+
+            FlowEditor.Curves.AddToBackground
+            (
+                UiLayoutEditorCurve.Type.Vertical,
+                _iconA.GlobalX + _iconA.Width / 2 + 1,
+                _iconA.GlobalY + 14,
+                _iconB.GlobalX + _iconB.Width / 2 - 1,
+                _iconB.GlobalY + 1,
+                2,
+                _color
             );
         }
     }

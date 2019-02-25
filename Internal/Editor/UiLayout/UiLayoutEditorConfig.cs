@@ -2,6 +2,11 @@
 {
     public static class UiLayoutEditorConfig
     {
+        // Predefined basic methods and events for some types
+        public const string PREDEFINED_METHOD_ANIMATION_PLAY = "Play";
+        public const string PREDEFINED_EVENT_ANIMATION_ON_COMPLETE = "OnComplete";
+
+        // Colors
         public const string COLOR_NODE_LABEL = "#999999";
 
         public const string COLOR_NODE_BACKGROUND = "#3A3A3A";
