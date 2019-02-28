@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Text.RegularExpressions;
+
 using UnityEditor;
 using UnityEngine;
 using UnityExpansion.Editor;
-using UnityExpansion.UI;
+using UnityExpansion.UI.Layout;
 
 namespace UnityExpansionInternal.UiLayoutEditor
 {
@@ -63,23 +64,9 @@ namespace UnityExpansionInternal.UiLayoutEditor
 
                         if(match.Success)
                         {
-                            bool isUnique = true;
-
                             _prefab = layoutElement;
 
-                            if (_layoutEditor.Selection.Target != null)
-                            {
-                                for (int i = 0; i < _layoutEditor.Selection.Target.Prefabs.Count; i++)
-                                {
-                                    if (_layoutEditor.Selection.Target.Prefabs[i] == _prefab)
-                                    {
-                                        isUnique = false;
-                                        break;
-                                    }
-                                }
-                            }
-
-                            if (isUnique)
+                            if (_layoutEditor.Selection.ProcessorPresetUniqueCheck(_prefab))
                             {
                                 PreviewShow();
                             }

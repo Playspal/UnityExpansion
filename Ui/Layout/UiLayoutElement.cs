@@ -2,8 +2,9 @@
 
 using UnityEngine;
 using UnityExpansion.UI.Animation;
+using UnityExpansion.UI.Layout.Processor;
 
-namespace UnityExpansion.UI
+namespace UnityExpansion.UI.Layout
 {
     /// <summary>
     /// Base ui layout element. Provides functionality to play show and hide animation clips.
@@ -31,13 +32,13 @@ namespace UnityExpansion.UI
         /// <summary>
         /// Invokes right after element show begin.
         /// </summary>
-        [UiLayoutEvent (Group = UiLayoutAttribute.GROUP_MAIN, Weight = 1, ExcludeFromLayoutObject = true)]
+        [UiLayoutProcessorEvent (Group = UiLayoutProcessorAttribute.GROUP_MAIN, Weight = 1, ExcludeFromLayoutObject = true)]
         public event Action OnShow;
 
         /// <summary>
         /// Invokes right after element hide begin.
         /// </summary>
-        [UiLayoutEvent(Group = UiLayoutAttribute.GROUP_MAIN, Weight = 2, ExcludeFromLayoutObject = true)]
+        [UiLayoutProcessorEvent(Group = UiLayoutProcessorAttribute.GROUP_MAIN, Weight = 2, ExcludeFromLayoutObject = true)]
         public event Action OnHide;
 
         // The persistant identifier of this element.
@@ -112,7 +113,7 @@ namespace UnityExpansion.UI
         /// Shows this element.
         /// If element have child tweens that presents show animation, they will be played.
         /// </summary>
-        [UiLayoutMethod(Group = UiLayoutAttribute.GROUP_MAIN, Weight = 1, ExcludeFromLayoutObject = true)]
+        [UiLayoutProcessorHandler(Group = UiLayoutProcessorAttribute.GROUP_MAIN, Weight = 1, ExcludeFromLayoutObject = true)]
         public void Show()
         {
             if (IsDestroyed || _isShown)
@@ -161,7 +162,7 @@ namespace UnityExpansion.UI
         /// Hides this element.
         /// If element have child tweens that presents hide animation, they will be played.
         /// </summary>
-        [UiLayoutMethod(Group = UiLayoutAttribute.GROUP_MAIN, Weight = 2, ExcludeFromLayoutObject = true)]
+        [UiLayoutProcessorHandler(Group = UiLayoutProcessorAttribute.GROUP_MAIN, Weight = 2, ExcludeFromLayoutObject = true)]
         public void Hide()
         {
             if (IsDestroyed || !_isShown)

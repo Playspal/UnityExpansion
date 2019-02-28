@@ -2,7 +2,8 @@
 using UnityEngine;
 
 using UnityExpansion.Editor;
-using UnityExpansion.UI;
+using UnityExpansion.UI.Layout;
+using UnityExpansion.UI.Layout.Processor;
 using UnityExpansion.Utilities;
 
 namespace UnityExpansionInternal.UiLayoutEditor
@@ -91,11 +92,11 @@ namespace UnityExpansionInternal.UiLayoutEditor
             }
 
             //
-            string[] layoutMethods = UtilityReflection.GetMethodsWithAttribute(Selection.Target, typeof(UiLayoutMethod));
+            string[] layoutMethods = UtilityReflection.GetMethodsWithAttribute(Selection.Target, typeof(UiLayoutProcessorHandler));
             
             for (int i = 0; i < layoutMethods.Length; i++)
             {
-                UiLayoutMethod attribute = UtilityReflection.GetMethodAttribute(Selection.Target, layoutMethods[i], typeof(UiLayoutMethod)) as UiLayoutMethod;
+                UiLayoutProcessorHandler attribute = UtilityReflection.GetMethodAttribute(Selection.Target, layoutMethods[i], typeof(UiLayoutProcessorHandler)) as UiLayoutProcessorHandler;
 
                 if(!attribute.ExcludeFromLayoutObject)
                 {
@@ -103,11 +104,11 @@ namespace UnityExpansionInternal.UiLayoutEditor
                 }
             }
 
-            string[] layoutEvents = UtilityReflection.GetEventsWithAttribute(Selection.Target, typeof(UiLayoutEvent));
+            string[] layoutEvents = UtilityReflection.GetEventsWithAttribute(Selection.Target, typeof(UiLayoutProcessorEvent));
 
             for(int i = 0; i < layoutEvents.Length; i++)
             {
-                UiLayoutEvent attribute = UtilityReflection.GetEventAttribute(Selection.Target, layoutEvents[i], typeof(UiLayoutEvent)) as UiLayoutEvent;
+                UiLayoutProcessorEvent attribute = UtilityReflection.GetEventAttribute(Selection.Target, layoutEvents[i], typeof(UiLayoutProcessorEvent)) as UiLayoutProcessorEvent;
 
                 if (!attribute.ExcludeFromLayoutObject)
                 {
@@ -128,12 +129,12 @@ namespace UnityExpansionInternal.UiLayoutEditor
             }
 
 
-            for (int i = 0; i < Selection.Target.Actions.Length; i++)
+            for (int i = 0; i < Selection.TargetProcessor.Edicts.Count; i++)
             {
                 NodeConnectorOutput output = null;
                 NodeConnectorInput input = null;
 
-                UiLayout.UiAction action = Selection.Target.Actions[i];
+                UiLayoutProcessorEdict edict = Selection.TargetProcessor.Edicts[i];
 
                 for (int j = 0; j < Nodes.Items.Count; j++)
                 {
@@ -143,8 +144,8 @@ namespace UnityExpansionInternal.UiLayoutEditor
                     {
                         if
                         (
-                            node.Output[n].DataID == action.SenderID &&
-                            node.Output[n].DataMethod == action.SenderEvent
+                            node.Output[n].DataID == edict.SenderID &&
+                            node.Output[n].DataMethod == edict.SenderEvent
                         )
                         {
                             output = node.Output[n];
@@ -155,8 +156,8 @@ namespace UnityExpansionInternal.UiLayoutEditor
                     {
                         if
                         (
-                            node.Input[n].DataID == action.TargetID &&
-                            node.Input[n].DataMethod == action.TargetMethod
+                            node.Input[n].DataID == edict.HandlerID &&
+                            node.Input[n].DataMethod == edict.HandlerMethod
                         )
                         {
                             input = node.Input[n];
@@ -208,7 +209,7 @@ namespace UnityExpansionInternal.UiLayoutEditor
 
         private void SetupLayoutElementRoot(InternalUiLayoutData.NodeData nodeData)
         {
-            UiLayoutElement layoutElement = nodeData.LayoutPrefab;
+            UiLayoutElement layoutElement = nodeData.LayoutPreset.Prefab;
 
             if (layoutElement != null)
             {
@@ -252,14 +253,12 @@ namespace UnityExpansionInternal.UiLayoutEditor
 
         private void OnDragAndDrop(UiLayoutElement layoutElement)
         {
-            Selection.Target.Prefabs.Add(layoutElement);
+            UiLayoutProcessorPreset preset = Selection.ProcessorPresetCreate(layoutElement);
 
             InternalUiLayoutData.NodeData nodeData = Selection.Data.CreateNodeDataLayoutElementRoot();
-            //GameObject gameObject = AssetDatabase.LoadAssetAtPath<GameObject>(layoutPreset.AssetPath);
-            //UiLayoutElement element = gameObject.GetComponent<UiLayoutElement>();
 
             nodeData.ID = layoutElement.PersistantID.Value;
-            nodeData.LayoutPrefab = layoutElement;
+            nodeData.LayoutPreset = preset;
             nodeData.X = Mouse.X - CanvasX;
             nodeData.Y = Mouse.Y - CanvasY;
 

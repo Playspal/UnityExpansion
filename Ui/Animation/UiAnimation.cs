@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityExpansion.Services;
 
+using UnityExpansion.UI.Layout;
+
 namespace UnityExpansion.UI.Animation
 {
     [Serializable]

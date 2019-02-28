@@ -1,7 +1,8 @@
 ﻿using System.Collections.Generic;
 using UnityExpansion.Editor;
-using UnityExpansion.UI;
+
 using UnityExpansion.UI.Animation;
+using UnityExpansion.UI.Layout;
 
 namespace UnityExpansionInternal.UiLayoutEditor
 {

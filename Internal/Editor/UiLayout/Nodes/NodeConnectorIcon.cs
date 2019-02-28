@@ -92,7 +92,7 @@ namespace UnityExpansionInternal.UiLayoutEditor
             {
                 RenderCurveToMouse();
             }
-            else if (Connector.ConnectorType == NodeConnector.Type.Output && Connector.Connected != null)
+            else if (Connector.ConnectorType == NodeConnector.Type.Sender && Connector.Connected != null)
             {
                 RenderCurveToConnection();
             }

@@ -1,17 +1,17 @@
 ﻿using System;
 
-namespace UnityExpansion.UI
+namespace UnityExpansion.UI.Layout.Processor
 {
     /// <summary>
     /// Makes method visible in UiLayout editor.
     /// </summary>
     [AttributeUsage(AttributeTargets.Method)]
-    public class UiLayoutMethod : Attribute
+    public class UiLayoutProcessorHandler : Attribute
     {
         /// <summary>
         /// Group name.
         /// </summary>
-        public string Group = UiLayoutAttribute.GROUP_CUSTOM;
+        public string Group = UiLayoutProcessorAttribute.GROUP_CUSTOM;
 
         /// <summary>
         /// Methods in editor block sorted by weight.
@@ -30,12 +30,12 @@ namespace UnityExpansion.UI
     /// Makes event visible in UiLayout editor.
     /// </summary>
     [AttributeUsage(AttributeTargets.Event)]
-    public class UiLayoutEvent : Attribute
+    public class UiLayoutProcessorEvent : Attribute
     {
         /// <summary>
         /// Group name.
         /// </summary>
-        public string Group = UiLayoutAttribute.GROUP_CUSTOM;
+        public string Group = UiLayoutProcessorAttribute.GROUP_CUSTOM;
 
         /// <summary>
         /// Events in editor block sorted by weight.
@@ -50,7 +50,7 @@ namespace UnityExpansion.UI
         public bool ExcludeFromLayoutObject = false;
     }
 
-    public class UiLayoutAttribute : Attribute
+    public class UiLayoutProcessorAttribute : Attribute
     {
         /// <summary>
         /// Main group name.

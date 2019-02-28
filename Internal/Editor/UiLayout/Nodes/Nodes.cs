@@ -1,7 +1,6 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityExpansion.UI;
+﻿using System.Collections.Generic;
+
+using UnityExpansion.UI.Layout;
 
 namespace UnityExpansionInternal.UiLayoutEditor
 {

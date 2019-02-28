@@ -9,8 +9,8 @@ namespace UnityExpansionInternal.UiLayoutEditor
     {
         public enum Type
         {
-            Input,
-            Output
+            Handler,
+            Sender
         }
 
         public Action<NodeConnector> OnConnected;
@@ -46,14 +46,14 @@ namespace UnityExpansionInternal.UiLayoutEditor
         {
             Icon = new NodeConnectorIcon(Layout, Node, this);
             Icon.SetParent(this);
-            Icon.X = ConnectorType == Type.Input ? -Icon.Width / 2 : Width - Icon.Width / 2 - 1;
+            Icon.X = ConnectorType == Type.Handler ? -Icon.Width / 2 : Width - Icon.Width / 2 - 1;
             Icon.Y = 0;
         }
 
         protected void SetupLabel(string text)
         {
             Label = new EditorLayoutObjectText(Layout, Width - 20, Height);
-            Label.SetAlignment(ConnectorType == Type.Input ? TextAnchor.MiddleLeft : TextAnchor.MiddleRight);
+            Label.SetAlignment(ConnectorType == Type.Handler ? TextAnchor.MiddleLeft : TextAnchor.MiddleRight);
             Label.SetColor(UiLayoutEditorConfig.COLOR_NODE_LABEL);
             Label.SetText(text);
             Label.SetParent(this);
@@ -89,26 +89,32 @@ namespace UnityExpansionInternal.UiLayoutEditor
                 ConnectionRemove(b, b.Connected);
             }
 
-            NodeConnectorInput input = (a.ConnectorType == Type.Input ? a : b) as NodeConnectorInput;
-            NodeConnectorOutput output = (a.ConnectorType == Type.Output ? a : b) as NodeConnectorOutput;
+            NodeConnectorInput handler = (a.ConnectorType == Type.Handler ? a : b) as NodeConnectorInput;
+            NodeConnectorOutput sender = (a.ConnectorType == Type.Sender ? a : b) as NodeConnectorOutput;
 
-            Color color = output.Node.ColorMain;
+            Color color = sender.Node.ColorMain;
 
-            input.Connected = output;
-            input.Icon.SetColor(color);
-            input.OnConnected.InvokeIfNotNull(output);
+            handler.Connected = sender;
+            handler.Icon.SetColor(color);
+            handler.OnConnected.InvokeIfNotNull(sender);
 
-            output.Connected = input;
-            output.Icon.SetColor(color);
-            output.OnConnected.InvokeIfNotNull(input);
+            sender.Connected = handler;
+            sender.Icon.SetColor(color);
+            sender.OnConnected.InvokeIfNotNull(handler);
 
-            UiLayoutEditor.Instance.Selection.Target.ActionAdd(output.DataID, output.DataMethod, input.DataID, input.DataMethod);
+            UiLayoutEditor.Instance.Selection.ProcessorEdictCreate
+            (
+                sender.DataID,
+                sender.DataMethod,
+                handler.DataID,
+                handler.DataMethod
+            );
         }
 
         public static void ConnectionRemove(NodeConnector a, NodeConnector b)
         {
-            NodeConnectorInput input = (a.ConnectorType == Type.Input ? a : b) as NodeConnectorInput;
-            NodeConnectorOutput output = (a.ConnectorType == Type.Output ? a : b) as NodeConnectorOutput;
+            NodeConnectorInput handler = (a.ConnectorType == Type.Handler ? a : b) as NodeConnectorInput;
+            NodeConnectorOutput sender = (a.ConnectorType == Type.Sender ? a : b) as NodeConnectorOutput;
 
             a.OnDisconnected.InvokeIfNotNull(a.Connected);
             a.Connected = null;
@@ -118,7 +124,13 @@ namespace UnityExpansionInternal.UiLayoutEditor
             b.Connected = null;
             b.Icon.ResetColor();
 
-            UiLayoutEditor.Instance.Selection.Target.ActionRemove(output.DataID, output.DataMethod, input.DataID, input.DataMethod);
+            UiLayoutEditor.Instance.Selection.ProcessorEdictRemove
+            (
+                sender.DataID,
+                sender.DataMethod,
+                handler.DataID,
+                handler.DataMethod
+            );
         }
     }
 }

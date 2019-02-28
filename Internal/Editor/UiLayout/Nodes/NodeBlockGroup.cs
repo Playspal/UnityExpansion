@@ -1,7 +1,9 @@
 ﻿using System.Collections.Generic;
+
 using UnityEngine;
+
 using UnityExpansion.Editor;
-using UnityExpansion.UI;
+using UnityExpansion.UI.Layout.Processor;
 
 namespace UnityExpansionInternal.UiLayoutEditor
 {
@@ -23,7 +25,7 @@ namespace UnityExpansionInternal.UiLayoutEditor
             Node = node;
             GroupName = name;
 
-            IsMainGroup = GroupName == UiLayoutAttribute.GROUP_MAIN;
+            IsMainGroup = GroupName == UiLayoutProcessorAttribute.GROUP_MAIN;
 
             if (!IsMainGroup)
             {

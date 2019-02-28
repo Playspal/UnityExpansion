@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Reflection;
-using UnityEditor;
+
 using UnityEngine;
-using UnityExpansion.UI;
+
+using UnityExpansion.UI.Layout.Processor;
 
 [Serializable]
 public class InternalUiLayoutData : MonoBehaviour
@@ -27,7 +27,7 @@ public class InternalUiLayoutData : MonoBehaviour
         public NodeType Type = NodeType.Undefined;
 
         [SerializeField]
-        public UiLayoutElement LayoutPrefab;
+        public UiLayoutProcessorPreset LayoutPreset;
 
         [SerializeField]
         public int X;

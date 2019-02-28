@@ -1,10 +1,10 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEditor;
-using UnityEngine;
+﻿using System.Collections.Generic;
+
 using UnityExpansion.Editor;
-using UnityExpansion.UI;
+
 using UnityExpansion.UI.Animation;
+using UnityExpansion.UI.Layout;
+using UnityExpansion.UI.Layout.Processor;
 using UnityExpansion.Utilities;
 
 namespace UnityExpansionInternal.UiLayoutEditor
@@ -41,21 +41,21 @@ namespace UnityExpansionInternal.UiLayoutEditor
                 BlockAnimation.SetAnimation(layoutElement, layoutElement.GetComponent<UiAnimation>());
             }
 
-            string[] outputs = UtilityReflection.GetMethodsWithAttribute(layoutElement, typeof(UiLayoutMethod));
+            string[] outputs = UtilityReflection.GetMethodsWithAttribute(layoutElement, typeof(UiLayoutProcessorHandler));
 
             for (int i = 0; i < outputs.Length; i++)
             {
-                UiLayoutMethod a = UtilityReflection.GetMethodAttribute(layoutElement, outputs[i], typeof(UiLayoutMethod)) as UiLayoutMethod;
+                UiLayoutProcessorHandler a = UtilityReflection.GetMethodAttribute(layoutElement, outputs[i], typeof(UiLayoutProcessorHandler)) as UiLayoutProcessorHandler;
                 NodeBlockGroup blockGroup = GetGroup(a.Group);
 
                 blockGroup.AddInput(LayoutElement.PersistantID.Value, outputs[i], a.Weight);
             }
 
-            string[] inputs = UtilityReflection.GetEventsWithAttribute(layoutElement, typeof(UiLayoutEvent));
+            string[] inputs = UtilityReflection.GetEventsWithAttribute(layoutElement, typeof(UiLayoutProcessorEvent));
 
             for (int i = 0; i < inputs.Length; i++)
             {
-                UiLayoutEvent a = UtilityReflection.GetEventAttribute(layoutElement, inputs[i], typeof(UiLayoutEvent)) as UiLayoutEvent;
+                UiLayoutProcessorEvent a = UtilityReflection.GetEventAttribute(layoutElement, inputs[i], typeof(UiLayoutProcessorEvent)) as UiLayoutProcessorEvent;
                 NodeBlockGroup blockGroup = GetGroup(a.Group);
 
                 blockGroup.AddOutput(LayoutElement.PersistantID.Value, inputs[i], a.Weight);
