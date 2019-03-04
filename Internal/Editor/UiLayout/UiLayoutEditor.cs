@@ -92,11 +92,11 @@ namespace UnityExpansionInternal.UiLayoutEditor
             }
 
             //
-            string[] layoutMethods = UtilityReflection.GetMethodsWithAttribute(Selection.Target, typeof(UiLayoutProcessorHandler));
+            string[] layoutMethods = UtilityReflection.GetMembersWithAttribute(Selection.Target, typeof(UiLayoutProcessorHandler));
             
             for (int i = 0; i < layoutMethods.Length; i++)
             {
-                UiLayoutProcessorHandler attribute = UtilityReflection.GetMethodAttribute(Selection.Target, layoutMethods[i], typeof(UiLayoutProcessorHandler)) as UiLayoutProcessorHandler;
+                UiLayoutProcessorHandler attribute = UtilityReflection.GetAttribute<UiLayoutProcessorHandler>(Selection.Target, layoutMethods[i]);
 
                 if(!attribute.ExcludeFromLayoutObject)
                 {
@@ -104,11 +104,11 @@ namespace UnityExpansionInternal.UiLayoutEditor
                 }
             }
 
-            string[] layoutEvents = UtilityReflection.GetEventsWithAttribute(Selection.Target, typeof(UiLayoutProcessorEvent));
+            string[] layoutEvents = UtilityReflection.GetMembersWithAttribute(Selection.Target, typeof(UiLayoutProcessorEvent));
 
             for(int i = 0; i < layoutEvents.Length; i++)
             {
-                UiLayoutProcessorEvent attribute = UtilityReflection.GetEventAttribute(Selection.Target, layoutEvents[i], typeof(UiLayoutProcessorEvent)) as UiLayoutProcessorEvent;
+                UiLayoutProcessorEvent attribute = UtilityReflection.GetAttribute<UiLayoutProcessorEvent>(Selection.Target, layoutEvents[i]);
 
                 if (!attribute.ExcludeFromLayoutObject)
                 {

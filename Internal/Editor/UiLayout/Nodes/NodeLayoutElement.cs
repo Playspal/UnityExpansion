@@ -41,21 +41,21 @@ namespace UnityExpansionInternal.UiLayoutEditor
                 BlockAnimation.SetAnimation(layoutElement, layoutElement.GetComponent<UiAnimation>());
             }
 
-            string[] outputs = UtilityReflection.GetMethodsWithAttribute(layoutElement, typeof(UiLayoutProcessorHandler));
+            string[] outputs = UtilityReflection.GetMembersWithAttribute(layoutElement, typeof(UiLayoutProcessorHandler));
 
             for (int i = 0; i < outputs.Length; i++)
             {
-                UiLayoutProcessorHandler a = UtilityReflection.GetMethodAttribute(layoutElement, outputs[i], typeof(UiLayoutProcessorHandler)) as UiLayoutProcessorHandler;
+                UiLayoutProcessorHandler a = UtilityReflection.GetAttribute<UiLayoutProcessorHandler>(layoutElement, outputs[i]);
                 NodeBlockGroup blockGroup = GetGroup(a.Group);
 
                 blockGroup.AddInput(LayoutElement.PersistantID.Value, outputs[i], a.Weight);
             }
 
-            string[] inputs = UtilityReflection.GetEventsWithAttribute(layoutElement, typeof(UiLayoutProcessorEvent));
+            string[] inputs = UtilityReflection.GetMembersWithAttribute(layoutElement, typeof(UiLayoutProcessorEvent));
 
             for (int i = 0; i < inputs.Length; i++)
             {
-                UiLayoutProcessorEvent a = UtilityReflection.GetEventAttribute(layoutElement, inputs[i], typeof(UiLayoutProcessorEvent)) as UiLayoutProcessorEvent;
+                UiLayoutProcessorEvent a = UtilityReflection.GetAttribute<UiLayoutProcessorEvent>(layoutElement, inputs[i]);
                 NodeBlockGroup blockGroup = GetGroup(a.Group);
 
                 blockGroup.AddOutput(LayoutElement.PersistantID.Value, inputs[i], a.Weight);
