@@ -78,11 +78,6 @@ namespace UnityExpansionInternal.UiLayoutEditor
                 SetupColors(UiLayoutEditorConfig.COLOR_BLOCK_MAIN, UiLayoutEditorConfig.COLOR_BLOCK_DARK, UiLayoutEditorConfig.COLOR_BLOCK_LIGHT);
             }
 
-            if (this is NodeSignal)
-            {
-                SetupColors(UiLayoutEditorConfig.COLOR_SIGNAL_MAIN, UiLayoutEditorConfig.COLOR_SIGNAL_DARK, UiLayoutEditorConfig.COLOR_SIGNAL_LIGHT);
-            }
-
             if (this is NodeSystemEvent)
             {
                 SetupColors(UiLayoutEditorConfig.COLOR_SYSTEM_MAIN, UiLayoutEditorConfig.COLOR_SYSTEM_DARK, UiLayoutEditorConfig.COLOR_SYSTEM_LIGHT);

@@ -1,6 +1,6 @@
-﻿using UnityEngine;
-using UnityExpansion.Services;
-using UnityExpansion.UI;
+﻿using System;
+
+using UnityEngine;
 using UnityExpansionInternal;
 
 namespace UnityExpansion
@@ -15,9 +15,9 @@ namespace UnityExpansion
         public const string VERSION = "2.0.0";
 
         /// <summary>
-        /// Signal name that dispatched on start of each frame.
+        /// Invoked on every frame.
         /// </summary>
-        public const string SIGNAL_FRAME_START = "UnityExpansion/FrameStart";
+        public event Action OnUpdate; 
 
         /// <summary>
         /// Expansion instance.
@@ -36,7 +36,7 @@ namespace UnityExpansion
         // Updates internal part of UnityExpansion.
         private void Update()
         {
-            Signals.Dispatch(SIGNAL_FRAME_START);
+            OnUpdate.InvokeIfNotNull();
         }
 
         // Resets UnityExpansion component to default state.

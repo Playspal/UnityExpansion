@@ -36,18 +36,6 @@ namespace UnityExpansionInternal
 
             button._interactionDelay = EditorGUILayout.FloatField(new GUIContent("Interaction Delay [?]", "Time in seconds to prevent undesirable interactions repeat like double click"), button._interactionDelay);
 
-            InternalLayout.ButtonSignals
-            (
-                "Signals on click",
-                "Select signals to dispatch on button click",
-                button._signalsClick,
-                (string[] result) =>
-                {
-                    button._signalsClick = result;
-                    Repaint();
-                }
-            );
-
             serializedObject.ApplyModifiedProperties();
         }
     }

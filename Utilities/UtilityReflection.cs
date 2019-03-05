@@ -1,42 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
-using UnityEngine;
 
 namespace UnityExpansion.Utilities
 {
     /// <summary>
-    /// Provides basic reflection functionality.
+    /// Provides advanced reflection functionality.
     /// </summary>
-    /// <example>
-    /// <code>
-    /// using UnityEngine;
-    /// using UnityExpansion.Utilities;
-    /// 
-    /// public class MyClass1
-    /// {
-    ///     public int MyField;
-    /// }
-    /// 
-    /// public class MyClass2
-    /// {
-    ///     public MyClass2()
-    ///     {
-    ///         MyClass1 a = new MyClass1();
-    ///         MyClass1 b = new MyClass1();
-    ///         
-    ///         // Sets a.MyField value
-    ///         UtilityReflection.SetMemberValue(a, "MyField", 100);
-    ///         
-    ///         // Copy all properties and fields from a to b
-    ///         UtilityReflection.CloneMembers(a, b);
-    ///         
-    ///         // Prints 100
-    ///         Debug.Log(UtilityReflection.GetMemberValue(b, "MyField"));
-    ///     }
-    /// }
-    /// </code>
-    /// </example>
     public static class UtilityReflection
     {
         /// <summary>

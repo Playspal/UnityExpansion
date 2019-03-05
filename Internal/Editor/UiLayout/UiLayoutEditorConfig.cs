@@ -33,10 +33,6 @@
         public const string COLOR_ITEM_DARK = "#08445A";
         public const string COLOR_ITEM_LIGHT = "#B5DEEF";
 
-        public const string COLOR_SIGNAL_MAIN = "#4E5E00";
-        public const string COLOR_SIGNAL_DARK = "#344000";
-        public const string COLOR_SIGNAL_LIGHT = "#D3DCAD";
-
         public const string COLOR_SYSTEM_MAIN = "#186C15";
         public const string COLOR_SYSTEM_DARK = "#0F490E";
         public const string COLOR_SYSTEM_LIGHT = "#B9E3B9";

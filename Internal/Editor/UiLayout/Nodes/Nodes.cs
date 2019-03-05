@@ -44,15 +44,6 @@ namespace UnityExpansionInternal.UiLayoutEditor
             return node;
         }
 
-        public NodeSignal CreateNodeSignal(InternalUiLayoutData.NodeData nodeData)
-        {
-            NodeSignal node = new NodeSignal(nodeData, UiLayoutEditor.Instance);
-
-            Add(node);
-
-            return node;
-        }
-
         public NodeSystemEvent CreateNodeSystemEvent(InternalUiLayoutData.NodeData nodeData, UiLayout uiLayout, string eventName)
         {
             NodeSystemEvent node = new NodeSystemEvent(nodeData, UiLayoutEditor.Instance);

@@ -153,14 +153,6 @@ namespace UnityExpansion.UI.Animation
                 {
                     Play(AnimationClips[i]);
                 }
-
-                if(AnimationClips[i].PlayOnSignals != null)
-                {
-                    for(int j = 0; j < AnimationClips[i].PlayOnSignals.Length; j++)
-                    {
-                        SubscribeClipToSignal(AnimationClips[i].PlayOnSignals[j], AnimationClips[i].Name);
-                    }                    
-                }
             }
 
             UiLayoutElement element = FindParentLayoutElement(gameObject.transform);
@@ -196,18 +188,6 @@ namespace UnityExpansion.UI.Animation
             }
         }
 
-        // Subscribe to specified signal to play clip with specified name.
-        private void SubscribeClipToSignal(string signal, string clipName)
-        {
-            Signals.AddListener
-            (
-                signal,
-                () =>
-                {
-                    Play(clipName);
-                }
-            );
-        }
 
         // Recursively searches parent layout element.
         private UiLayoutElement FindParentLayoutElement(Transform transform)

@@ -30,7 +30,7 @@ namespace UnityExpansion.Utilities
         /// </summary>
         static UtilityTime()
         {
-            Signals.AddListener(Expansion.SIGNAL_FRAME_START, Update);
+            Expansion.Instance.OnUpdate += Update;
         }
 
         // Updates fps
