@@ -1,7 +1,6 @@
 ﻿using System;
 
 using UnityEngine;
-using UnityExpansionInternal;
 
 namespace UnityExpansion
 {
@@ -24,9 +23,6 @@ namespace UnityExpansion
         /// </summary>
         public static Expansion Instance { get; private set; }
 
-        [SerializeField]
-        public InternalSettings InternalSettings;
-
         // Initialization
         private void Awake()
         {
@@ -37,28 +33,6 @@ namespace UnityExpansion
         private void Update()
         {
             OnUpdate.InvokeIfNotNull();
-        }
-
-        // Resets UnityExpansion component to default state.
-        private void Reset()
-        {
-            Validate();
-        }
-
-        // Script is loaded or a value is changed in the inspector
-        private void OnValidate()
-        {
-            Validate();
-        }
-
-        // Validation
-        private void Validate()
-        {
-            if (InternalSettings == null)
-            {
-                InternalSettings = gameObject.GetOrAddComponent<InternalSettings>();
-                InternalSettings.hideFlags = HideFlags.HideInInspector;
-            }
         }
     }
 }
