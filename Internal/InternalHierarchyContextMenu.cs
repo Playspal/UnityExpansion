@@ -2,7 +2,6 @@
 using UnityEditor;
 using UnityEngine;
 
-using UnityExpansion;
 using UnityExpansion.UI.Animation;
 using UnityExpansion.UI.Layout;
 
@@ -10,29 +9,6 @@ namespace UnityExpansionInternal
 {
     public static class InternalHierarchyContextMenu
     {
-        /// <summary>
-        /// Creates new expansion main object.
-        /// </summary>
-        [MenuItem("GameObject/UnityExpansion/Main Object", false, 0)]
-        public static void CreateExpansionMainObject()
-        {
-            Expansion[] exists = GameObject.FindObjectsOfType<Expansion>();
-
-            if(exists.Length > 0)
-            {
-                EditorUtility.DisplayDialog("Error", "UnityExpansion main object already exists in screne.", "OK");
-                return;
-            }
-
-            GameObject gameObject = new GameObject("UnityExpansion");
-            Expansion expansion = gameObject.AddComponent<Expansion>();
-
-            gameObject.transform.position = Vector3.zero;
-            gameObject.transform.SetParent(Selection.activeTransform, false);
-
-            Selection.activeObject = gameObject;
-        }
-
         /// <summary>
         /// Creates new layout screen.
         /// </summary>

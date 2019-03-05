@@ -30,7 +30,7 @@ namespace UnityExpansion.Utilities
         /// </summary>
         static UtilityTime()
         {
-            Expansion.Instance.OnUpdate += Update;
+            Expansion.OnUpdate += Update;
         }
 
         // Updates fps

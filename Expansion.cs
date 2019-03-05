@@ -5,32 +5,32 @@ using UnityEngine;
 namespace UnityExpansion
 {
     /// <summary>
-    /// Main class of UnityExpansion and it should be added as component to one of game objects.
+    /// Main class of UnityExpansion. Will be automatically initialized when required.
     /// If you are looking any information visit http://okov.se/expansion/
     /// </summary>
-    [AddComponentMenu("Expansion/Expansion Main Object", 1)]
-    public class Expansion : MonoBehaviour
+    public static class Expansion
     {
-        public const string VERSION = "2.0.0";
-
         /// <summary>
         /// Invoked on every frame.
         /// </summary>
-        public event Action OnUpdate; 
+        public static event Action OnUpdate;
 
-        /// <summary>
-        /// Expansion instance.
-        /// </summary>
-        public static Expansion Instance { get; private set; }
+        private static ExpansionComponent _expansionComponent;
 
-        // Initialization
-        private void Awake()
+        static Expansion()
         {
-            Instance = this;
+            if(_expansionComponent == null)
+            {
+                GameObject gameObject = new GameObject("UnityExpansion");
+                
+                _expansionComponent = gameObject.AddComponent<ExpansionComponent>();
+                _expansionComponent.OnUpdate += OnComponentUpdate;
+
+                UnityEngine.Object.DontDestroyOnLoad(gameObject);
+            }
         }
 
-        // Updates internal part of UnityExpansion.
-        private void Update()
+        private static void OnComponentUpdate()
         {
             OnUpdate.InvokeIfNotNull();
         }

@@ -27,7 +27,7 @@ namespace UnityExpansion.Services
             _isStarted = true;
             _delay = _delayDefined;
 
-            Expansion.Instance.OnUpdate += Process;
+            Expansion.OnUpdate += Process;
         }
 
         /// <summary>
@@ -42,7 +42,7 @@ namespace UnityExpansion.Services
 
             _isStarted = false;
 
-            Expansion.Instance.OnUpdate -= Process;
+            Expansion.OnUpdate -= Process;
         }
 
         /// <summary>
