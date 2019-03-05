@@ -1,7 +1,6 @@
-﻿using UnityEngine;
-using UnityExpansion.Services;
-using UnityExpansion.UI;
-using UnityExpansionInternal;
+﻿using System;
+
+using UnityEngine;
 
 namespace UnityExpansion
 {
@@ -12,23 +11,17 @@ namespace UnityExpansion
     [AddComponentMenu("Expansion/Expansion Main Object", 1)]
     public class Expansion : MonoBehaviour
     {
-        public const string VERSION = "1.1.5";
+        public const string VERSION = "2.0.0";
 
         /// <summary>
-        /// Signal name that dispatched on start of each frame.
+        /// Invoked on every frame.
         /// </summary>
-        public const string SIGNAL_FRAME_START = "UnityExpansion/FrameStart";
+        public event Action OnUpdate; 
 
         /// <summary>
         /// Expansion instance.
         /// </summary>
         public static Expansion Instance { get; private set; }
-
-        [SerializeField]
-        public UiLayoutSettings LayoutSettings;
-
-        [SerializeField]
-        public InternalSettings InternalSettings;
 
         // Initialization
         private void Awake()
@@ -39,35 +32,7 @@ namespace UnityExpansion
         // Updates internal part of UnityExpansion.
         private void Update()
         {
-            Signals.Dispatch(SIGNAL_FRAME_START);
-        }
-
-        // Resets UnityExpansion component to default state.
-        private void Reset()
-        {
-            Validate();
-        }
-
-        // Script is loaded or a value is changed in the inspector
-        private void OnValidate()
-        {
-            Validate();
-        }
-
-        // Validation
-        private void Validate()
-        {
-            if (LayoutSettings == null)
-            {
-                LayoutSettings = gameObject.GetOrAddComponent<UiLayoutSettings>();
-                LayoutSettings.hideFlags = HideFlags.HideInInspector;
-            }
-
-            if (InternalSettings == null)
-            {
-                InternalSettings = gameObject.GetOrAddComponent<InternalSettings>();
-                InternalSettings.hideFlags = HideFlags.HideInInspector;
-            }
+            OnUpdate.InvokeIfNotNull();
         }
     }
 }

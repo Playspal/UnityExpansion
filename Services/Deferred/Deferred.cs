@@ -27,7 +27,7 @@ namespace UnityExpansion.Services
             _isStarted = true;
             _delay = _delayDefined;
 
-            Signals.AddListener(Expansion.SIGNAL_FRAME_START, Process);
+            Expansion.Instance.OnUpdate += Process;
         }
 
         /// <summary>
@@ -42,7 +42,7 @@ namespace UnityExpansion.Services
 
             _isStarted = false;
 
-            Signals.RemoveListener(Expansion.SIGNAL_FRAME_START, Process);
+            Expansion.Instance.OnUpdate -= Process;
         }
 
         /// <summary>

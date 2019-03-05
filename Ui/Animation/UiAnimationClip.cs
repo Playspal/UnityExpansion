@@ -9,6 +9,21 @@ namespace UnityExpansion.UI.Animation
     public class UiAnimationClip
     {
         /// <summary>
+        /// Invokes after animation clip is finished or stopped.
+        /// </summary>
+        public event Action OnComplete;
+
+        /// <summary>
+        /// Unique ID of animation clip.
+        /// </summary>
+        public PersistantID ID { get { return _id; } }
+
+        /// <summary>
+        /// Parent animation object.
+        /// </summary>
+        public UiAnimation Animation;
+
+        /// <summary>
         /// The name.
         /// </summary>
         public string Name = "Animation Clip";
@@ -34,15 +49,19 @@ namespace UnityExpansion.UI.Animation
         public bool PlayOnLayoutElementHide = false;
 
         /// <summary>
-        /// Animation will be started after the signal with specified name will be dispatched.
-        /// Used if PlayOnSignal is true.
-        /// </summary>
-        public string[] PlayOnSignals = new string[0];
-
-        /// <summary>
         /// Loop animation clip.
         /// </summary>
         public bool Loop = false;
+
+        // Unique ID of animation clip.
+        //[SerializeField, HideInInspector]
+        [SerializeField]
+        private PersistantID _id;
+
+        public void SetAnimationController(UiAnimation animation)
+        {
+            Animation = animation;
+        }
 
         /// <summary>
         /// Gets animation clip duration.
@@ -58,6 +77,17 @@ namespace UnityExpansion.UI.Animation
             }
 
             return output;
+        }
+
+        /// <summary>
+        /// Plays this clip.
+        /// </summary>
+        public void Play()
+        {
+            if(Animation != null)
+            {
+                Animation.Play(this);
+            }
         }
 
         /// <summary>
@@ -86,6 +116,7 @@ namespace UnityExpansion.UI.Animation
         public void RewindToEnd()
         {
             Rewind(GetDuration());
+            OnComplete.InvokeIfNotNull();
         }
     }
 }

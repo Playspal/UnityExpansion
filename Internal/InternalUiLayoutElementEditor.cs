@@ -1,8 +1,9 @@
 ﻿#if UNITY_EDITOR
 using UnityEditor;
 using UnityEngine;
-using UnityExpansion.UI;
+
 using UnityExpansion.UI.Animation;
+using UnityExpansion.UI.Layout;
 
 namespace UnityExpansionInternal
 {

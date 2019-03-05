@@ -1,68 +1,58 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Reflection;
 
 namespace UnityExpansion.Utilities
 {
     /// <summary>
-    /// Provides basic reflection functionality.
+    /// Provides advanced reflection functionality.
     /// </summary>
-    /// <example>
-    /// <code>
-    /// using UnityEngine;
-    /// using UnityExpansion.Utilities;
-    /// 
-    /// public class MyClass1
-    /// {
-    ///     public int MyField;
-    /// }
-    /// 
-    /// public class MyClass2
-    /// {
-    ///     public MyClass2()
-    ///     {
-    ///         MyClass1 a = new MyClass1();
-    ///         MyClass1 b = new MyClass1();
-    ///         
-    ///         // Sets a.MyField value
-    ///         UtilityReflection.SetMemberValue(a, "MyField", 100);
-    ///         
-    ///         // Copy all properties and fields from a to b
-    ///         UtilityReflection.CloneMembers(a, b);
-    ///         
-    ///         // Prints 100
-    ///         Debug.Log(UtilityReflection.GetMemberValue(b, "MyField"));
-    ///     }
-    /// }
-    /// </code>
-    /// </example>
     public static class UtilityReflection
     {
         /// <summary>
+        /// Executes specified method.
+        /// </summary>
+        public static void ExecuteMethod(object target, string name, object[] parameters = null)
+        {
+            Type type = target.GetType();
+            MethodInfo method = type.GetMethod(name);
+
+            if (method != null)
+            {
+                method.Invoke(target, parameters);
+            }
+        }
+
+        /// <summary>
+        /// Adds handler delegate to specified event.
+        /// </summary>
+        public static void AddEventHandler(object target, string eventName, Action handler)
+        {
+            Type type = target.GetType();
+            EventInfo eventInfo = type.GetEvent(eventName);
+
+            if (eventInfo != null)
+            {
+                eventInfo.AddEventHandler(target, handler);
+            }
+        }
+
+        /// <summary>
         /// Clones all properties and fields from one object to another.
         /// </summary>
-        /// <param name="from">From object</param>
-        /// <param name="to">To object</param>
+        /// <param name="from">Target object</param>
+        /// <param name="to">Destination object</param>
         public static void CloneMembers(object from, object to)
         {
-            Type typeFrom = from.GetType();
-            Type typeTo = to.GetType();
-
-            if(typeFrom != typeTo)
+            if (from.GetType() == to.GetType())
             {
-                return;
-            }
+                MemberTypes[] memberTypes = new MemberTypes[] { MemberTypes.Property, MemberTypes.Field };
+                MemberInfo[] members = GetMembers(from, memberTypes);
 
-            PropertyInfo[] properties = typeFrom.GetProperties();
-            FieldInfo[] fields = typeFrom.GetFields();
-
-            foreach (PropertyInfo property in properties)
-            {
-                SetMemberValue(to, property.Name, property.GetValue(from, null));
-            }
-
-            foreach (FieldInfo field in fields)
-            {
-                SetMemberValue(to, field.Name, field.GetValue(from));
+                for (int i = 0; i < members.Length; i++)
+                {
+                    members[i].SetValue(to, members[i].GetValue(from));
+                }
             }
         }
 
@@ -74,47 +64,118 @@ namespace UnityExpansion.Utilities
         /// <param name="value">New value</param>
         public static void SetMemberValue(object target, string name, object value)
         {
-            Type type = target.GetType();
+            MemberInfo memberInfo = GetMember(target, name);
 
-            BindingFlags bindFlags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static;
-
-            PropertyInfo propertyInfo = type.GetProperty(name, bindFlags);
-            FieldInfo fieldInfo = type.GetField(name, bindFlags);
-
-            if (propertyInfo != null && propertyInfo.CanWrite)
+            if (memberInfo != null)
             {
-                propertyInfo.SetValue(target, Convert.ChangeType(value, propertyInfo.PropertyType), null);
-            }
-
-            if (fieldInfo != null)
-            {
-                fieldInfo.SetValue(target, Convert.ChangeType(value, fieldInfo.FieldType));
+                memberInfo.SetValue(target, value);
             }
         }
 
         /// <summary>
-        /// Gets value of specified object's property or field.
+        /// Gets value of specified member.
         /// </summary>
         /// <param name="target">Target object</param>
         /// <param name="name">Member name</param>
         /// <returns>Member's value or null if member with specified name is not found</returns>
         public static object GetMemberValue(object target, string name)
         {
-            Type type = target.GetType();
+            MemberInfo member = GetMember(target, name);
+            return member != null ? member.GetValue(target) : null;
+        }
 
-            BindingFlags bindFlags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static;
+        /// <summary>
+        /// Gets member with specified name.
+        /// </summary>
+        /// <param name="target">Target object</param>
+        /// <param name="name">Member name</param>
+        public static MemberInfo GetMember(object target, string name)
+        {
+            MemberInfo[] members = GetMembers(target);
 
-            PropertyInfo propertyInfo = type.GetProperty(name, bindFlags);
-            FieldInfo fieldInfo = type.GetField(name, bindFlags);
-
-            if (propertyInfo != null && propertyInfo.CanRead)
+            for (int i = 0; i < members.Length; i++)
             {
-                return propertyInfo.GetValue(target, null);
+                if (members[i] != null && members[i].Name == name)
+                {
+                    return members[i];
+                }
             }
 
-            if (fieldInfo != null)
+            return null;
+        }
+
+        /// <summary>
+        /// Get list of all members.
+        /// </summary>
+        /// <param name="target">Target object</param>
+        public static MemberInfo[] GetMembers(object target)
+        {
+            return target.GetType().GetAllMembers();
+        }
+
+        /// <summary>
+        /// Gets list of specified members.
+        /// </summary>
+        /// <param name="target">Target object</param>
+        /// <param name="memberTypes">Array of required members types</param>
+        public static MemberInfo[] GetMembers(object target, MemberTypes[] memberTypes)
+        {
+            return target.GetType().GetAllMembers(memberTypes);
+        }
+
+        /// <summary>
+        /// Gets array of members names with specified attribute.
+        /// </summary>
+        /// <param name="target">Target object</param>
+        /// <param name="attributeType">Specified attribute</param>
+        public static string[] GetMembersWithAttribute(object target, Type attributeType)
+        {
+            List<string> output = new List<string>();
+            MemberInfo[] members = GetMembers(target);
+
+            for (int i = 0; i < members.Length; i++)
             {
-                return fieldInfo.GetValue(target);
+                if (members[i].GetCustomAttributes(attributeType, true).Length > 0)
+                {
+                    output.Add(members[i].Name);
+                }
+            }
+
+            return output.ToArray();
+        }
+
+        /// <summary>
+        /// Gets specified attribute attached to member with specified name.
+        /// </summary>
+        /// <typeparam name="T">Type of required attribute</typeparam>
+        /// <param name="target">Target object</param>
+        /// <param name="memberName">Member name</param>
+        public static T GetAttribute<T>(object target, string memberName) where T : Attribute
+        {
+            return GetAttribute(target, memberName, typeof(T)) as T;
+        }
+
+        /// <summary>
+        /// Gets specified attribute attached to member with specified name.
+        /// </summary>
+        /// <param name="target">Target object</param>
+        /// <param name="memberName">Member name</param>
+        /// <param name="attributeType">Type of required attribute</param>
+        public static Attribute GetAttribute(object target, string memberName, Type attributeType)
+        {
+            MemberInfo member = GetMember(target, memberName);
+
+            if(member != null)
+            {
+                object[] attributes = member.GetCustomAttributes(attributeType, true);
+
+                for (int i = 0; i < attributes.Length; i++)
+                {
+                    if (attributes[i].GetType() == attributeType)
+                    {
+                        return attributes[i] as Attribute;
+                    }
+                }
             }
 
             return null;

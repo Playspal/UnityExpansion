@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityExpansion.Services;
 
+using UnityExpansion.UI.Layout;
+
 namespace UnityExpansion.UI.Animation
 {
     [Serializable]
@@ -39,24 +41,24 @@ namespace UnityExpansion.UI.Animation
         private UiAnimationClip _activeAnimation = null;
 
         /// <summary>
-        /// Searches animation clip with specified name.
+        /// Searches animation clip with specified name or id.
         /// </summary>
-        /// <param name="name">The name of animation clip</param>
-        /// <returns>Animation clip of null if not found</returns>
-        public UiAnimationClip GetAnimationClipByName(string name)
+        /// <param name="clipNameOrID">The name or id of animation clip</param>
+        /// <returns>Animation clip or null if not found</returns>
+        public UiAnimationClip GetAnimationClip(string clipNameOrID)
         {
-            return AnimationClips.Find(x => x.Name == name);
+            return AnimationClips.Find(x => x.Name == clipNameOrID || x.ID == clipNameOrID);
         }
 
         /// <summary>
-        /// Plays the animation clip with specified name from the beginning.
+        /// Plays the animation clip with specified name or id from the beginning.
         /// </summary>
-        /// <param name="name">The name of animation clip</param>
-        public void Play(string name)
+        /// <param name="nameOrID">The name or id of animation clip</param>
+        public void Play(string clipNameOrID)
         {
-            UiAnimationClip clip = GetAnimationClipByName(name);
+            UiAnimationClip clip = GetAnimationClip(clipNameOrID);
 
-            if(clip != null)
+            if (clip != null)
             {
                 Play(clip);
             }
@@ -107,6 +109,15 @@ namespace UnityExpansion.UI.Animation
             _activeAnimation = null;
         }
 
+        // Initialization
+        private void Awake()
+        {
+            for (int i = 0; i < AnimationClips.Count; i++)
+            {
+                AnimationClips[i].SetAnimationController(this);
+            }
+        }
+
         // Main iteration
         private void Update()
         {
@@ -142,22 +153,14 @@ namespace UnityExpansion.UI.Animation
                 {
                     Play(AnimationClips[i]);
                 }
-
-                if(AnimationClips[i].PlayOnSignals != null)
-                {
-                    for(int j = 0; j < AnimationClips[i].PlayOnSignals.Length; j++)
-                    {
-                        SubscribeClipToSignal(AnimationClips[i].PlayOnSignals[j], AnimationClips[i].Name);
-                    }                    
-                }
             }
 
             UiLayoutElement element = FindParentLayoutElement(gameObject.transform);
 
             if(element != null)
             {
-                element.OnShowBegin += OnParentLayoutElementShowBegin;
-                element.OnHideBegin += OnParentLayoutElementHideBegin;
+                element.OnShow += OnParentLayoutElementShowBegin;
+                element.OnHide += OnParentLayoutElementHideBegin;
             }
         }
 
@@ -185,18 +188,6 @@ namespace UnityExpansion.UI.Animation
             }
         }
 
-        // Subscribe to specified signal to play clip with specified name.
-        private void SubscribeClipToSignal(string signal, string clipName)
-        {
-            Signals.AddListener
-            (
-                signal,
-                () =>
-                {
-                    Play(clipName);
-                }
-            );
-        }
 
         // Recursively searches parent layout element.
         private UiLayoutElement FindParentLayoutElement(Transform transform)

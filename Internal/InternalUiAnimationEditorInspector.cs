@@ -82,11 +82,6 @@ namespace UnityExpansionInternal
                 triggers.Add("Element Hide");
             }
 
-            if (clip.PlayOnSignals.Length > 0)
-            {
-                triggers.Add("Signals");
-            }
-
             string playon = "";
 
             if (triggers.Count > 1)
@@ -122,18 +117,6 @@ namespace UnityExpansionInternal
                 (
                     new GUIContent("   Element hide"),
                     clip.PlayOnLayoutElementHide
-                );
-
-                InternalLayout.ButtonSignals
-                (
-                    "   Signals",
-                    "Select signals to play animation clip",
-                    clip.PlayOnSignals,
-                    (string[] result) =>
-                    {
-                        clip.PlayOnSignals = result;
-                    },
-                    15
                 );
             }
         }

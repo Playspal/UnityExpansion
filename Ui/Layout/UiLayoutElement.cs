@@ -2,8 +2,9 @@
 
 using UnityEngine;
 using UnityExpansion.UI.Animation;
+using UnityExpansion.UI.Layout.Processor;
 
-namespace UnityExpansion.UI
+namespace UnityExpansion.UI.Layout
 {
     /// <summary>
     /// Base ui layout element. Provides functionality to play show and hide animation clips.
@@ -12,13 +13,18 @@ namespace UnityExpansion.UI
     public class UiLayoutElement : UiObject
     {
         /// <summary>
-        /// Name of show animation clip
+        /// Gets the persistant identifier of this element.
+        /// </summary>
+        public PersistantID PersistantID { get { return _persistantID; } }
+
+        /// <summary>
+        /// Name of show animation clip.
         /// </summary>
         [HideInInspector]
         public string AnimationShow = string.Empty;
 
         /// <summary>
-        /// Name of hide animation clip
+        /// Name of hide animation clip.
         /// </summary>
         [HideInInspector]
         public string AnimationHide = string.Empty;
@@ -26,28 +32,22 @@ namespace UnityExpansion.UI
         /// <summary>
         /// Invokes right after element show begin.
         /// </summary>
-        public event Action OnShowBegin;
-
-        /// <summary>
-        /// Invokes after element is shown.
-        /// If element have show animation, OnShow will be invoked after animation will be played.
-        /// </summary>
+        [UiLayoutProcessorEvent (Group = UiLayoutProcessorAttribute.GROUP_MAIN, Weight = 1, ExcludeFromLayoutObject = true)]
         public event Action OnShow;
 
         /// <summary>
         /// Invokes right after element hide begin.
         /// </summary>
-        public event Action OnHideBegin;
-
-        /// <summary>
-        /// Invokes after element is hiden.
-        /// If element have hide animation, OnHide will be invoked after animation will be played.
-        /// </summary>
+        [UiLayoutProcessorEvent(Group = UiLayoutProcessorAttribute.GROUP_MAIN, Weight = 2, ExcludeFromLayoutObject = true)]
         public event Action OnHide;
+
+        // The persistant identifier of this element.
+        [SerializeField]
+        private PersistantID _persistantID;
 
         // Current visibility. Sets to true right before show animations and sets to false before hide animations
         // Used to prevent start animation if it is already started
-        private bool _isScreenShown = false;
+        private bool _isShown = false;
 
         // Attached UiAnimation component
         private UiAnimation _animation;
@@ -70,8 +70,8 @@ namespace UnityExpansion.UI
             {
                 _animation.OnComplete += OnAnimationCompleted;
 
-                _animationShow = _animation.GetAnimationClipByName(AnimationShow);
-                _animationHide = _animation.GetAnimationClipByName(AnimationHide);
+                _animationShow = _animation.GetAnimationClip(AnimationShow);
+                _animationHide = _animation.GetAnimationClip(AnimationHide);
 
                 if (_animationShow != null)
                 {
@@ -113,9 +113,10 @@ namespace UnityExpansion.UI
         /// Shows this element.
         /// If element have child tweens that presents show animation, they will be played.
         /// </summary>
+        [UiLayoutProcessorHandler(Group = UiLayoutProcessorAttribute.GROUP_MAIN, Weight = 1, ExcludeFromLayoutObject = true)]
         public void Show()
         {
-            if (IsDestroyed || _isScreenShown)
+            if (IsDestroyed || _isShown)
             {
                 return;
             }
@@ -161,9 +162,10 @@ namespace UnityExpansion.UI
         /// Hides this element.
         /// If element have child tweens that presents hide animation, they will be played.
         /// </summary>
+        [UiLayoutProcessorHandler(Group = UiLayoutProcessorAttribute.GROUP_MAIN, Weight = 2, ExcludeFromLayoutObject = true)]
         public void Hide()
         {
-            if (IsDestroyed || !_isScreenShown)
+            if (IsDestroyed || !_isShown)
             {
                 return;
             }
@@ -200,9 +202,23 @@ namespace UnityExpansion.UI
             }
         }
 
-        // Stops animation in case it exists.
-        // If there was playing animation OnAnimationCompleted will be invoked.
-        private void StopAnimation()
+        /// <summary>
+        /// Plays the animation.
+        /// </summary>
+        /// <param name="clipNameOrID">The name or identifier of animation clip.</param>
+        public void PlayAnimation(string clipNameOrID)
+        {
+            if (_animation != null)
+            {
+                _animation.Play(clipNameOrID);
+            }
+        }
+
+        /// <summary>
+        /// Stops animation in case it exists.
+        /// If there was playing animation OnAnimationCompleted will be invoked.
+        /// </summary>
+        public void StopAnimation()
         {
             if (_animation != null)
             {
@@ -230,9 +246,9 @@ namespace UnityExpansion.UI
         /// </summary>
         protected virtual void ShowBegin()
         {
-            OnShowBegin.InvokeIfNotNull();
+            OnShow.InvokeIfNotNull();
 
-            _isScreenShown = true;
+            _isShown = true;
         }
 
         /// <summary>
@@ -241,7 +257,6 @@ namespace UnityExpansion.UI
         /// </summary>
         protected virtual void ShowEnd()
         {
-            OnShow.InvokeIfNotNull();
         }
 
         /// <summary>
@@ -250,9 +265,9 @@ namespace UnityExpansion.UI
         /// </summary>
         protected virtual void HideBegin()
         {
-            OnHideBegin.InvokeIfNotNull();
+            OnHide.InvokeIfNotNull();
 
-            _isScreenShown = false;
+            _isShown = false;
         }
 
         /// <summary>
@@ -261,8 +276,6 @@ namespace UnityExpansion.UI
         /// </summary>
         protected virtual void HideEnd()
         {
-            OnHide.InvokeIfNotNull();
-
             SetActive(false);
         }
     }

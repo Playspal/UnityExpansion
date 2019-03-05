@@ -1,6 +1,4 @@
-﻿using System;
-
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace UnityExpansion.UI
 {
@@ -15,6 +13,8 @@ namespace UnityExpansion.UI
     [AddComponentMenu("Expansion/UiObject", 1)]
     public class UiObject : MonoBehaviour
     {
+
+
         /// <summary>
         /// Is game object destroyed.
         /// </summary>
@@ -171,30 +171,6 @@ namespace UnityExpansion.UI
         }
 
         /// <summary>
-        /// MonoBehavior Update handler.
-        /// In inherited classes always use base.Update() when overriding this method.
-        /// </summary>
-        protected virtual void Update() { }
-
-        /// <summary>
-        /// MonoBehavior Awake handler.
-        /// In inherited classes always use base.Awake() when overriding this method.
-        /// </summary>
-        protected virtual void Awake() { }
-
-        /// <summary>
-        /// MonoBehavior Start handler.
-        /// In inherited classes always use base.Start() when overriding this method.
-        /// </summary>
-        protected virtual void Start() { }
-
-        /// <summary>
-        /// MonoBehavior OnDisable handler.
-        /// In inherited classes always use base.OnDisable() when overriding this method.
-        /// </summary>
-        protected virtual void OnDisable() { }
-
-        /// <summary>
         /// Destroys game object.
         /// </summary>
         public void Destroy()
@@ -266,68 +242,39 @@ namespace UnityExpansion.UI
         }
 
         /// <summary>
-        /// Searches a child by name and returns it.
+        /// MonoBehavior Update handler.
+        /// In inherited classes always use base.Update() when overriding this method.
         /// </summary>
-        /// <param name="name">Name of child to be found</param>
-        /// <returns>Instance of GameObject or null</returns>
-        public GameObject Find(string name)
-        {
-            Transform output = RectTransform.Find(name);
-            return output == null ? null : output.gameObject;
-        }
+        protected virtual void Update() { }
 
         /// <summary>
-        /// Searches for a child by name and returns specified Component attached to it.
-        /// Shorter analogue of Find(name).GetComponent<type>();
+        /// MonoBehavior Awake handler.
+        /// In inherited classes always use base.Awake() when overriding this method.
         /// </summary>
-        /// <param name="name">Name of child to be found</param>
-        /// <returns>Instance of Component or null</returns>
-        public T FindComponent<T>(string name) where T : Component
-        {
-            return Find(name).GetComponent<T>() as T;
-        }
+        protected virtual void Awake() { }
 
         /// <summary>
-        /// Loads and instantiates UiObject stored at path in a Resources folder.
-        /// Throws exception if prefab not found at provided path.
+        /// MonoBehavior Start handler.
+        /// In inherited classes always use base.Start() when overriding this method.
         /// </summary>
-        /// <param name="path">Prefab path in a Resources folder</param>
-        /// <param name="parent">Parent RectTransform</param>
-        /// <returns>Instance of UiObject</returns>
-        public static T Instantiate<T>(string path, RectTransform parent) where T : UiObject
-        {
-            GameObject prefab = Resources.Load<GameObject>(path);
-
-            if (prefab == null)
-            {
-                throw new Exception("Prefab not found at " + path);
-            }
-
-            return Instantiate<T>(prefab, parent);
-        }
+        protected virtual void Start() { }
 
         /// <summary>
-        /// Instantiates already loaded UiObject.
-        /// Throws exception if provided type of component is not found on profided prefab.
+        /// MonoBehavior OnDisable handler.
+        /// In inherited classes always use base.OnDisable() when overriding this method.
         /// </summary>
-        /// <param name="path">Prefab GameObject</param>
-        /// <param name="parent">Parent RectTransform</param>
-        /// <returns>Instance of UiObject</returns>
-        public static T Instantiate<T>(GameObject prefab, RectTransform parent) where T : UiObject
-        {
-            GameObject instance = GameObject.Instantiate(prefab);
+        protected virtual void OnDisable() { }
 
-            instance.transform.SetParent(parent, false);
-            instance.SetActive(true);
+        /// <summary>
+        /// MonoBehavior OnValidate handler.
+        /// In inherited classes always use base.OnValidate() when overriding this method.
+        /// </summary>
+        protected virtual void OnValidate() { }
 
-            T output = instance.GetComponent<T>();
-
-            if (output == null)
-            {
-                throw new Exception(typeof(T).ToString() + " component doesn't found on " + prefab.name);
-            }
-
-            return output;
-        }
+        /// <summary>
+        /// MonoBehavior Reset handler.
+        /// In inherited classes always use base.Reset() when overriding this method.
+        /// </summary>
+        protected virtual void Reset() { }
     }
 }
