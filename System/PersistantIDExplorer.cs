@@ -1,17 +1,46 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
+
 using UnityEngine;
 
 namespace UnityExpansion
 {
     /// <summary>
     /// This class used to recursively search all PersistantID attached to GameObject.
-    /// 
     /// </summary>
+    /// <example>
+    /// <code>
+    /// using UnityEngine;
+    /// using UnityExpansion;
+    /// 
+    /// public static class MyClass
+    /// {
+    ///     public static void ParseObject(GameObject gameObject)
+    ///     {
+    ///         PersistantIDExplorer.Explore
+    ///         (
+    ///             gameObject,
+    ///             (object foundObject, PersistantID persistantID) =>
+    ///             {
+    ///                 Debug.Log("Found " + foundObject + " with ID: " + persistantID.ToString());
+    ///             }
+    ///         );
+    ///     }
+    /// }
+    /// </code>
+    /// </example>
+    /// <seealso cref="UnityExpansion.PersistantID" />
     public class PersistantIDExplorer
     {
-        private const BindingFlags BINDING_FLAGS = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.GetField | BindingFlags.GetProperty;
+        private const BindingFlags BINDING_FLAGS =
+        (
+            BindingFlags.Instance |
+            BindingFlags.Public |
+            BindingFlags.NonPublic |
+            BindingFlags.GetField |
+            BindingFlags.GetProperty
+        );
 
         /// <summary>
         /// Explores the specified game object.
