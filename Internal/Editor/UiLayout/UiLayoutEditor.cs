@@ -131,8 +131,8 @@ namespace UnityExpansionInternal.UiLayoutEditor
 
             for (int i = 0; i < Selection.TargetProcessor.Edicts.Count; i++)
             {
-                NodeConnectorOutput output = null;
-                NodeConnectorInput input = null;
+                NodeConnectorSender sender = null;
+                NodeConnectorHandler handler = null;
 
                 UiLayoutProcessorEdict edict = Selection.TargetProcessor.Edicts[i];
 
@@ -140,34 +140,34 @@ namespace UnityExpansionInternal.UiLayoutEditor
                 {
                     Node node = Nodes.Items[j];
 
-                    for (int n = 0; n < node.Output.Count; n++)
+                    for (int n = 0; n < node.Senders.Count; n++)
                     {
                         if
                         (
-                            node.Output[n].DataID == edict.SenderID &&
-                            node.Output[n].DataMethod == edict.SenderEvent
+                            node.Senders[n].DataID == edict.SenderID &&
+                            node.Senders[n].DataMethod == edict.SenderEvent
                         )
                         {
-                            output = node.Output[n];
+                            sender = node.Senders[n];
                         }
                     }
 
-                    for (int n = 0; n < node.Input.Count; n++)
+                    for (int n = 0; n < node.Handlers.Count; n++)
                     {
                         if
                         (
-                            node.Input[n].DataID == edict.HandlerID &&
-                            node.Input[n].DataMethod == edict.HandlerMethod
+                            node.Handlers[n].DataID == edict.HandlerID &&
+                            node.Handlers[n].DataMethod == edict.HandlerMethod
                         )
                         {
-                            input = node.Input[n];
+                            handler = node.Handlers[n];
                         }
                     }
                 }
 
-                if(output != null && input != null)
+                if(sender != null && handler != null)
                 {
-                    NodeConnector.ConnectionCreate(output, input);
+                    NodeConnector.ConnectionCreate(sender, handler);
                 }
             }
         }

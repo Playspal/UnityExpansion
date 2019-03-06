@@ -25,8 +25,7 @@ namespace UnityExpansionInternal.UiLayoutEditor
 
         public NodeLayoutElementRoot CreateNodeLayoutElementRoot(InternalUiLayoutData.NodeData nodeData, UiLayoutElement element)
         {
-            NodeLayoutElementRoot node = new NodeLayoutElementRoot(nodeData, UiLayoutEditor.Instance);
-            node.SetLayoutElement(element);
+            NodeLayoutElementRoot node = new NodeLayoutElementRoot(nodeData, UiLayoutEditor.Instance, element);
 
             Add(node);
 
@@ -35,8 +34,7 @@ namespace UnityExpansionInternal.UiLayoutEditor
 
         public NodeLayoutElement CreateNodeLayoutElement(InternalUiLayoutData.NodeData nodeData, UiLayoutElement element, Node parentNode)
         {
-            NodeLayoutElement node = new NodeLayoutElement(nodeData, UiLayoutEditor.Instance);
-            node.SetLayoutElement(element);
+            NodeLayoutElement node = new NodeLayoutElement(nodeData, UiLayoutEditor.Instance, element);
 
             Add(node);
             CreateLink(parentNode, node);

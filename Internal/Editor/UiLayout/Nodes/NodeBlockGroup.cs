@@ -9,7 +9,7 @@ namespace UnityExpansionInternal.UiLayoutEditor
 {
     public class NodeBlockGroup : EditorLayoutObject
     {
-        public readonly Node Node;
+        public readonly NodeLayoutElement Node;
         public readonly string GroupName;
 
         public readonly bool IsMainGroup;
@@ -17,10 +17,10 @@ namespace UnityExpansionInternal.UiLayoutEditor
         private EditorLayoutObjectText _title;
         private EditorLayoutObjectTexture _hline;
 
-        private List<NodeConnectorInput> _input = new List<NodeConnectorInput>();
-        private List<NodeConnectorOutput> _output = new List<NodeConnectorOutput>();
+        private List<NodeConnectorHandler> _handlers = new List<NodeConnectorHandler>();
+        private List<NodeConnectorSender> _senders = new List<NodeConnectorSender>();
 
-        public NodeBlockGroup(EditorLayout layout, Node node, string name) : base(layout, node.Width, 30)
+        public NodeBlockGroup(EditorLayout layout, NodeLayoutElement node, string name) : base(layout, node.Width, 30)
         {
             Node = node;
             GroupName = name;
@@ -34,8 +34,8 @@ namespace UnityExpansionInternal.UiLayoutEditor
                 _hline.SetParent(this);
 
                 _title = new EditorLayoutObjectText(layout, Width, 20);
-                _title.SetAlignment(UnityEngine.TextAnchor.MiddleLeft);
-                _title.SetFontStyle(UnityEngine.FontStyle.Bold);
+                _title.SetAlignment(TextAnchor.MiddleLeft);
+                _title.SetFontStyle(FontStyle.Bold);
                 _title.SetColor(UiLayoutEditorConfig.COLOR_NODE_LABEL);
                 _title.SetText(GroupName);
                 _title.SetParent(this);
@@ -46,28 +46,40 @@ namespace UnityExpansionInternal.UiLayoutEditor
             Refresh();
         }
 
-        public void AddInput(string uniqueID, string method, int weight)
+        public void AddHandler(string uniqueID, string method, int weight)
         {
-            NodeConnectorInput item = new NodeConnectorInput(Layout, Node, method);
+            NodeConnectorHandler item = null;// new NodeConnectorHandler(Layout, Node, method);
+
+            switch(method)
+            {
+                case "Show":
+                    item = new NodeConnectorHandlerShow(Layout, Node);
+                    break;
+
+                default:
+                    item = new NodeConnectorHandler(Layout, Node, method);
+                    break;
+            }
+
             item.SetWeight(weight);
             item.SetData(uniqueID, method);
             item.SetParent(this);
             
-            _input.Add(item);
-            _input.Sort((a, b) => a.Weight.CompareTo(b.Weight));
+            _handlers.Add(item);
+            _handlers.Sort((a, b) => a.Weight.CompareTo(b.Weight));
 
             Refresh();
         }
 
-        public void AddOutput(string uniqueID, string method, int weight)
+        public void AddSender(string uniqueID, string method, int weight)
         {
-            NodeConnectorOutput item = new NodeConnectorOutput(Layout, Node, method);
+            NodeConnectorSender item = new NodeConnectorSender(Layout, Node, method);
             item.SetWeight(weight);
             item.SetData(uniqueID, method);
             item.SetParent(this);
 
-            _output.Add(item);
-            _output.Sort((a, b) => a.Weight.CompareTo(b.Weight));
+            _senders.Add(item);
+            _senders.Sort((a, b) => a.Weight.CompareTo(b.Weight));
 
             Refresh();
         }
@@ -77,18 +89,18 @@ namespace UnityExpansionInternal.UiLayoutEditor
             int offset = IsMainGroup ? 0 : _title.Y + _title.Height + 5;
             int height = offset;
 
-            for (int i = 0; i < _input.Count; i++)
+            for (int i = 0; i < _handlers.Count; i++)
             {
-                _input[i].Y = i * (_input[i].Height + 5) + offset;
+                _handlers[i].Y = i * (_handlers[i].Height + 5) + offset;
 
-                height = Mathf.Max(height, _input[i].Y + _input[i].Height);
+                height = Mathf.Max(height, _handlers[i].Y + _handlers[i].Height);
             }
 
-            for (int i = 0; i < _output.Count; i++)
+            for (int i = 0; i < _senders.Count; i++)
             {
-                _output[i].Y = i * (_output[i].Height + 5) + offset;
+                _senders[i].Y = i * (_senders[i].Height + 5) + offset;
 
-                height = Mathf.Max(height, _output[i].Y + _output[i].Height);
+                height = Mathf.Max(height, _senders[i].Y + _senders[i].Height);
             }
 
             SetSize(Width, height);
