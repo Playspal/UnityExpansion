@@ -18,16 +18,16 @@ namespace UnityExpansion.UI.Layout
         public PersistantID PersistantID { get { return _persistantID; } }
 
         /// <summary>
-        /// Name of show animation clip.
+        /// Persistand id of show animation clip.
         /// </summary>
         [HideInInspector]
-        public string AnimationShow = string.Empty;
+        public string AnimationShowID = string.Empty;
 
         /// <summary>
-        /// Name of hide animation clip.
+        /// Persistand id of hide animation clip.
         /// </summary>
         [HideInInspector]
-        public string AnimationHide = string.Empty;
+        public string AnimationHideID = string.Empty;
 
         /// <summary>
         /// Invokes right after element show begin.
@@ -70,8 +70,8 @@ namespace UnityExpansion.UI.Layout
             {
                 _animation.OnComplete += OnAnimationCompleted;
 
-                _animationShow = _animation.GetAnimationClip(AnimationShow);
-                _animationHide = _animation.GetAnimationClip(AnimationHide);
+                _animationShow = _animation.GetAnimationClip(AnimationShowID);
+                _animationHide = _animation.GetAnimationClip(AnimationHideID);
 
                 if (_animationShow != null)
                 {
