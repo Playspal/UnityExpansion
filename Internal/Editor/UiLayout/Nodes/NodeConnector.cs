@@ -89,8 +89,8 @@ namespace UnityExpansionInternal.UiLayoutEditor
                 ConnectionRemove(b, b.Connected);
             }
 
-            NodeConnectorInput handler = (a.ConnectorType == Type.Handler ? a : b) as NodeConnectorInput;
-            NodeConnectorOutput sender = (a.ConnectorType == Type.Sender ? a : b) as NodeConnectorOutput;
+            NodeConnectorHandler handler = (a.ConnectorType == Type.Handler ? a : b) as NodeConnectorHandler;
+            NodeConnectorSender sender = (a.ConnectorType == Type.Sender ? a : b) as NodeConnectorSender;
 
             Color color = sender.Node.ColorMain;
 
@@ -113,8 +113,8 @@ namespace UnityExpansionInternal.UiLayoutEditor
 
         public static void ConnectionRemove(NodeConnector a, NodeConnector b)
         {
-            NodeConnectorInput handler = (a.ConnectorType == Type.Handler ? a : b) as NodeConnectorInput;
-            NodeConnectorOutput sender = (a.ConnectorType == Type.Sender ? a : b) as NodeConnectorOutput;
+            NodeConnectorHandler handler = (a.ConnectorType == Type.Handler ? a : b) as NodeConnectorHandler;
+            NodeConnectorSender sender = (a.ConnectorType == Type.Sender ? a : b) as NodeConnectorSender;
 
             a.OnDisconnected.InvokeIfNotNull(a.Connected);
             a.Connected = null;
