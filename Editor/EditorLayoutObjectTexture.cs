@@ -112,6 +112,22 @@ namespace UnityExpansion.Editor
         }
 
         /// <summary>
+        /// Draws rhombus in texture.
+        /// </summary>
+        public void DrawTriangleUp(int x, int y, int radius, Color color)
+        {
+            Texture.DrawTriangleUp(x * Scale, y * Scale, radius * Scale, color);
+        }
+
+        /// <summary>
+        /// Draws rhombus in texture.
+        /// </summary>
+        public void DrawTriangleDown(int x, int y, int radius, Color color)
+        {
+            Texture.DrawTriangleDown(x * Scale, y * Scale, radius * Scale, color);
+        }
+
+        /// <summary>
         /// Draws circle in texture.
         /// </summary>
         public void DrawCircle(int x, int y, int radius, Color color)
