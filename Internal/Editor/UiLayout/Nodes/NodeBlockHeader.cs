@@ -33,17 +33,11 @@ namespace UnityExpansionInternal.UiLayoutEditor
             _label.SetText("...");
             _label.SetParent(this);
             _label.X = 9;
-
-            Layout.Mouse.OnPress += MouseHandlerPress;
-            Layout.Mouse.OnRelease += MouseHandlerRelease;
         }
 
         public override void Destroy()
         {
             base.Destroy();
-
-            Layout.Mouse.OnPress -= MouseHandlerPress;
-            Layout.Mouse.OnRelease -= MouseHandlerRelease;
         }
 
         public void SetTitle(string value)
@@ -56,16 +50,16 @@ namespace UnityExpansionInternal.UiLayoutEditor
             base.Render();
         }
 
-        private void MouseHandlerPress()
+        public override void OnMousePress()
         {
-            if (HitTest(Layout.Mouse.X, Layout.Mouse.Y))
-            {
-                _parentNode.DragStart(false);
-            }
+            base.OnMousePress();
+            _parentNode.DragStart(false);
         }
 
-        private void MouseHandlerRelease()
+        public override void OnMouseRelease()
         {
+            base.OnMouseRelease();
+
             if (_parentNode.IsDragging)
             {
                 _parentNode.DragStop();

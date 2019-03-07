@@ -53,6 +53,7 @@ namespace UnityExpansionInternal.UiLayoutEditor
             switch(method)
             {
                 case "Show":
+                case "Hide":
                     item = new NodeConnectorHandlerShow(Layout, Node);
                     break;
 
@@ -73,6 +74,14 @@ namespace UnityExpansionInternal.UiLayoutEditor
 
         public void AddSender(string uniqueID, string method, int weight)
         {
+            switch (method)
+            {
+                case "OnShow":
+                case "OnHide":
+                    return;
+            }
+
+
             NodeConnectorSender item = new NodeConnectorSender(Layout, Node, method);
             item.SetWeight(weight);
             item.SetData(uniqueID, method);

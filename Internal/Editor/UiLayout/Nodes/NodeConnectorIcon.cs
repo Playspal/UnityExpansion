@@ -51,6 +51,7 @@ namespace UnityExpansionInternal.UiLayoutEditor
 
             if(!_texture.LoadFromCache())
             {
+                // TODO: set size used to create new instance?!
                 _texture.SetSize(_texture.Width, _texture.Height);
                 _texture.Fill(new Color(0, 0, 0, 0));
                 _texture.DrawRhombus(7, 7, 9, Node.ColorBackground);
