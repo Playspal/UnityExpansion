@@ -13,9 +13,14 @@ namespace UnityExpansion.Editor
         /// </summary>
         public EditorLayout Layout { get; private set; }
 
+        private EditorLayoutObjectsInteraction _interaction;
+
         private List<EditorLayoutObject> _objects = new List<EditorLayoutObject>();
         private List<EditorLayoutObject> _objectsToAdd = new List<EditorLayoutObject>();
         private List<EditorLayoutObject> _objectsToRemove = new List<EditorLayoutObject>();
+
+        
+        private int _zindex = 0;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="EditorLayoutObjects"/> class.
@@ -23,6 +28,8 @@ namespace UnityExpansion.Editor
         public EditorLayoutObjects(EditorLayout layout)
         {
             Layout = layout;
+
+            _interaction = new EditorLayoutObjectsInteraction(this);
         }
 
         /// <summary>
@@ -71,10 +78,50 @@ namespace UnityExpansion.Editor
         }
 
         /// <summary>
+        /// Get list of objects that collide with provided global position.
+        /// </summary>
+        public List<EditorLayoutObject> HitTestAll(int x, int y)
+        {
+            List<EditorLayoutObject> output = new List<EditorLayoutObject>();
+            EditorLayoutObject layoutObject = HitTest(Layout.Mouse.X, Layout.Mouse.Y);
+
+            while (layoutObject != null)
+            {
+                output.Add(layoutObject);
+                layoutObject = layoutObject.ParentObject;
+            }
+
+            return output;
+        }
+
+        /// <summary>
+        /// Get object that collide with provided global position.
+        /// </summary>
+        public EditorLayoutObject HitTest(int x, int y)
+        {
+            EditorLayoutObject output = null;
+
+            for (int i = 0; i < _objects.Count; i++)
+            {
+                if (_objects[i].IsMouseListener && _objects[i].HitTest(x, y))
+                {
+                    if (output == null || _objects[i].Index > output.Index)
+                    {
+                        output = _objects[i];
+                    }
+                }
+            }
+
+            return output;
+        }
+
+        /// <summary>
         /// Renders all LayoutObjects according to hierarchy.
         /// </summary>
         public void Render()
         {
+            ZIndexReset();
+
             for (int i = 0; i < _objectsToRemove.Count; i++)
             {
                 _objects.Remove(_objectsToRemove[i]);
@@ -93,8 +140,15 @@ namespace UnityExpansion.Editor
                 }
             }
 
-            _objectsToRemove.Clear();
-            _objectsToAdd.Clear();
+            if (_objectsToRemove.Count > 0)
+            {
+                _objectsToRemove.Clear();
+            }
+
+            if (_objectsToAdd.Count > 0)
+            {
+                _objectsToAdd.Clear();
+            }
         }
 
         public void Update()
@@ -112,6 +166,8 @@ namespace UnityExpansion.Editor
         {
             if (layoutObject.IsActive)
             {
+                ZIndexAssign(layoutObject);
+
                 if
                 (
                     layoutObject.GlobalX < Layout.WindowWidth &&
@@ -145,6 +201,17 @@ namespace UnityExpansion.Editor
                     UpdateRecursively(layoutObject.ChildObjects[i]);
                 }
             }
+        }
+
+        private void ZIndexReset()
+        {
+            _zindex = 0;
+        }
+
+        private void ZIndexAssign(EditorLayoutObject layoutObject)
+        {
+            layoutObject.Index = _zindex;
+            _zindex++;
         }
     }
 }

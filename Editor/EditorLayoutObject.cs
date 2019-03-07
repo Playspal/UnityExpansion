@@ -21,6 +21,11 @@ namespace UnityExpansion.Editor
         public List<EditorLayoutObject> ChildObjects { get; private set; }
 
         /// <summary>
+        /// Z Index
+        /// </summary>
+        public float Index { get; set; }
+
+        /// <summary>
         /// Object's local position X.
         /// </summary>
         public int X { get; set; }
@@ -61,9 +66,9 @@ namespace UnityExpansion.Editor
         public bool IsDragging { get; private set; }
 
         /// <summary>
-        /// Z Index
+        /// Is object react on mouse.
         /// </summary>
-        public float ZIndex { get; set; }
+        public bool IsMouseListener { get; private set; }
 
         /// <summary>
         /// Dispatches on resize
@@ -82,6 +87,8 @@ namespace UnityExpansion.Editor
         {
             Width = width;
             Height = height;
+
+            SetMouseListener(true);
 
             Layout = layout;
             Layout.Objects.Add(this);
@@ -135,6 +142,14 @@ namespace UnityExpansion.Editor
         }
 
         /// <summary>
+        /// Allow or disable react on mouse events.
+        /// </summary>
+        public void SetMouseListener(bool value)
+        {
+            IsMouseListener = value;
+        }
+
+        /// <summary>
         /// Sets the parent object.
         /// </summary>
         public virtual void SetParent(EditorLayoutObject parent)
@@ -170,23 +185,7 @@ namespace UnityExpansion.Editor
 
             OnResize.InvokeIfNotNull();
         }
-        /*
-        /// <summary>
-        /// Gets the global position X.
-        /// </summary>
-        public int GetPositionGlobalX()
-        {
-            return ParentObject != null ? ParentObject.GetPositionGlobalX() + X : Layout.CanvasX + X;
-        }
 
-        /// <summary>
-        /// Gets the global position Y.
-        /// </summary>
-        public int GetPositionGlobalY()
-        {
-            return ParentObject != null ? ParentObject.GetPositionGlobalY() + Y : Layout.CanvasY + Y;
-        }
-        */
         /// <summary>
         /// Starts dragging by Input.mousePosition.
         /// </summary>
@@ -267,6 +266,35 @@ namespace UnityExpansion.Editor
         {
         }
 
+        public virtual void OnMouseOver()
+        {
+        }
+
+        public virtual void OnMouseOut()
+        {
+        }
+
+        public virtual void OnMouseMove()
+        {
+        }
+
+        public virtual void OnMousePress()
+        {
+        }
+
+        public virtual void OnMouseRelease()
+        {
+        }
+
+        public virtual void OnMouseReleaseInside()
+        {
+        }
+
+
+        public virtual void OnMouseReleaseOutside()
+        {
+        }
+
         public virtual void Update()
         {
             if (IsDragging)
@@ -275,11 +303,6 @@ namespace UnityExpansion.Editor
                 Y = Layout.Mouse.Y - Layout.CanvasY - _dragOffsetY;
             }
 
-            RecalculateGlobalPosition();
-        }
-
-        public void RecalculateGlobalPosition()
-        {
             GlobalX = ParentObject != null ? ParentObject.GlobalX + X : Layout.CanvasX + X;
             GlobalY = ParentObject != null ? ParentObject.GlobalY + Y : Layout.CanvasY + Y;
         }

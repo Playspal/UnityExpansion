@@ -10,6 +10,15 @@ namespace UnityExpansion.Editor
     /// </summary>
     public class EditorLayoutMouse
     {
+        public enum MouseEvent
+        {
+            Press,
+            Release,
+            Move,
+            Over,
+            Out
+        }
+
         public event Action OnPress;
         public event Action OnRelease;
         public event Action OnMove;
