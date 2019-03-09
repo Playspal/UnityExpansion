@@ -77,5 +77,11 @@ namespace UnityExpansionInternal.UiLayoutEditor
         {
             Items.Add(node);
         }
+
+        public void Destroy(Node node)
+        {
+            Items.Remove(node);
+            node.Destroy();
+        }
     }
 }
