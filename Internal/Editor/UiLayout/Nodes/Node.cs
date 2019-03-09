@@ -15,12 +15,16 @@ namespace UnityExpansionInternal.UiLayoutEditor
         public Color ColorDark { get; private set; }
         public Color ColorLight { get; private set; }
 
+        public Node ParentNode { get; private set; }
+
+        /// <summary>
+        /// List of links.
+        /// </summary>
+        public List<NodeLink> Links = new List<NodeLink>();
         public List<NodeConnectorHandler> Handlers { get; private set; }
         public List<NodeConnectorSender> Senders { get; private set; }
 
         protected EditorLayoutObjectTextureCachable _textureBackground;
-
-        private List<NodeLink> _links = new List<NodeLink>();
 
         public Node(InternalUiLayoutData.NodeData nodeData, EditorLayout layout, int width, int height) : base (layout, width, height)
         {
@@ -45,15 +49,20 @@ namespace UnityExpansionInternal.UiLayoutEditor
             SetupColors();
         }
 
+        public void SetParentNode(Node parent)
+        {
+            ParentNode = parent;
+        }
+
         public virtual void AddLink(Node node)
         {
             NodeLink link = new NodeLink(Layout, this, node);
 
-            _links.Add(link);
+            Links.Add(link);
 
-            for (int i = 0; i < _links.Count; i++)
+            for (int i = 0; i < Links.Count; i++)
             {
-                _links[i].SetPosition(i, _links.Count);
+                Links[i].SetPosition(i, Links.Count);
             }
         }
 
@@ -115,9 +124,9 @@ namespace UnityExpansionInternal.UiLayoutEditor
 
         public override void Render()
         {
-            for (int i = 0; i < _links.Count; i++)
+            for (int i = 0; i < Links.Count; i++)
             {
-                _links[i].Render();
+                Links[i].Render();
             }
 
             base.Render();

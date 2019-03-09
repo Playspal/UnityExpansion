@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-
 using UnityEditor;
 using UnityEngine;
 
@@ -56,9 +55,15 @@ namespace UnityExpansionInternal.UiLayoutEditor
 
         public void RefreshNode(Node node)
         {
+            if (node.ParentNode != null)
+            {
+                RefreshNode(node.ParentNode);
+                return;
+            }
+
             InternalUiLayoutData.NodeData nodeData = node.NodeData;
 
-            Nodes.Destroy(node);
+            Nodes.DestroyWithLinkedNodes(node);
             SetupNode(nodeData);
             RefreshEdicts();
         }
@@ -137,13 +142,16 @@ namespace UnityExpansionInternal.UiLayoutEditor
 
         private void RefreshEdicts()
         {
-            // TODO: delete edict if handler of sender object not found
-            for (int i = 0; i < Selection.TargetProcessor.Edicts.Count; i++)
+            UiLayoutProcessorEdict[] edicts = Selection.TargetProcessor.Edicts.ToArray();
+
+            List<UiLayoutProcessorEdict> unused = new List<UiLayoutProcessorEdict>();
+
+            for (int i = 0; i < edicts.Length; i++)
             {
+                UiLayoutProcessorEdict edict = edicts[i];
+
                 NodeConnectorSender sender = null;
                 NodeConnectorHandler handler = null;
-
-                UiLayoutProcessorEdict edict = Selection.TargetProcessor.Edicts[i];
 
                 for (int j = 0; j < Nodes.Items.Count; j++)
                 {
@@ -158,6 +166,7 @@ namespace UnityExpansionInternal.UiLayoutEditor
                         )
                         {
                             sender = node.Senders[n];
+                            break;
                         }
                     }
 
@@ -170,6 +179,7 @@ namespace UnityExpansionInternal.UiLayoutEditor
                         )
                         {
                             handler = node.Handlers[n];
+                            break;
                         }
                     }
                 }
@@ -178,6 +188,21 @@ namespace UnityExpansionInternal.UiLayoutEditor
                 {
                     NodeConnector.ConnectionCreate(sender, handler);
                 }
+                else
+                {
+                    unused.Add(edict);
+                }
+            }
+
+            for(int i = 0; i < unused.Count; i++)
+            {
+                Selection.ProcessorEdictRemove
+                (
+                    unused[i].SenderID,
+                    unused[i].SenderEvent,
+                    unused[i].HandlerID,
+                    unused[i].HandlerMethod
+                );
             }
         }
       

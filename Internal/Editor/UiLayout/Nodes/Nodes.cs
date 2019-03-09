@@ -35,6 +35,7 @@ namespace UnityExpansionInternal.UiLayoutEditor
         public NodeLayoutElement CreateNodeLayoutElement(InternalUiLayoutData.NodeData nodeData, UiLayoutElement element, Node parentNode)
         {
             NodeLayoutElement node = new NodeLayoutElement(nodeData, UiLayoutEditor.Instance, element);
+            node.SetParentNode(parentNode);
 
             Add(node);
             CreateLink(parentNode, node);
@@ -78,10 +79,26 @@ namespace UnityExpansionInternal.UiLayoutEditor
             Items.Add(node);
         }
 
-        public void Destroy(Node node)
+        public void DestroyWithLinkedNodes(Node node)
         {
+            List<NodeLink> links = node.Links;
+
             Items.Remove(node);
+
             node.Destroy();
+
+            for (int i = 0; i < links.Count; i++)
+            {
+                if (links[i].NodeA != node && links[i].NodeA != null)
+                {
+                    DestroyWithLinkedNodes(links[i].NodeA);
+                }
+
+                if (links[i].NodeB != node && links[i].NodeB != null)
+                {
+                    DestroyWithLinkedNodes(links[i].NodeB);
+                }
+            }
         }
     }
 }
