@@ -1,4 +1,6 @@
-﻿using UnityEditor;
+﻿using System.Collections.Generic;
+
+using UnityEditor;
 using UnityEngine;
 
 using UnityExpansion.Editor;
@@ -50,6 +52,15 @@ namespace UnityExpansionInternal.UiLayoutEditor
             };
 
             Refresh();
+        }
+
+        public void RefreshNode(Node node)
+        {
+            InternalUiLayoutData.NodeData nodeData = node.NodeData;
+
+            Nodes.Destroy(node);
+            SetupNode(nodeData);
+            RefreshEdicts();
         }
 
         protected override void OnGUI()
@@ -118,17 +129,15 @@ namespace UnityExpansionInternal.UiLayoutEditor
 
             for (int i = 0; i < Selection.Data.Nodes.Count; i++)
             {
-                InternalUiLayoutData.NodeData nodeData = Selection.Data.Nodes[i];
-
-                switch (nodeData.Type)
-                {
-                    case InternalUiLayoutData.NodeType.LayoutElementRoot:
-                        SetupLayoutElementRoot(nodeData);
-                        break;
-                }
+                SetupNode(Selection.Data.Nodes[i]);
             }
 
+            RefreshEdicts();
+        }
 
+        private void RefreshEdicts()
+        {
+            // TODO: delete edict if handler of sender object not found
             for (int i = 0; i < Selection.TargetProcessor.Edicts.Count; i++)
             {
                 NodeConnectorSender sender = null;
@@ -165,13 +174,12 @@ namespace UnityExpansionInternal.UiLayoutEditor
                     }
                 }
 
-                if(sender != null && handler != null)
+                if (sender != null && handler != null)
                 {
                     NodeConnector.ConnectionCreate(sender, handler);
                 }
             }
         }
-
       
         private void SetupSystemMethod(string methodName)
         {
@@ -205,6 +213,16 @@ namespace UnityExpansionInternal.UiLayoutEditor
             }
 
             NodeSystemEvent node = Nodes.CreateNodeSystemEvent(nodeData, Selection.Target, eventName);
+        }
+
+        private void SetupNode(InternalUiLayoutData.NodeData nodeData)
+        {
+            switch (nodeData.Type)
+            {
+                case InternalUiLayoutData.NodeType.LayoutElementRoot:
+                    SetupLayoutElementRoot(nodeData);
+                    break;
+            }
         }
 
         private void SetupLayoutElementRoot(InternalUiLayoutData.NodeData nodeData)
