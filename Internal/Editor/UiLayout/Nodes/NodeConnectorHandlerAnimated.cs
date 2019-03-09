@@ -87,10 +87,20 @@ namespace UnityExpansionInternal.UiLayoutEditor
             switch (_animationType)
             {
                 case AnimationType.Show:
+                    if(_node.LayoutElement.AnimationHideID == id)
+                    {
+                        _node.LayoutElement.AnimationHideID = string.Empty;
+                    }
+
                     _node.LayoutElement.AnimationShowID = id;
                     break;
 
                 case AnimationType.Hide:
+                    if (_node.LayoutElement.AnimationShowID == id)
+                    {
+                        _node.LayoutElement.AnimationShowID = string.Empty;
+                    }
+
                     _node.LayoutElement.AnimationHideID = id;
                     break;
             }
