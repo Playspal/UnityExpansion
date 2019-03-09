@@ -70,6 +70,14 @@ namespace UnityExpansion.Editor
         /// </summary>
         public bool IsMouseListener { get; private set; }
 
+        public event Action OnMouseOver;
+        public event Action OnMouseOut;
+        public event Action OnMouseMove;
+        public event Action OnMousePress;
+        public event Action OnMouseRelease;
+        public event Action OnMouseReleaseInside;
+        public event Action OnMouseReleaseOutside;
+
         /// <summary>
         /// Dispatches on resize
         /// </summary>
@@ -266,35 +274,6 @@ namespace UnityExpansion.Editor
         {
         }
 
-        public virtual void OnMouseOver()
-        {
-        }
-
-        public virtual void OnMouseOut()
-        {
-        }
-
-        public virtual void OnMouseMove()
-        {
-        }
-
-        public virtual void OnMousePress()
-        {
-        }
-
-        public virtual void OnMouseRelease()
-        {
-        }
-
-        public virtual void OnMouseReleaseInside()
-        {
-        }
-
-
-        public virtual void OnMouseReleaseOutside()
-        {
-        }
-
         public virtual void Update()
         {
             if (IsDragging)
@@ -306,5 +285,40 @@ namespace UnityExpansion.Editor
             GlobalX = ParentObject != null ? ParentObject.GlobalX + X : Layout.CanvasX + X;
             GlobalY = ParentObject != null ? ParentObject.GlobalY + Y : Layout.CanvasY + Y;
         }
+
+        public void ProcessEvent(EditorLayoutObjectEvent layoutEvent)
+        {
+            switch(layoutEvent)
+            {
+                case EditorLayoutObjectEvent.MouseMove:
+                    OnMouseMove.InvokeIfNotNull();
+                    break;
+
+                case EditorLayoutObjectEvent.MouseOut:
+                    OnMouseOut.InvokeIfNotNull();
+                    break;
+
+                case EditorLayoutObjectEvent.MouseOver:
+                    OnMouseOver.InvokeIfNotNull();
+                    break;
+
+                case EditorLayoutObjectEvent.MousePress:
+                    OnMousePress.InvokeIfNotNull();
+                    break;
+
+                case EditorLayoutObjectEvent.MouseRelease:
+                    OnMouseRelease.InvokeIfNotNull();
+                    break;
+
+                case EditorLayoutObjectEvent.MouseReleaseInside:
+                    OnMouseReleaseInside.InvokeIfNotNull();
+                    break;
+
+                case EditorLayoutObjectEvent.MouseReleaseOutside:
+                    OnMouseReleaseOutside.InvokeIfNotNull();
+                    break;
+            }
+        }
     }
 }
+ 

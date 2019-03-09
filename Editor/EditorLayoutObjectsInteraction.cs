@@ -28,7 +28,7 @@ namespace UnityExpansion.Editor
             {
                 if (!hitTested.Contains(_hoveredObjects[i]))
                 {
-                    _hoveredObjects[i].OnMouseOut();
+                    _hoveredObjects[i].ProcessEvent(EditorLayoutObjectEvent.MouseOut);
                     _hoveredObjects[i] = null;
                 }
             }
@@ -37,12 +37,12 @@ namespace UnityExpansion.Editor
             {
                 if (!_hoveredObjects.Contains(hitTested[i]))
                 {
-                    hitTested[i].OnMouseOver();
+                    hitTested[i].ProcessEvent(EditorLayoutObjectEvent.MouseOver);
                     _hoveredObjects.Add(hitTested[i]);
                 }
                 else
                 {
-                    hitTested[i].OnMouseMove();
+                    hitTested[i].ProcessEvent(EditorLayoutObjectEvent.MouseMove);
                 }
             }
 
@@ -55,7 +55,7 @@ namespace UnityExpansion.Editor
 
             for(int i = 0; i < hitTested.Count; i++)
             {
-                hitTested[i].OnMousePress();
+                hitTested[i].ProcessEvent(EditorLayoutObjectEvent.MousePress);
                 _pressedObjects.Add(hitTested[i]);
             }
         }
@@ -66,16 +66,13 @@ namespace UnityExpansion.Editor
 
             for(int i = 0; i < _pressedObjects.Count; i++)
             {
-                _pressedObjects[i].OnMouseRelease();
-
-                if (hitTested.Contains(_pressedObjects[i]))
-                {
-                    _pressedObjects[i].OnMouseReleaseInside();
-                }
-                else
-                {
-                    _pressedObjects[i].OnMouseReleaseOutside();
-                }
+                _pressedObjects[i].ProcessEvent(EditorLayoutObjectEvent.MouseRelease);
+                _pressedObjects[i].ProcessEvent
+                (
+                    hitTested.Contains(_pressedObjects[i]) ?
+                    EditorLayoutObjectEvent.MouseReleaseInside :
+                    EditorLayoutObjectEvent.MouseReleaseOutside
+                );
             }
 
             _pressedObjects.Clear();
