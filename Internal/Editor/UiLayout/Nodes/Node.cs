@@ -14,8 +14,6 @@ namespace UnityExpansionInternal.UiLayoutEditor
         public Color ColorMain { get; private set; }
         public Color ColorDark { get; private set; }
         public Color ColorLight { get; private set; }
-        public Color ColorBackground { get; private set; }
-        public Color ColorBackgroundBorder { get; private set; }
 
         public List<NodeConnectorHandler> Handlers { get; private set; }
         public List<NodeConnectorSender> Senders { get; private set; }
@@ -34,16 +32,13 @@ namespace UnityExpansionInternal.UiLayoutEditor
             Handlers = new List<NodeConnectorHandler>();
             Senders = new List<NodeConnectorSender>();
 
-            ColorBackground = Color.red.Parse(UiLayoutEditorConfig.COLOR_NODE_BACKGROUND);
-            ColorBackgroundBorder = Color.red.Parse(UiLayoutEditorConfig.COLOR_NODE_BACKGROUND_BORDER);
-
             _textureBackground = new EditorLayoutObjectTextureCachable(layout, Width, Height, "node-background");
             _textureBackground.SetParent(this);
 
             if(!_textureBackground.LoadFromCache())
             {
-                _textureBackground.Fill(ColorBackground);
-                _textureBackground.DrawBorder(1, ColorBackgroundBorder);
+                _textureBackground.Fill(UiLayoutEditorConfig.ColorNodeBackground);
+                _textureBackground.DrawBorder(1, UiLayoutEditorConfig.ColorNodeBackgroundBorder);
                 _textureBackground.SaveToCache();
             }
 
@@ -70,30 +65,30 @@ namespace UnityExpansionInternal.UiLayoutEditor
 
             if (this is NodeLayoutElementRoot)
             {
-                SetupColors(UiLayoutEditorConfig.COLOR_SCREEN_MAIN, UiLayoutEditorConfig.COLOR_SCREEN_DARK, UiLayoutEditorConfig.COLOR_SCREEN_LIGHT);
+                SetupColors(UiLayoutEditorConfig.ColorElementRootMain, UiLayoutEditorConfig.ColorElementRootDark, UiLayoutEditorConfig.ColorElementRootLight);
             }
 
             else if (this is NodeLayoutElement)
             {
-                SetupColors(UiLayoutEditorConfig.COLOR_BLOCK_MAIN, UiLayoutEditorConfig.COLOR_BLOCK_DARK, UiLayoutEditorConfig.COLOR_BLOCK_LIGHT);
+                SetupColors(UiLayoutEditorConfig.ColorElementChildMain, UiLayoutEditorConfig.ColorElementChildDark, UiLayoutEditorConfig.ColorElementChildLight);
             }
 
             if (this is NodeSystemEvent)
             {
-                SetupColors(UiLayoutEditorConfig.COLOR_SYSTEM_MAIN, UiLayoutEditorConfig.COLOR_SYSTEM_DARK, UiLayoutEditorConfig.COLOR_SYSTEM_LIGHT);
+                SetupColors(UiLayoutEditorConfig.ColorElementSystemMain, UiLayoutEditorConfig.ColorElementSystemDark, UiLayoutEditorConfig.ColorElementSystemLight);
             }
 
             if (this is NodeSystemMethod)
             {
-                SetupColors(UiLayoutEditorConfig.COLOR_SYSTEM_MAIN, UiLayoutEditorConfig.COLOR_SYSTEM_DARK, UiLayoutEditorConfig.COLOR_SYSTEM_LIGHT);
+                SetupColors(UiLayoutEditorConfig.ColorElementSystemMain, UiLayoutEditorConfig.ColorElementSystemDark, UiLayoutEditorConfig.ColorElementSystemLight);
             }
         }
 
-        protected void SetupColors(string main, string dark, string light)
+        protected void SetupColors(Color main, Color dark, Color light)
         {
-            ColorMain = Color.red.Parse(main);
-            ColorDark = Color.red.Parse(dark);
-            ColorLight = Color.red.Parse(light);
+            ColorMain = main;
+            ColorDark = dark;
+            ColorLight = light;
         }
 
         protected void RenderCurveTo(int toX, int toY)
@@ -101,7 +96,7 @@ namespace UnityExpansionInternal.UiLayoutEditor
             int fromX = GlobalX + Width / 2;
             int fromY = GlobalY + Height;
 
-            ((UiLayoutEditor)Layout).Curves.AddToBackground(UiLayoutEditorCurve.Type.Vertical, fromX, fromY, toX, toY, 5, ColorBackground);
+            ((UiLayoutEditor)Layout).Curves.AddToBackground(UiLayoutEditorCurve.Type.Vertical, fromX, fromY, toX, toY, 5, UiLayoutEditorConfig.ColorNodeBackground);
         }
 
         public override void SetSize(int width, int height)
@@ -112,8 +107,8 @@ namespace UnityExpansionInternal.UiLayoutEditor
 
             if (!_textureBackground.LoadFromCache())
             {
-                _textureBackground.Fill(ColorBackground);
-                _textureBackground.DrawBorder(1, ColorBackgroundBorder);
+                _textureBackground.Fill(UiLayoutEditorConfig.ColorNodeBackground);
+                _textureBackground.DrawBorder(1, UiLayoutEditorConfig.ColorNodeBackgroundBorder);
                 _textureBackground.SaveToCache();
             }
         }

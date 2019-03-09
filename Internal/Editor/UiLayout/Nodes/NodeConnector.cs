@@ -55,7 +55,7 @@ namespace UnityExpansionInternal.UiLayoutEditor
         {
             Label = new EditorLayoutObjectText(Layout, Width - 20, Height);
             Label.SetAlignment(ConnectorType == Type.Handler ? TextAnchor.MiddleLeft : TextAnchor.MiddleRight);
-            Label.SetColor(UiLayoutEditorConfig.COLOR_NODE_LABEL);
+            Label.SetColor(UiLayoutEditorConfig.ColorNodeLabel);
             Label.SetText(text);
             Label.SetParent(this);
             Label.X = 10;

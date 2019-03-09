@@ -30,13 +30,13 @@ namespace UnityExpansionInternal.UiLayoutEditor
             if (!IsMainGroup)
             {
                 _hline = new EditorLayoutObjectTexture(layout, Width, 1);
-                _hline.Fill(node.ColorBackgroundBorder);
+                _hline.Fill(UiLayoutEditorConfig.ColorNodeBackgroundBorder);
                 _hline.SetParent(this);
 
                 _title = new EditorLayoutObjectText(layout, Width, 20);
                 _title.SetAlignment(TextAnchor.MiddleLeft);
                 _title.SetFontStyle(FontStyle.Bold);
-                _title.SetColor(UiLayoutEditorConfig.COLOR_NODE_LABEL);
+                _title.SetColor(UiLayoutEditorConfig.ColorNodeLabel);
                 _title.SetText(GroupName);
                 _title.SetParent(this);
                 _title.Y = _hline.Height + 5;

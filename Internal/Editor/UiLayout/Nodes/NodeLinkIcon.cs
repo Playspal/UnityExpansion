@@ -16,7 +16,7 @@ namespace UnityExpansionInternal.UiLayoutEditor
             if (!_texture.LoadFromCache())
             {
                 _texture.Fill(new Color(0, 0, 0, 0));
-                _texture.DrawCircle(7, 7, 7, Color.white.Parse(UiLayoutEditorConfig.COLOR_NODE_BACKGROUND_BORDER));
+                _texture.DrawCircle(7, 7, 7, UiLayoutEditorConfig.ColorNodeBackgroundBorder);
                 _texture.DrawCircle(7, 7, 5, Color.white);
                 _texture.SaveToCache();
             }

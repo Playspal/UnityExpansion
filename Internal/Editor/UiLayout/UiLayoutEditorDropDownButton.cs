@@ -28,7 +28,7 @@ namespace UnityExpansionInternal.UiLayoutEditor
             _label.SetFontStyle(FontStyle.Italic);
             _label.SetParent(this);
 
-            _colorNormal = UiLayoutEditorConfig.COLOR_NODE_LABEL_SPECIAL;
+            _colorNormal = UiLayoutEditorConfig.ColorNodeLabelSpecial;
             _colorHover = Color.white;
 
             SetColor(_colorNormal);

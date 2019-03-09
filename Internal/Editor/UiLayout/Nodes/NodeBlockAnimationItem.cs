@@ -28,7 +28,7 @@ namespace UnityExpansionInternal.UiLayoutEditor
 
             _label = new EditorLayoutObjectText(Layout, node.Width - 100, 20);
             _label.SetAlignment(TextAnchor.MiddleLeft);
-            _label.SetColor(UiLayoutEditorConfig.COLOR_NODE_LABEL_SPECIAL);
+            _label.SetColor(UiLayoutEditorConfig.ColorNodeLabelSpecial);
             _label.SetText(clip.Name);
             _label.SetFontStyle(FontStyle.Italic);
             _label.SetParent(this);

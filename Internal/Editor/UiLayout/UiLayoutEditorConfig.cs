@@ -4,48 +4,31 @@ namespace UnityExpansionInternal.UiLayoutEditor
 {
     public static class UiLayoutEditorConfig
     {
-        // TODO: Convert hex colors into instances on startup
-        // TODO: Dropdown list colors
-
         // Predefined basic methods and events for some types
         public const string PREDEFINED_METHOD_ANIMATION_PLAY = "Play";
         public const string PREDEFINED_EVENT_ANIMATION_ON_COMPLETE = "OnComplete";
 
         // Colors
-        public const string COLOR_NODE_LABEL = "#999999";
-        public static Color COLOR_NODE_LABEL_SPECIAL = CreateColor("#CCCCCC");
+        public static Color ColorNodeLabel = CreateColor("#999999");
+        public static Color ColorNodeLabelSpecial = CreateColor("#CCCCCC");
 
-        public const string COLOR_NODE_BACKGROUND = "#3A3A3A";
-        public const string COLOR_NODE_BACKGROUND_BORDER = "#4D4D4D";
+        public static Color ColorNodeBackground = CreateColor("#3A3A3A");
+        public static Color ColorNodeBackgroundBorder = CreateColor("#4D4D4D");
 
-        public const string COLOR_SCREEN_MAIN = "#A73D3F";
-        public const string COLOR_SCREEN_DARK = "#72292A";
-        public const string COLOR_SCREEN_LIGHT = "#FFCCCC";
+        public static Color ColorElementRootMain = CreateColor("#A73D3F");
+        public static Color ColorElementRootDark = CreateColor("#72292A");
+        public static Color ColorElementRootLight = CreateColor("#FFCCCC");
 
-        public const string COLOR_PANEL_MAIN = "#A03979";
-        public const string COLOR_PANEL_DARK = "#6E2652";
-        public const string COLOR_PANEL_LIGHT = "#FCCAE8";
+        public static Color ColorElementChildMain = CreateColor("#3C52A6");
+        public static Color ColorElementChildDark = CreateColor("#283771");
+        public static Color ColorElementChildLight = CreateColor("#CCD6FF");
 
-        public const string COLOR_POPUP_MAIN = "#7641A2";
-        public const string COLOR_POPUP_DARK = "#512C6E";
-        public const string COLOR_POPUP_LIGHT = "#E8CEFC";
+        public static Color ColorElementSystemMain = CreateColor("#186C15");
+        public static Color ColorElementSystemDark = CreateColor("#0F490E");
+        public static Color ColorElementSystemLight = CreateColor("#B9E3B9");
 
-        public const string COLOR_BLOCK_MAIN = "#3C52A6";
-        public const string COLOR_BLOCK_DARK = "#283771";
-        public const string COLOR_BLOCK_LIGHT = "#CCD6FF";
-
-        // Interactive items like buttons
-        public const string COLOR_ITEM_MAIN = "#0C6483";
-        public const string COLOR_ITEM_DARK = "#08445A";
-        public const string COLOR_ITEM_LIGHT = "#B5DEEF";
-
-        public const string COLOR_SYSTEM_MAIN = "#186C15";
-        public const string COLOR_SYSTEM_DARK = "#0F490E";
-        public const string COLOR_SYSTEM_LIGHT = "#B9E3B9";
-
-        //
-        public static Color DropDownListItemLabelNormal = CreateColor("#999999");
-        public static Color DropDownListItemLabelHover = CreateColor("#FFFFFF");
+        public static Color ColorDropDownListItemLabelNormal = CreateColor("#999999");
+        public static Color ColorDropDownListItemLabelHover = CreateColor("#FFFFFF");
 
         private static Color CreateColor(string value)
         {
