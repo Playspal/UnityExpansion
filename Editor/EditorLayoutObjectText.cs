@@ -5,6 +5,10 @@ namespace UnityExpansion.Editor
     public class EditorLayoutObjectText : EditorLayoutObject
     {
         public string Text { get; private set; }
+
+        public int PreferredWidth { get; private set; }
+        public int PreferredHeight { get; private set; }
+
         private Color _color = Color.black;
         private FontStyle _fontStyle = FontStyle.Normal;
         private TextAnchor _aligment = TextAnchor.UpperLeft;
@@ -18,11 +22,18 @@ namespace UnityExpansion.Editor
         {
             Width = width;
             Height = height;
+
+            _style = new GUIStyle();
+            _style.fixedHeight = Height;
+            _style.padding = new RectOffset(2, 2, 1, 2);
         }
 
         public void SetText(string value)
         {
             Text = value;
+
+            RefreshStyle();
+            RecalculatePreferredSize();
         }
 
         public void SetFontStyle(FontStyle fontStyle)
@@ -34,6 +45,7 @@ namespace UnityExpansion.Editor
         public void SetFontSize(int value)
         {
             _fontSize = value;
+            _styleUpdated = true;
         }
 
         public void SetColor(string color)
@@ -57,23 +69,31 @@ namespace UnityExpansion.Editor
         {
             base.Render();
 
-            if(_style == null)
-            {
-                _style = new GUIStyle(GUI.skin.GetStyle("Label"));
-                _style.fixedHeight = Height;
-            }
+            RefreshStyle();
 
-            if(_styleUpdated)
+            GUI.Label(new Rect(GlobalX, GlobalY, Width, Height), Text, _style);
+        }
+
+        private void RefreshStyle()
+        {
+            if (_styleUpdated)
             {
                 _style.normal.textColor = _color;
                 _style.fontStyle = _fontStyle;
                 _style.alignment = _aligment;
                 _style.fontSize = _fontSize;
 
-                //Debug.LogError(_style.fontSize);
+                _styleUpdated = false;
             }
+        }
 
-            GUI.Label(new Rect(GlobalX, GlobalY, Width, Height), Text, _style);
+        private void RecalculatePreferredSize()
+        {
+            GUIContent content = new GUIContent(Text);
+            Vector2 size = _style.CalcSize(content);
+
+            PreferredWidth = Mathf.RoundToInt(size.x);
+            PreferredHeight = Mathf.RoundToInt(size.y);
         }
     }
 }
