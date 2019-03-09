@@ -100,6 +100,17 @@ namespace UnityExpansion
                     onFound.InvokeIfNotNull(parent, target as PersistantID);
                 }
 
+                // TODO: look inside of any collecion, not only arrays
+                if (type == typeof(Array))
+                {
+                    Array array = target as Array;
+
+                    for(int i = 0; i < array.Length; i++)
+                    {
+                        ExploreMembers(target, array.GetValue(i), onFound, filter);
+                    }
+                }
+
                 FieldInfo[] fields = type.GetFields(BINDING_FLAGS);
 
                 for (int i = 0; i < fields.Length; i++)
