@@ -16,7 +16,8 @@ namespace UnityExpansion.Editor
         {
             base.Destroy();
 
-            Texture2D.DestroyImmediate(Texture, true);
+            // TODO: Cachable textures shouldn't destroy texture instance
+            //Texture2D.DestroyImmediate(Texture, true);
         }
 
         public void Clear()

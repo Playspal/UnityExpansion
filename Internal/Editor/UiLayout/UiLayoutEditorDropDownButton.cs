@@ -20,70 +20,52 @@ namespace UnityExpansionInternal.UiLayoutEditor
         {
             _icon = new UiLayoutEditorDropDownButtonIcon(Layout);
             _icon.SetParent(this);
-            _icon.X = Width - 3 - _icon.Width;
+            _icon.X = Width - _icon.Width;
             _icon.Y = Height / 2 - _icon.Height / 2;
 
-            _label = new EditorLayoutObjectText(Layout, _icon.X - 5, Height);
+            _label = new EditorLayoutObjectText(Layout, 0, Height);
             _label.SetAlignment(TextAnchor.MiddleRight);
-            _label.SetText("Without animation");
-            _label.SetColor(Color.white);
             _label.SetFontStyle(FontStyle.Italic);
             _label.SetParent(this);
-            _label.X = 3;
 
-            //Layout.Mouse.OnMove += MouseHandlerMove;
-            //Layout.Mouse.OnClickLeft += MouseHandlerClick;
+            _colorNormal = UiLayoutEditorConfig.COLOR_NODE_LABEL_SPECIAL;
+            _colorHover = Color.white;
+
+            SetColor(_colorNormal);
+
+            SetupInteractions(_label);
+            SetupInteractions(_icon);
         }
 
-        public void SetColor(Color color)
+        public void SetLabel(string value)
         {
-            _colorNormal = color;
+            _label.SetText(value);
+            _label.SetSize(_label.PreferredWidth, Height);
+            _label.X += _icon.X - _label.Width;
+        }
 
+        private void SetColor(Color color)
+        {
             _label.SetColor(color);
             _icon.SetColor(color);
         }
 
-        private void SetColorNormal()
+        private void SetupInteractions(EditorLayoutObject layoutObject)
         {
-            SetColor(_colorNormal);
-        }
-
-        private void SetColorWhite()
-        {
-            _label.SetColor(Color.white);
-            _icon.SetColor(Color.white);
-        }
-
-        private void MouseHandlerMove()
-        {
-            if (HitTest(Layout.Mouse.X, Layout.Mouse.Y))
-            {
-                SetColorWhite();
-            }
-            else
-            {
-                SetColorNormal();
-            }
-        }
-
-        private void MouseHandlerClick()
-        {
-            if (HitTest(Layout.Mouse.X, Layout.Mouse.Y))
+            layoutObject.OnMouseReleaseInside += () =>
             {
                 OnClick.InvokeIfNotNull();
-            }
-        }
+            };
 
-        public override void OnMouseOver()
-        {
-            base.OnMouseOver();
-            SetColorWhite();
-        }
+            layoutObject.OnMouseOver += () =>
+            {
+                SetColor(_colorHover);
+            };
 
-        public override void OnMouseOut()
-        {
-            base.OnMouseOut();
-            SetColorNormal();
+            layoutObject.OnMouseOut += () =>
+            {
+                SetColor(_colorNormal);
+            };
         }
     }
 }

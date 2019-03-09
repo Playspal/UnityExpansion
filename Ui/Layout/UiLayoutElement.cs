@@ -32,13 +32,11 @@ namespace UnityExpansion.UI.Layout
         /// <summary>
         /// Invokes right after element show begin.
         /// </summary>
-        [UiLayoutProcessorEvent (Group = UiLayoutProcessorAttribute.GROUP_MAIN, Weight = 1, ExcludeFromLayoutObject = true)]
         public event Action OnShow;
 
         /// <summary>
         /// Invokes right after element hide begin.
         /// </summary>
-        [UiLayoutProcessorEvent(Group = UiLayoutProcessorAttribute.GROUP_MAIN, Weight = 2, ExcludeFromLayoutObject = true)]
         public event Action OnHide;
 
         // The persistant identifier of this element.

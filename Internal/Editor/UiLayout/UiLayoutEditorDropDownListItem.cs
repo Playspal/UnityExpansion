@@ -19,11 +19,26 @@ namespace UnityExpansionInternal.UiLayoutEditor
             Title = title;
             Value = value;
 
-            _label = new EditorLayoutObjectText(Layout, Width, Height);
+            _label = new EditorLayoutObjectText(Layout, Width - 4, Height);
             _label.SetAlignment(TextAnchor.MiddleRight);
             _label.SetText(Title);
-            _label.SetColor(Color.white);
+            _label.SetColor(UiLayoutEditorConfig.DropDownListItemLabelNormal);
             _label.SetParent(this);
+
+            OnMouseOver += () =>
+            {
+                _label.SetColor(UiLayoutEditorConfig.DropDownListItemLabelHover);
+            };
+
+            OnMouseOut += () =>
+            {
+                _label.SetColor(UiLayoutEditorConfig.DropDownListItemLabelNormal);
+            };
+
+            OnMouseReleaseInside += () =>
+            {
+                OnClick.InvokeIfNotNull(this);
+            };
         }
     }
 }

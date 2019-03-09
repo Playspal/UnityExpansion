@@ -7,10 +7,11 @@ namespace UnityExpansionInternal.UiLayoutEditor
     {
         private EditorLayoutObjectTextureCachable _triangleDown;
 
-        public UiLayoutEditorDropDownButtonIcon(EditorLayout layout) : base(layout, 12, 5)
+        public UiLayoutEditorDropDownButtonIcon(EditorLayout layout) : base(layout, 14, 5)
         {
             _triangleDown = new EditorLayoutObjectTextureCachable(Layout, 12, 5, "ui-layout-editor-drop-down-button-triangle-down-raw");
             _triangleDown.SetParent(this);
+            _triangleDown.X = 1;
         }
 
         public void SetColor(Color color)

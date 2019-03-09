@@ -48,13 +48,16 @@ namespace UnityExpansionInternal.UiLayoutEditor
 
         public void AddHandler(string uniqueID, string method, int weight)
         {
-            NodeConnectorHandler item = null;// new NodeConnectorHandler(Layout, Node, method);
+            NodeConnectorHandler item = null;
 
             switch(method)
             {
                 case "Show":
+                    item = new NodeConnectorHandlerAnimated(Layout, Node, NodeConnectorHandlerAnimated.AnimationType.Show);
+                    break;
+
                 case "Hide":
-                    item = new NodeConnectorHandlerShow(Layout, Node);
+                    item = new NodeConnectorHandlerAnimated(Layout, Node, NodeConnectorHandlerAnimated.AnimationType.Hide);
                     break;
 
                 default:
