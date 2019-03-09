@@ -33,6 +33,22 @@ namespace UnityExpansionInternal.UiLayoutEditor
             _label.SetText("...");
             _label.SetParent(this);
             _label.X = 9;
+
+            OnMousePress += () =>
+            {
+                _parentNode.DragStart(false);
+            };
+
+            OnMouseRelease += () =>
+            {
+                if (_parentNode.IsDragging)
+                {
+                    _parentNode.DragStop();
+
+                    _parentNode.X = Mathf.RoundToInt((float)_parentNode.X / 20f) * 20;
+                    _parentNode.Y = Mathf.RoundToInt((float)(_parentNode.Y) / 20f) * 20;
+                }
+            };
         }
 
         public override void Destroy()
@@ -43,30 +59,6 @@ namespace UnityExpansionInternal.UiLayoutEditor
         public void SetTitle(string value)
         {
             _label.SetText(value);
-        }
-
-        public override void Render()
-        {
-            base.Render();
-        }
-
-        public override void OnMousePress()
-        {
-            base.OnMousePress();
-            _parentNode.DragStart(false);
-        }
-
-        public override void OnMouseRelease()
-        {
-            base.OnMouseRelease();
-
-            if (_parentNode.IsDragging)
-            {
-                _parentNode.DragStop();
-
-                _parentNode.X = Mathf.RoundToInt((float)_parentNode.X / 20f) * 20;
-                _parentNode.Y = Mathf.RoundToInt((float)(_parentNode.Y) / 20f) * 20;
-            }
         }
     }
 }
