@@ -12,7 +12,6 @@ namespace UnityExpansionInternal.UiLayoutEditor
     public class UiLayoutEditor : EditorLayout
     {
         public static UiLayoutEditor Instance { get; private set; }
-
         public UiLayoutEditorSelection Selection { get; private set; }
         public UiLayoutEditorCurves Curves { get; private set; }
         public Nodes Nodes { get; private set; }
@@ -24,6 +23,8 @@ namespace UnityExpansionInternal.UiLayoutEditor
         public override void Initialization()
         {
             base.Initialization();
+
+            Instance = this;
 
             OnWindowResized += OnWindowResize;
 
@@ -42,13 +43,6 @@ namespace UnityExpansionInternal.UiLayoutEditor
 
             Curves = new UiLayoutEditorCurves();
             Nodes = new Nodes();
-
-            Mouse.OnClickRight += () =>
-            {
-                GenericMenu menu = new GenericMenu();
-                menu.AddItem(new GUIContent("Add signal"), true, ()=> { });
-                menu.ShowAsContext();
-            };
 
             Refresh();
         }
@@ -70,6 +64,11 @@ namespace UnityExpansionInternal.UiLayoutEditor
 
         protected override void OnGUI()
         {
+            if(Selection == null)
+            {
+                Initialization();
+            }
+
             Selection.Update();
 
             if (Selection.Target == null)
