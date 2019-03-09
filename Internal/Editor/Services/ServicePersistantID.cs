@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Reflection;
 
 using UnityEditor;
 using UnityEngine;
@@ -20,8 +18,6 @@ namespace UnityExpansionInternal
     [InitializeOnLoad]
     public class ServicePersistantID : AssetPostprocessor
     {
-        private const BindingFlags BINDING_FLAGS = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.GetField | BindingFlags.GetProperty;
-
         // TODO: use unity native constancts instead this
         private const string COMMAND_NAME_DUPLICATE = "Duplicate";
         private const string COMMAND_NAME_PASTE = "Paste";
@@ -34,9 +30,6 @@ namespace UnityExpansionInternal
 
         // Duplication trigger
         private static bool _duplicated = false;
-
-        // Already seen objects to filter in recursive search
-        private static Stack<object> _seen = new Stack<object>();
 
         static ServicePersistantID()
         {
@@ -67,68 +60,11 @@ namespace UnityExpansionInternal
                 {
                     for(int i = 0; i < Selection.gameObjects.Length; i++)
                     {
-                        ParseRecursivelyGameObject(Selection.gameObjects[i]);
+                        OnDublicateFound(Selection.gameObjects[i]);
                     }
                 }
 
                 _duplicated = false;
-                _seen.Clear();
-            }
-        }
-
-        private static void ParseRecursivelyGameObject(GameObject target)
-        {
-            Component[] components = target.GetComponents(typeof(Component));
-
-            // Parse members
-            for (int i = 0; i < components.Length; i++)
-            {
-                ParseRecursively(components[i]);
-            }
-
-            // Parse childs
-            for(int i = 0; i < target.transform.childCount; i++)
-            {
-                ParseRecursivelyGameObject(target.transform.GetChild(i).gameObject);
-            }
-        }
-
-        private static void ParseRecursively(object target)
-        {
-            if(target == null)
-            {
-                return;
-            }
-
-            Type type = target.GetType();
-
-            if(_seen.Contains(target))
-            {
-                return;
-            }
-
-            _seen.Push(target);
-
-            while (type != null)
-            {
-                if (!IsTypeValid(type))
-                {
-                    return;
-                }
-
-                if (type == typeof(PersistantID))
-                {
-                    type.GetMethod("Generate").Invoke(target, null);
-                }
-
-                FieldInfo[] fields = type.GetFields(BINDING_FLAGS);
-
-                for (int i = 0; i < fields.Length; i++)
-                {
-                    ParseRecursively(fields[i].GetValue(target));
-                }
-
-                type = type.BaseType;
             }
         }
 
@@ -151,32 +87,25 @@ namespace UnityExpansionInternal
 
                         if (gameObject != null)
                         {
-                            ParseRecursivelyGameObject(gameObject);
+                            OnDublicateFound(gameObject);
                         }
                     }
                 }
             }
         }
 
-        private static bool IsTypeValid(Type type)
+        private static void OnDublicateFound(GameObject gameObject)
         {
-            if (type == null)
-            {
-                return false;
-            }
+            PersistantIDExplorer.Explore
+            (
+                gameObject,
+                OnPersistantIDFound
+            );
+        }
 
-            if (type.IsPrimitive)
-            {
-                return false;
-            }
-
-            // TODO: generate list of ignored namespaces in constructor
-            if (type.Namespace != null && type.Namespace == "UnityEngine")
-            {
-                return false;
-            }
-
-            return true;
+        private static void OnPersistantIDFound(object targetObject, PersistantID persistantID)
+        {
+            persistantID.Generate();
         }
     }
 }
