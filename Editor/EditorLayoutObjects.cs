@@ -16,11 +16,8 @@ namespace UnityExpansion.Editor
         private EditorLayoutObjectsInteraction _interaction;
 
         private List<EditorLayoutObject> _objects = new List<EditorLayoutObject>();
-        private List<EditorLayoutObject> _objectsToAdd = new List<EditorLayoutObject>();
-        private List<EditorLayoutObject> _objectsToRemove = new List<EditorLayoutObject>();
-
-        
-        private int _zindex = 0;
+ 
+        private int _nextZindex = 0;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="EditorLayoutObjects"/> class.
@@ -48,7 +45,7 @@ namespace UnityExpansion.Editor
         /// </summary>
         public void Add(EditorLayoutObject layoutObject)
         {
-            _objectsToAdd.Add(layoutObject);
+            _objects.Add(layoutObject);
         }
 
         /// <summary>
@@ -56,7 +53,7 @@ namespace UnityExpansion.Editor
         /// </summary>
         public void Remove(EditorLayoutObject layoutObject)
         {
-            _objectsToRemove.Add(layoutObject);
+            _objects.Remove(layoutObject);
         }
 
         /// <summary>
@@ -122,32 +119,14 @@ namespace UnityExpansion.Editor
         {
             ZIndexReset();
 
-            for (int i = 0; i < _objectsToRemove.Count; i++)
-            {
-                _objects.Remove(_objectsToRemove[i]);
-            }
+            EditorLayoutObject[] objects = _objects.ToArray();
 
-            for (int i = 0; i < _objectsToAdd.Count; i++)
-            {
-                _objects.Add(_objectsToAdd[i]);
-            }
-
-            for (int i = 0; i < _objects.Count; i++)
+            for (int i = 0; i < objects.Length; i++)
             {
                 if (_objects[i].ParentObject == null)
                 {
                     RenderRecursively(_objects[i]);
                 }
-            }
-
-            if (_objectsToRemove.Count > 0)
-            {
-                _objectsToRemove.Clear();
-            }
-
-            if (_objectsToAdd.Count > 0)
-            {
-                _objectsToAdd.Clear();
             }
         }
 
@@ -205,13 +184,13 @@ namespace UnityExpansion.Editor
 
         private void ZIndexReset()
         {
-            _zindex = 0;
+            _nextZindex = 0;
         }
 
         private void ZIndexAssign(EditorLayoutObject layoutObject)
         {
-            layoutObject.Index = _zindex;
-            _zindex++;
+            layoutObject.Index = _nextZindex;
+            _nextZindex++;
         }
     }
 }

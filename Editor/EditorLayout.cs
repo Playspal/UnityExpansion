@@ -18,9 +18,7 @@ namespace UnityExpansion.Editor
         public EditorLayoutMouse Mouse { get; private set; }
         public EditorLayoutObjects Objects { get; private set; }
         public EditorLayoutObject ObjectDragged { get; set; }
-
-        private double _lastRepaintTime;
-
+        
         public virtual void Initialization()
         {
             UpdateSize();
@@ -41,12 +39,10 @@ namespace UnityExpansion.Editor
         {
             UpdateSize();
 
-            Mouse.OnGui();
-
             Objects.Render();
             Objects.Update();
 
-            _lastRepaintTime = EditorApplication.timeSinceStartup;
+            Mouse.OnGui();
         }
 
         protected virtual void Update()
