@@ -28,12 +28,19 @@ namespace UnityExpansionInternal.UiLayoutEditor
 
             _label = new EditorLayoutObjectText(Layout, node.Width - 100, 20);
             _label.SetAlignment(TextAnchor.MiddleLeft);
-            _label.SetColor(node.ColorMain);
+            _label.SetColor(UiLayoutEditorConfig.COLOR_NODE_LABEL_SPECIAL);
             _label.SetText(clip.Name);
             _label.SetFontStyle(FontStyle.Italic);
             _label.SetParent(this);
             _label.X = 40;
-            _label.Y = -2;
+            _label.Y = -3;
+
+            if(layoutElement.AnimationShowID == clip.ID || layoutElement.AnimationHideID == clip.ID)
+            {
+                Handler.SetActive(false);
+
+                _label.X = 10;
+            }
         }
     }
 }
