@@ -51,8 +51,8 @@ namespace UnityExpansionInternal
                 animationHide
             };
 
-            element.AnimationShow = animationShow.Name;
-            element.AnimationHide = animationHide.Name;
+            element.AnimationShowID = animationShow.ID.ToString();
+            element.AnimationHideID = animationHide.ID.ToString();
 
             Selection.activeObject = gameObject;
         }

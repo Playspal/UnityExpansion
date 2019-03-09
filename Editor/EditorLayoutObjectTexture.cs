@@ -16,7 +16,8 @@ namespace UnityExpansion.Editor
         {
             base.Destroy();
 
-            Texture2D.DestroyImmediate(Texture, true);
+            // TODO: Cachable textures shouldn't destroy texture instance
+            //Texture2D.DestroyImmediate(Texture, true);
         }
 
         public void Clear()
@@ -109,6 +110,22 @@ namespace UnityExpansion.Editor
         public void DrawRhombus(int x, int y, int radius, Color color)
         {
             Texture.DrawRhombus(x * Scale, y * Scale, radius * Scale, color);
+        }
+
+        /// <summary>
+        /// Draws rhombus in texture.
+        /// </summary>
+        public void DrawTriangleUp(int x, int y, int radius, Color color)
+        {
+            Texture.DrawTriangleUp(x * Scale, y * Scale, radius * Scale, color);
+        }
+
+        /// <summary>
+        /// Draws rhombus in texture.
+        /// </summary>
+        public void DrawTriangleDown(int x, int y, int radius, Color color)
+        {
+            Texture.DrawTriangleDown(x * Scale, y * Scale, radius * Scale, color);
         }
 
         /// <summary>

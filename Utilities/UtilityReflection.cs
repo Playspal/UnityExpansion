@@ -15,7 +15,7 @@ namespace UnityExpansion.Utilities
         public static void ExecuteMethod(object target, string name, object[] parameters = null)
         {
             Type type = target.GetType();
-            MethodInfo method = type.GetMethod(name);
+            MethodInfo method = type.GetMethod(name, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
 
             if (method != null)
             {
@@ -29,7 +29,7 @@ namespace UnityExpansion.Utilities
         public static void AddEventHandler(object target, string eventName, Action handler)
         {
             Type type = target.GetType();
-            EventInfo eventInfo = type.GetEvent(eventName);
+            EventInfo eventInfo = type.GetEvent(eventName, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
 
             if (eventInfo != null)
             {

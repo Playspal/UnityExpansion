@@ -27,6 +27,7 @@ namespace UnityExpansionInternal.UiLayoutEditor
         public NodeConnector Connected { get; private set; }
 
         public NodeConnectorIcon Icon { get; private set; }
+
         public EditorLayoutObjectText Label { get; private set; }
 
         private const int HEIGHT = 15;
@@ -58,7 +59,7 @@ namespace UnityExpansionInternal.UiLayoutEditor
             Label.SetText(text);
             Label.SetParent(this);
             Label.X = 10;
-            Label.Y = -1;
+            Label.Y =- 1;
         }
 
         public void SetWeight(int value)
@@ -89,8 +90,8 @@ namespace UnityExpansionInternal.UiLayoutEditor
                 ConnectionRemove(b, b.Connected);
             }
 
-            NodeConnectorInput handler = (a.ConnectorType == Type.Handler ? a : b) as NodeConnectorInput;
-            NodeConnectorOutput sender = (a.ConnectorType == Type.Sender ? a : b) as NodeConnectorOutput;
+            NodeConnectorHandler handler = (a.ConnectorType == Type.Handler ? a : b) as NodeConnectorHandler;
+            NodeConnectorSender sender = (a.ConnectorType == Type.Sender ? a : b) as NodeConnectorSender;
 
             Color color = sender.Node.ColorMain;
 
@@ -109,12 +110,17 @@ namespace UnityExpansionInternal.UiLayoutEditor
                 handler.DataID,
                 handler.DataMethod
             );
+
+            if(!handler.IsActive || !sender.IsActive)
+            {
+                ConnectionRemove(handler, sender);
+            }
         }
 
         public static void ConnectionRemove(NodeConnector a, NodeConnector b)
         {
-            NodeConnectorInput handler = (a.ConnectorType == Type.Handler ? a : b) as NodeConnectorInput;
-            NodeConnectorOutput sender = (a.ConnectorType == Type.Sender ? a : b) as NodeConnectorOutput;
+            NodeConnectorHandler handler = (a.ConnectorType == Type.Handler ? a : b) as NodeConnectorHandler;
+            NodeConnectorSender sender = (a.ConnectorType == Type.Sender ? a : b) as NodeConnectorSender;
 
             a.OnDisconnected.InvokeIfNotNull(a.Connected);
             a.Connected = null;

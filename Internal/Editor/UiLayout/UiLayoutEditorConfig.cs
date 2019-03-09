@@ -1,13 +1,19 @@
-﻿namespace UnityExpansionInternal.UiLayoutEditor
+﻿using UnityEngine;
+
+namespace UnityExpansionInternal.UiLayoutEditor
 {
     public static class UiLayoutEditorConfig
     {
+        // TODO: Convert hex colors into instances on startup
+        // TODO: Dropdown list colors
+
         // Predefined basic methods and events for some types
         public const string PREDEFINED_METHOD_ANIMATION_PLAY = "Play";
         public const string PREDEFINED_EVENT_ANIMATION_ON_COMPLETE = "OnComplete";
 
         // Colors
         public const string COLOR_NODE_LABEL = "#999999";
+        public static Color COLOR_NODE_LABEL_SPECIAL = CreateColor("#CCCCCC");
 
         public const string COLOR_NODE_BACKGROUND = "#3A3A3A";
         public const string COLOR_NODE_BACKGROUND_BORDER = "#4D4D4D";
@@ -36,5 +42,21 @@
         public const string COLOR_SYSTEM_MAIN = "#186C15";
         public const string COLOR_SYSTEM_DARK = "#0F490E";
         public const string COLOR_SYSTEM_LIGHT = "#B9E3B9";
+
+        //
+        public static Color DropDownListItemLabelNormal = CreateColor("#999999");
+        public static Color DropDownListItemLabelHover = CreateColor("#FFFFFF");
+
+        private static Color CreateColor(string value)
+        {
+            Color output = new Color();
+
+            if (ColorUtility.TryParseHtmlString(value, out output))
+            {
+                return output;
+            }
+
+            return Color.red;
+        }
     }
 }

@@ -93,10 +93,45 @@ public static class ExtensionsTexture2D
             int y1 = y + (radius - i) - 1;
             int y2 = y - (radius - i) + 1;
 
-            texture.SetPixel(xFrom, y1, color);
-            texture.SetPixel(xFrom, y2, color);
+            texture.DrawRect(xFrom, y1, i * 2 + 1, 1, color, false);
+            texture.DrawRect(xFrom, y2, i * 2 + 1, 1, color, false);
+        }
+
+        texture.Apply();
+    }
+
+    /// <summary>
+    /// Draws triangle in texture.
+    /// </summary>
+    public static void DrawTriangleUp(this Texture2D texture, int x, int y, int radius, Color color)
+    {
+        Color transparent = new Color(0, 0, 0, 0);
+
+        for (int i = 0; i < radius; i++)
+        {
+            int xFrom = x - i;
+            int xTo = x + i;
+            int y1 = y + (radius - i);
 
             texture.DrawRect(xFrom, y1, i * 2 + 1, 1, color, false);
+        }
+
+        texture.Apply();
+    }
+
+    /// <summary>
+    /// Draws triangle in texture.
+    /// </summary>
+    public static void DrawTriangleDown(this Texture2D texture, int x, int y, int radius, Color color)
+    {
+        Color transparent = new Color(0, 0, 0, 0);
+
+        for (int i = 0; i < radius; i++)
+        {
+            int xFrom = x - i;
+            int xTo = x + i;
+            int y2 = y - (radius - i);
+
             texture.DrawRect(xFrom, y2, i * 2 + 1, 1, color, false);
         }
 

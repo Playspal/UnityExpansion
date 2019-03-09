@@ -17,8 +17,8 @@ namespace UnityExpansionInternal.UiLayoutEditor
         public Color ColorBackground { get; private set; }
         public Color ColorBackgroundBorder { get; private set; }
 
-        public List<NodeConnectorInput> Input { get; private set; }
-        public List<NodeConnectorOutput> Output { get; private set; }
+        public List<NodeConnectorHandler> Handlers { get; private set; }
+        public List<NodeConnectorSender> Senders { get; private set; }
 
         protected EditorLayoutObjectTextureCachable _textureBackground;
 
@@ -31,8 +31,8 @@ namespace UnityExpansionInternal.UiLayoutEditor
             X = nodeData.X;
             Y = nodeData.Y;
 
-            Input = new List<NodeConnectorInput>();
-            Output = new List<NodeConnectorOutput>();
+            Handlers = new List<NodeConnectorHandler>();
+            Senders = new List<NodeConnectorSender>();
 
             ColorBackground = Color.red.Parse(UiLayoutEditorConfig.COLOR_NODE_BACKGROUND);
             ColorBackgroundBorder = Color.red.Parse(UiLayoutEditorConfig.COLOR_NODE_BACKGROUND_BORDER);

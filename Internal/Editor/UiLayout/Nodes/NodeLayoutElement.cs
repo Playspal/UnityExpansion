@@ -14,31 +14,26 @@ namespace UnityExpansionInternal.UiLayoutEditor
         public readonly NodeBlockHeader BlockHeader;
         public readonly NodeBlockAnimation BlockAnimation;
 
-        public UiLayoutElement LayoutElement { get; private set; }
+        public readonly UiLayoutElement LayoutElement;
+        public readonly UiAnimation Animation;
 
         private List<NodeBlockGroup> _groups = new List<NodeBlockGroup>();
 
-        public NodeLayoutElement(InternalUiLayoutData.NodeData nodeData, EditorLayout layout) : base(nodeData, layout, 300, 1)
-        {
-            BlockHeader = new NodeBlockHeader(layout, this);
-            BlockHeader.SetParent(this);
-
-            BlockAnimation = new NodeBlockAnimation(layout, this);
-            BlockAnimation.SetParent(this);
-            BlockAnimation.Y = BlockHeader.Y + BlockHeader.Height + 10;
-            BlockAnimation.SetActive(false);
-        }
-
-        public void SetLayoutElement(UiLayoutElement layoutElement)
+        public NodeLayoutElement(InternalUiLayoutData.NodeData nodeData, EditorLayout layout, UiLayoutElement layoutElement) : base(nodeData, layout, 300, 1)
         {
             LayoutElement = layoutElement;
+            Animation = LayoutElement.GetComponent<UiAnimation>();
 
+            BlockHeader = new NodeBlockHeader(layout, this);
             BlockHeader.SetTitle(LayoutElement.name);
+            BlockHeader.SetParent(this);
 
-            if(layoutElement.GetComponent<UiAnimation>() != null)
+            if (Animation != null)
             {
-                BlockAnimation.SetActive(true);
-                BlockAnimation.SetAnimation(layoutElement, layoutElement.GetComponent<UiAnimation>());
+                BlockAnimation = new NodeBlockAnimation(layout, this);
+                BlockAnimation.SetAnimation(LayoutElement, Animation);
+                BlockAnimation.SetParent(this);
+                BlockAnimation.Y = BlockHeader.Y + BlockHeader.Height + 10;
             }
 
             string[] outputs = UtilityReflection.GetMembersWithAttribute(layoutElement, typeof(UiLayoutProcessorHandler));
@@ -48,7 +43,7 @@ namespace UnityExpansionInternal.UiLayoutEditor
                 UiLayoutProcessorHandler a = UtilityReflection.GetAttribute<UiLayoutProcessorHandler>(layoutElement, outputs[i]);
                 NodeBlockGroup blockGroup = GetGroup(a.Group);
 
-                blockGroup.AddInput(LayoutElement.PersistantID.Value, outputs[i], a.Weight);
+                blockGroup.AddHandler(LayoutElement.PersistantID.Value, outputs[i], a.Weight);
             }
 
             string[] inputs = UtilityReflection.GetMembersWithAttribute(layoutElement, typeof(UiLayoutProcessorEvent));
@@ -58,7 +53,7 @@ namespace UnityExpansionInternal.UiLayoutEditor
                 UiLayoutProcessorEvent a = UtilityReflection.GetAttribute<UiLayoutProcessorEvent>(layoutElement, inputs[i]);
                 NodeBlockGroup blockGroup = GetGroup(a.Group);
 
-                blockGroup.AddOutput(LayoutElement.PersistantID.Value, inputs[i], a.Weight);
+                blockGroup.AddSender(LayoutElement.PersistantID.Value, inputs[i], a.Weight);
             }
 
             Refresh();
@@ -86,7 +81,6 @@ namespace UnityExpansionInternal.UiLayoutEditor
             int padding = 10;
             int y = BlockHeader.Y + BlockHeader.Height + padding;
 
-
             for (int i = 0; i < _groups.Count; i++)
             {
                 if (_groups[i].IsMainGroup)
@@ -98,7 +92,7 @@ namespace UnityExpansionInternal.UiLayoutEditor
                 }
             }
 
-            if (BlockAnimation.IsActive)
+            if (BlockAnimation != null)
             {
                 BlockAnimation.Y = y;
                 y += BlockAnimation.Height + padding;

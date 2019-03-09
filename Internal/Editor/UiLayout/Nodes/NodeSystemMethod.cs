@@ -5,20 +5,20 @@ namespace UnityExpansionInternal.UiLayoutEditor
 {
     public class NodeSystemMethod : NodeSystem
     {
-        public readonly NodeConnectorInput ConnectorInput;
+        public readonly NodeConnectorHandler Handler;
 
         public NodeSystemMethod(InternalUiLayoutData.NodeData nodeData, EditorLayout layout) : base(nodeData, layout)
         {
-            ConnectorInput = new NodeConnectorInput(layout, this, string.Empty);
-            ConnectorInput.SetParent(this);
-            ConnectorInput.Y = Height / 2 - 6;
+            Handler = new NodeConnectorHandler(layout, this, string.Empty);
+            Handler.SetParent(this);
+            Handler.Y = Height / 2 - 6;
 
-            SetConnector(ConnectorInput);
+            SetConnector(Handler);
         }
 
         public void SetData(UiLayout uiLayout, string methodName)
         {
-            ConnectorInput.SetData(uiLayout.PersistantID.Value, methodName);
+            Handler.SetData(uiLayout.PersistantID.Value, methodName);
             SetTitle(methodName);
         }
     }
