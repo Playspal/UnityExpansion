@@ -137,7 +137,10 @@ namespace UnityExpansion.Utilities
             {
                 if (members[i].GetCustomAttributes(attributeType, true).Length > 0)
                 {
-                    output.Add(members[i].Name);
+                    if (!output.Contains(members[i].Name))
+                    {
+                        output.Add(members[i].Name);
+                    }
                 }
             }
 
