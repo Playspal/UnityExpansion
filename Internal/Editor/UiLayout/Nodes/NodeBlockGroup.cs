@@ -30,7 +30,7 @@ namespace UnityExpansionInternal.UiLayoutEditor
             if (!IsMainGroup)
             {
                 _hline = new EditorLayoutObjectTexture(layout, Width, 1);
-                _hline.Fill(UiLayoutEditorConfig.ColorNodeBackgroundBorder);
+                _hline.Fill(UiLayoutEditorConfig.ColorNodeBorder);
                 _hline.SetParent(this);
 
                 _title = new EditorLayoutObjectText(layout, Width, 20);

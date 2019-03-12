@@ -42,7 +42,6 @@ namespace UnityExpansionInternal.UiLayoutEditor
             if(!_textureBackground.LoadFromCache())
             {
                 _textureBackground.Fill(UiLayoutEditorConfig.ColorNodeBackground);
-                _textureBackground.DrawBorder(1, UiLayoutEditorConfig.ColorNodeBackgroundBorder);
                 _textureBackground.SaveToCache();
             }
 
@@ -117,7 +116,7 @@ namespace UnityExpansionInternal.UiLayoutEditor
             if (!_textureBackground.LoadFromCache())
             {
                 _textureBackground.Fill(UiLayoutEditorConfig.ColorNodeBackground);
-                _textureBackground.DrawBorder(1, UiLayoutEditorConfig.ColorNodeBackgroundBorder);
+                _textureBackground.DrawBorder(1, UiLayoutEditorConfig.ColorNodeBorder);
                 _textureBackground.SaveToCache();
             }
         }

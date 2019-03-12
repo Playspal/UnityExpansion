@@ -13,7 +13,7 @@ namespace UnityExpansionInternal.UiLayoutEditor
         public static Color ColorNodeLabelSpecial = CreateColor("#CCCCCC");
 
         public static Color ColorNodeBackground = CreateColor("#3A3A3A");
-        public static Color ColorNodeBackgroundBorder = CreateColor("#4D4D4D");
+        public static Color ColorNodeBorder = CreateColor("#4D4D4D");
 
         public static Color ColorElementRootMain = CreateColor("#A73D3F");
         public static Color ColorElementRootDark = CreateColor("#72292A");

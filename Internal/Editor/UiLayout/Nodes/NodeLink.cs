@@ -33,7 +33,7 @@ namespace UnityExpansionInternal.UiLayoutEditor
             _iconB.SetParent(NodeB);
             _iconB.SetAsFirstSibling();
 
-            _color = UiLayoutEditorConfig.ColorNodeBackgroundBorder;
+            _color = UiLayoutEditorConfig.ColorNodeBorder;
         }
 
         public void SetPosition(int index, int total)
