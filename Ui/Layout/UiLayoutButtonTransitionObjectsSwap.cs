@@ -1,9 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 using UnityEngine;
 
 namespace UnityExpansion.UI.Layout
 {
+    [Serializable]
     public class UiLayoutButtonTransitionObjectsSwap : UiLayoutButtonTransition
     {
         [SerializeField]

@@ -4,6 +4,7 @@ using UnityExpansion.UI.Layout.Processor;
 
 namespace UnityExpansion.UI.Layout
 {
+    [Serializable]
     public class UiLayoutButton : UiLayoutElement
     {
         public enum TransitionType
@@ -79,31 +80,48 @@ namespace UnityExpansion.UI.Layout
 
         protected virtual void MouseOverHandler()
         {
+            if (!IsEnabled)
+            {
+                return;
+            }
+
             SetTransition(UiLayoutButtonTransition.State.Hover);
             OnMouseOver.InvokeIfNotNull();
         }
 
         protected virtual void MouseOutHandler()
         {
+            if (!IsEnabled)
+            {
+                return;
+            }
+
             SetTransition(UiLayoutButtonTransition.State.Normal);
             OnMouseOut.InvokeIfNotNull();
         }
 
         protected virtual void MousePressHandler()
         {
+            if (!IsEnabled)
+            {
+                return;
+            }
+
             SetTransition(UiLayoutButtonTransition.State.Pressed);
             OnMousePress.InvokeIfNotNull();
         }
 
         protected virtual void MouseReleaseHandler()
         {
-            if(!IsEnabled)
+            if (!IsEnabled)
             {
                 return;
             }
 
             SetTransition(UiLayoutButtonTransition.State.Normal);
+
             OnMouseRelease.InvokeIfNotNull();
+            OnMouseClick.InvokeIfNotNull();
         }
 
         private void SetTransition(UiLayoutButtonTransition.State state)

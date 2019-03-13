@@ -10,6 +10,15 @@ public static class ExtensionsFieldInfo
     /// <param name="value">New value</param>
     public static void SafeSetValue(this FieldInfo fieldInfo, object target, object value)
     {
-        fieldInfo.SetValue(target, Convert.ChangeType(value, fieldInfo.FieldType));
+        IConvertible convertible = value as IConvertible;
+
+        if (convertible != null)
+        {
+            fieldInfo.SetValue(target, Convert.ChangeType(value, fieldInfo.FieldType));
+        }
+        else
+        {
+            fieldInfo.SetValue(target, value);
+        }
     }
 }

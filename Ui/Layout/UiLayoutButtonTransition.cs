@@ -1,9 +1,11 @@
 ﻿using System;
 
+using UnityEngine;
+
 namespace UnityExpansion.UI.Layout
 {
     [Serializable]
-    public class UiLayoutButtonTransition
+    public class UiLayoutButtonTransition : ScriptableObject
     {
         public enum State
         {
