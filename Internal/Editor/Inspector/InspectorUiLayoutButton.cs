@@ -1,8 +1,8 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+
 using UnityEditor;
 using UnityEngine;
+
 using UnityExpansion.UI.Layout;
 using UnityExpansion.Utilities;
 
@@ -26,10 +26,11 @@ namespace UnityExpansionInternal
             switch(transitionType)
             {
                 case UiLayoutButton.TransitionType.ObjectsSwap:
-
                     UiLayoutButtonTransitionObjectsSwap transition = UtilityReflection.GetMemberValue(button, "_transition") as UiLayoutButtonTransitionObjectsSwap;
 
-                    if(transition != null)
+                    transition.hideFlags = HideFlags.HideInInspector;
+
+                    if (transition != null)
                     {
                         DrawPropertyGameObject(transition, "_objectNormal", new GUIContent("  State normal"));
                         DrawPropertyGameObject(transition, "_objectHover", new GUIContent("  State hover"));
@@ -77,48 +78,36 @@ namespace UnityExpansionInternal
             if (valueAfter != valueBefore)
             {
                 UtilityReflection.SetMemberValue(target, name, valueAfter);
-
-                Debug.LogError(UtilityReflection.GetMemberValue(target, name));
             }
         }
         
         private void OnTransitionTypeChanged(Enum value)
         {
             UiLayoutButton.TransitionType transitionType = (UiLayoutButton.TransitionType)value;
+            UiLayoutButtonTransition transition;
 
-            switch(transitionType)
+            switch (transitionType)
             {
                 case UiLayoutButton.TransitionType.None:
-                    Debug.LogError("Removed");
+                    transition = UtilityReflection.GetMemberValue(target, "_transition") as UiLayoutButtonTransition;
+
+                    if(transition != null)
+                    {
+                        DestroyImmediate(transition);
+                    }
+
                     UtilityReflection.SetMemberValue(target, "_transition", null);
                     break;
 
 
                 case UiLayoutButton.TransitionType.ObjectsSwap:
-                    Debug.LogError("Created");
-                    UtilityReflection.SetMemberValue(target, "_transition", new UiLayoutButtonTransitionObjectsSwap());
+                    UiLayoutButton button = target as UiLayoutButton;
+                    transition = button.gameObject.AddComponent<UiLayoutButtonTransitionObjectsSwap>();
+                    transition.hideFlags = HideFlags.HideInInspector;
+
+                    UtilityReflection.SetMemberValue(target, "_transition", transition);
                     break;
             }
-
-            /*
-            if (transitionType == TRANSITION_TYPE_OBJECTS_SWAP)
-            {
-                UiLayoutButton button = target as UiLayoutButton;
-                SetTransition(button.gameObject.AddComponent<UiLayoutButtonTransitionObjectsSwap>());
-            }
-            else
-            {
-                UiLayoutButton button = target as UiLayoutButton;
-                UiLayoutButtonTransition transition = GetTransition();
-                
-                if(transition != null)
-                {
-                    DestroyImmediate(transition);
-                }
-
-                SetTransition(null);
-            }
-            */
         }
     }
 }

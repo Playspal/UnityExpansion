@@ -13,14 +13,6 @@ namespace UnityExpansion.UI.Layout
             ObjectsSwap
         }
 
-        public enum State
-        {
-            Normal,
-            Hover,
-            Pressed,
-            Disabled
-        }
-
         [UiLayoutProcessorEvent(Group = "Mouse events", Weight = 1)]
         public event Action OnMouseOver;
 
@@ -54,6 +46,9 @@ namespace UnityExpansion.UI.Layout
         [SerializeField]
         private bool _isEnabled = true;
 
+        private bool _isHovered;
+        private bool _isPressed;
+
         [UiLayoutProcessorHandler(Group = "Mouse events", Weight = 1)]
         public void ButtonEnable()
         {
@@ -78,9 +73,16 @@ namespace UnityExpansion.UI.Layout
             UiEvents.AddMouseReleaseListener(gameObject, MouseReleaseHandler);
         }
 
+        protected override void Update()
+        {
+            base.Update();
+        }
+
         protected virtual void MouseOverHandler()
         {
-            if (!IsEnabled)
+            _isHovered = true;
+
+            if (!IsEnabled || _isPressed)
             {
                 return;
             }
@@ -91,12 +93,15 @@ namespace UnityExpansion.UI.Layout
 
         protected virtual void MouseOutHandler()
         {
-            if (!IsEnabled)
+            _isHovered = false;
+
+            if (!IsEnabled || _isPressed)
             {
                 return;
             }
 
             SetTransition(UiLayoutButtonTransition.State.Normal);
+
             OnMouseOut.InvokeIfNotNull();
         }
 
@@ -106,6 +111,8 @@ namespace UnityExpansion.UI.Layout
             {
                 return;
             }
+
+            _isPressed = true;
 
             SetTransition(UiLayoutButtonTransition.State.Pressed);
             OnMousePress.InvokeIfNotNull();
@@ -118,10 +125,21 @@ namespace UnityExpansion.UI.Layout
                 return;
             }
 
-            SetTransition(UiLayoutButtonTransition.State.Normal);
+            _isPressed = false;
 
-            OnMouseRelease.InvokeIfNotNull();
-            OnMouseClick.InvokeIfNotNull();
+            if (_isHovered)
+            {
+                SetTransition(UiLayoutButtonTransition.State.Hover);
+
+                OnMouseRelease.InvokeIfNotNull();
+                OnMouseClick.InvokeIfNotNull();
+            }
+            else
+            {
+                SetTransition(UiLayoutButtonTransition.State.Normal);
+
+                OnMouseRelease.InvokeIfNotNull();
+            }
         }
 
         private void SetTransition(UiLayoutButtonTransition.State state)

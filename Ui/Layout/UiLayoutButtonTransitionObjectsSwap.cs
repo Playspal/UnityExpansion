@@ -8,26 +8,26 @@ namespace UnityExpansion.UI.Layout
     [Serializable]
     public class UiLayoutButtonTransitionObjectsSwap : UiLayoutButtonTransition
     {
-        [SerializeField]
+        [SerializeField, HideInInspector]
         private GameObject _objectNormal;
 
-        [SerializeField]
+        [SerializeField, HideInInspector]
         private GameObject _objectHover;
 
-        [SerializeField]
+        [SerializeField, HideInInspector]
         private GameObject _objectPressed;
 
-        [SerializeField]
+        [SerializeField, HideInInspector]
         private GameObject _objectDisabled;
 
-        [SerializeField]
-        private float _transitionTime = 0.1f;
+        [SerializeField, HideInInspector]
+        private float _transitionTime = 0.05f;
 
         private Dictionary<State, GameObject> _objects = new Dictionary<State, GameObject>();
 
-        public override void Initialization()
+        protected override void Awake()
         {
-            base.Initialization();
+            base.Awake();
 
             SetupObject(State.Normal, _objectNormal);
             SetupObject(State.Hover, _objectHover);
@@ -35,7 +35,7 @@ namespace UnityExpansion.UI.Layout
             SetupObject(State.Disabled, _objectDisabled);
         }
 
-        public override void Update()
+        protected override void Update()
         {
             base.Update();
 
