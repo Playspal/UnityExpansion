@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
 
@@ -82,6 +83,35 @@ namespace UnityExpansion.Utilities
         {
             MemberInfo member = GetMember(target, name);
             return member != null ? member.GetValue(target) : null;
+        }
+
+        /// <summary>
+        /// Gets value of specified member with specified index.
+        /// </summary>
+        /// <param name="target">Target object</param>
+        /// <param name="name">Member name</param>
+        /// <param name="name">Member index</param>
+        /// <returns>Member's value or null if member with specified name is not found</returns>
+        public static object GetMemberValue(object target, string name, int index)
+        {
+            IEnumerable enumerable = GetMemberValue(target, name) as IEnumerable;
+
+            if (enumerable == null)
+            {
+                return null;
+            }
+
+            IEnumerator enumerator = enumerable.GetEnumerator();
+
+            for (int i = 0; i <= index; i++)
+            {
+                if (!enumerator.MoveNext())
+                {
+                    return null;
+                }
+            }
+
+            return enumerator.Current;
         }
 
         /// <summary>

@@ -78,7 +78,7 @@ namespace UnityExpansionInternal
                 {
                     string path = _dataPath + str + ".meta";
 
-                    DateTime timeCreated = File.GetLastAccessTime(path);
+                    DateTime timeCreated = File.GetCreationTime(path);
                     TimeSpan timeDelta = timeNow - timeCreated;
 
                     if(timeDelta.TotalSeconds < 2)

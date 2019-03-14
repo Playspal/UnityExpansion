@@ -1,9 +1,11 @@
 ﻿using System;
 
+using UnityEngine;
+
 namespace UnityExpansion.UI.Layout
 {
-    [Serializable]
-    public class UiLayoutButtonTransition
+    [Serializable, HideInInspector]
+    public class UiLayoutButtonTransition : MonoBehaviour
     {
         public enum State
         {
@@ -13,19 +15,25 @@ namespace UnityExpansion.UI.Layout
             Disabled
         }
 
+        /// <summary>
+        /// Current state
+        /// </summary>
         public State StateCurrent { get; private set; }
 
-        public virtual void Initialization()
-        {
-            SetState(State.Normal);
-        }
-
+        /// <summary>
+        /// Sets the state
+        /// </summary>
         public virtual void SetState(State state)
         {
             StateCurrent = state;
         }
 
-        public virtual void Update()
+        protected virtual void Awake()
+        {
+            SetState(State.Normal);
+        }
+
+        protected virtual void Update()
         {
         }
     }

@@ -56,7 +56,7 @@ namespace UnityExpansion.UI.Animation
         // Unique ID of animation clip.
         //[SerializeField, HideInInspector]
         [SerializeField]
-        private PersistantID _id;
+        private PersistantID _id = new PersistantID();
 
         public void SetAnimationController(UiAnimation animation)
         {
