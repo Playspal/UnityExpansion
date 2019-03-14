@@ -2,7 +2,6 @@
 using UnityEngine;
 
 using UnityExpansion;
-using UnityExpansion.Utilities;
 
 namespace UnityExpansionInternal
 {
@@ -11,6 +10,7 @@ namespace UnityExpansionInternal
     {
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
+            PersistantID persistantID = property.GetObject() as PersistantID;
 
             string tooltip = "PersistantID: " + persistantID.ToString();
 
