@@ -17,6 +17,8 @@ namespace UnityExpansion.Editor
         public event Action OnClickLeft;
         public event Action OnClickRight;
 
+        public event Action<float> OnScroll;
+
         public event Action OnDragByButtonLeft;
         public event Action OnDragByButtonRight;
 
@@ -87,6 +89,8 @@ namespace UnityExpansion.Editor
         public EditorLayoutMouse(EditorLayout layout)
         {
             Layout = layout;
+            X = 0;
+            Y = 0;
         }
 
         /// <summary>
@@ -122,18 +126,26 @@ namespace UnityExpansion.Editor
                     OnDragExit();
                     Event.current.Use();
                     break;
+
+                case EventType.ScrollWheel:
+                    OnScroll.InvokeIfNotNull(Event.current.delta.y);
+                    Event.current.Use();
+                    break;
             }
         }
 
         private void OnMouseMove()
         {
-            DeltaX = Mathf.RoundToInt(Event.current.mousePosition.x - X);
-            DeltaY = Mathf.RoundToInt(Event.current.mousePosition.y - Y);
+            int x = Mathf.RoundToInt(Event.current.mousePosition.x);
+            int y = Mathf.RoundToInt(Event.current.mousePosition.y);
 
-            X = Mathf.RoundToInt(Event.current.mousePosition.x);
-            Y = Mathf.RoundToInt(Event.current.mousePosition.y);
+            DeltaX = x - X;
+            DeltaY = y - Y;
 
-            IsInsideLayout = X >= 0 && Y >= 0 && X <= Layout.WindowWidth && Y <= Layout.WindowHeight;
+            X = x;
+            Y = y;
+
+            IsInsideLayout = X >= 0 && Y >= 0 && X <= Layout.CanvasWidth && Y <= Layout.CanvasHeight;
 
             OnMove.InvokeIfNotNull();
         }

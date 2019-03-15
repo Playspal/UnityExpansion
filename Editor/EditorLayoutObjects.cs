@@ -149,9 +149,9 @@ namespace UnityExpansion.Editor
 
                 if
                 (
-                    layoutObject.GlobalX < Layout.WindowWidth &&
+                    layoutObject.GlobalX < Layout.CanvasWidth &&
                     layoutObject.GlobalX + layoutObject.Width > 0 &&
-                    layoutObject.GlobalY < Layout.WindowHeight &&
+                    layoutObject.GlobalY < Layout.CanvasHeight &&
                     layoutObject.GlobalY + layoutObject.Height > 0
                 )
                 {
