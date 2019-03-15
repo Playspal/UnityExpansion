@@ -18,6 +18,7 @@ namespace UnityExpansionInternal.UiLayoutEditor
         public readonly UiAnimation Animation;
 
         private List<NodeBlockGroup> _groups = new List<NodeBlockGroup>();
+        protected int _groupsOffset = 0;
 
         public NodeLayoutElement(InternalUiLayoutData.NodeData nodeData, EditorLayout layout, UiLayoutElement layoutElement) : base(nodeData, layout, 300, 1)
         {
@@ -76,10 +77,10 @@ namespace UnityExpansionInternal.UiLayoutEditor
             return group;
         }
 
-        private void Refresh()
+        protected void Refresh()
         {
             int padding = 10;
-            int y = BlockHeader.Y + BlockHeader.Height + padding;
+            int y = BlockHeader.Y + BlockHeader.Height + padding + _groupsOffset;
 
             for (int i = 0; i < _groups.Count; i++)
             {
