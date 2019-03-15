@@ -20,9 +20,6 @@ namespace UnityExpansion.Editor
 
         public EditorLayoutObjectText(EditorLayout window, int width, int height) : base(window, width, height)
         {
-            Width = width;
-            Height = height;
-
             _style = new GUIStyle();
             _style.fixedHeight = Height;
             _style.padding = new RectOffset(2, 2, 1, 2);
