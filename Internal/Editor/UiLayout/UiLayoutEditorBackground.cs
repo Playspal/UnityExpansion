@@ -40,9 +40,9 @@ namespace UnityExpansionInternal.UiLayoutEditor
             int x = _layout.CanvasX % 20 - 20;
             int y = _layout.CanvasY % 20 - 20;
 
-            for(int xx = x; xx < x + _layout.WindowWidth + 40; xx += _texture.width)
+            for (int xx = x; xx < x + _layout.CanvasWidth + 40; xx += _texture.width)
             {
-                for (int yy = y; yy < y + _layout.WindowHeight + 40; yy += _texture.height)
+                for (int yy = y; yy < y + _layout.CanvasHeight + 40; yy += _texture.height)
                 {
                     Rect bounds = new Rect(xx, yy, _texture.width, _texture.height);
                     GUI.DrawTexture(bounds, _texture, ScaleMode.StretchToFill, true, 1f);

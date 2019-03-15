@@ -20,18 +20,21 @@ namespace UnityExpansionInternal.UiLayoutEditor
         private UiLayoutEditorBackground _background;
         private EditorLayoutObjectText _message;
 
+        public float scale = 0.5f;
+
         public override void Initialization()
         {
             base.Initialization();
+            EnableZoomByMouseWheel(0.3f, 1f, 0.1f);
 
             Instance = this;
 
             OnWindowResized += OnWindowResize;
 
-            _message = new EditorLayoutObjectText(this, WindowWidth, 20);
+            _message = new EditorLayoutObjectText(this, CanvasWidth, 20);
             _message.SetAlignment(TextAnchor.MiddleCenter);
             _message.X = 0;
-            _message.Y = WindowHeight / 2 - _message.Height / 2;
+            _message.Y = CanvasHeight / 2 - _message.Height / 2;
 
             _dragAndDrop = new UiLayoutEditorDragAndDrop(this);
             _dragAndDrop.OnSuccess += OnDragAndDrop;
@@ -62,9 +65,9 @@ namespace UnityExpansionInternal.UiLayoutEditor
             RefreshEdicts();
         }
 
-        protected override void OnGUI()
+        protected override void Render()
         {
-            if(Selection == null)
+            if (Selection == null)
             {
                 Initialization();
             }
@@ -74,11 +77,13 @@ namespace UnityExpansionInternal.UiLayoutEditor
             if (Selection.Target == null)
             {
                 _message.X = -CanvasX;
-                _message.Y = WindowHeight / 2 - _message.Height / 2 - CanvasY;
+                _message.Y = CanvasHeight / 2 - _message.Height / 2 - CanvasY;
                 _message.SetText("No UiLayout selected");
                 _message.SetActive(true);
 
-                base.OnGUI();
+                SetScale(1);
+
+                base.Render();
                 return;
             }
 
@@ -87,7 +92,7 @@ namespace UnityExpansionInternal.UiLayoutEditor
 
             Curves.RenderBackground();
 
-            base.OnGUI();
+            base.Render();
 
             Curves.RenderFrontground();
         }
@@ -311,9 +316,9 @@ namespace UnityExpansionInternal.UiLayoutEditor
 
         private void OnWindowResize()
         {
-            _message.SetSize(WindowWidth, _message.Height);
+            _message.SetSize(CanvasWidth, _message.Height);
             _message.X = 0;
-            _message.Y = WindowHeight / 2 - _message.Height / 2;
+            _message.Y = CanvasHeight / 2 - _message.Height / 2;
         }
 
         /// <summary>
