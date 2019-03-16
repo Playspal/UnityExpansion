@@ -256,7 +256,13 @@ namespace UnityExpansionInternal.UiLayoutEditor
 
         private void SetupLayoutElementRoot(InternalUiLayoutData.NodeData nodeData)
         {
-            UiLayoutElement layoutElement = nodeData.LayoutPreset.Prefab;
+            UiLayoutProcessorPreset preset = Selection.ProcessorPresetFind(nodeData.LayoutPresetID);
+            UiLayoutElement layoutElement = preset.Prefab;
+            
+            if(preset.Container == null)
+            {
+                preset.Container = Selection.Target.GetComponent<RectTransform>();
+            }
 
             if (layoutElement != null)
             {
@@ -305,7 +311,7 @@ namespace UnityExpansionInternal.UiLayoutEditor
             InternalUiLayoutData.NodeData nodeData = Selection.Data.CreateNodeDataLayoutElementRoot();
 
             nodeData.ID = layoutElement.PersistantID.Value;
-            nodeData.LayoutPreset = preset;
+            nodeData.LayoutPresetID = preset.ID;
             nodeData.X = Mouse.X - CanvasX;
             nodeData.Y = Mouse.Y - CanvasY;
 

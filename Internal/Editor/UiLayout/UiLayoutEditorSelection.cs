@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 using UnityEditor;
 using UnityEngine;
@@ -18,6 +19,8 @@ namespace UnityExpansionInternal.UiLayoutEditor
         public UiLayoutProcessor TargetProcessor { get; private set; }
 
         public InternalUiLayoutData Data { get; private set; }
+
+        public List<RectTransform> Containers = new List<RectTransform>();
 
         private GameObject _selection = null;
 
@@ -42,13 +45,24 @@ namespace UnityExpansionInternal.UiLayoutEditor
                     Target = Selection.activeGameObject.GetComponent<UiLayout>();
                     TargetProcessor = UtilityReflection.GetMemberValue(Target, "_processor") as UiLayoutProcessor;
                     Data = Target.gameObject.GetOrAddComponent<InternalUiLayoutData>();
-                    // TODO: uncomment
                     //Data.hideFlags = HideFlags.HideInInspector;
                 }
 
                 _selection = Selection.activeGameObject;
 
                 OnChanged.InvokeIfNotNull();
+            }
+
+            Containers.Clear();
+
+            if(Target != null)
+            {
+                AddContainer(Target.gameObject);
+
+                for (int i = 0; i < Target.transform.childCount; i++)
+                {
+                    AddContainer(Target.transform.GetChild(i).gameObject);
+                }
             }
         }
 
@@ -62,6 +76,11 @@ namespace UnityExpansionInternal.UiLayoutEditor
             TargetProcessor.Presets.Add(preset);
 
             return preset;
+        }
+
+        public UiLayoutProcessorPreset ProcessorPresetFind(string id)
+        {
+            return TargetProcessor.Presets.Find(x => x.ID == id);
         }
 
         /// <summary>
@@ -109,6 +128,16 @@ namespace UnityExpansionInternal.UiLayoutEditor
                 x.HandlerID == handlerID &&
                 x.HandlerMethod == handlerMethod
             );
+        }
+
+        private void AddContainer(GameObject gameObject)
+        {
+            RectTransform rectTransform = gameObject.GetComponent<RectTransform>();
+
+            if (rectTransform != null)
+            {
+                Containers.Add(rectTransform);
+            }
         }
     }
 }

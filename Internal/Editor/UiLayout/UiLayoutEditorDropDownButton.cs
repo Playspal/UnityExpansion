@@ -41,7 +41,8 @@ namespace UnityExpansionInternal.UiLayoutEditor
         {
             _label.SetText(value);
             _label.SetSize(_label.PreferredWidth, Height);
-            _label.X += _icon.X - _label.Width;
+            
+            _label.X = _icon.X - _label.Width;
         }
 
         private void SetColor(Color color)
