@@ -3,8 +3,6 @@ using System.Collections.Generic;
 
 using UnityEngine;
 
-using UnityExpansion.UI.Layout.Processor;
-
 [Serializable]
 public class InternalUiLayoutData : MonoBehaviour
 {
@@ -24,10 +22,10 @@ public class InternalUiLayoutData : MonoBehaviour
         public string ID;
 
         [SerializeField]
-        public NodeType Type = NodeType.Undefined;
+        public string LayoutPresetID;
 
         [SerializeField]
-        public UiLayoutProcessorPreset LayoutPreset;
+        public NodeType Type = NodeType.Undefined;
 
         [SerializeField]
         public int X;

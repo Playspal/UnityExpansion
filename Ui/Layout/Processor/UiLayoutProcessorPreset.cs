@@ -11,6 +11,12 @@ namespace UnityExpansion.UI.Layout.Processor
     public class UiLayoutProcessorPreset
     {
         /// <summary>
+        /// ID of preset.
+        /// </summary>
+        [SerializeField]
+        public string ID;
+
+        /// <summary>
         /// The prefab of UiLayoutElement.
         /// </summary>
         [SerializeField]
@@ -27,6 +33,7 @@ namespace UnityExpansion.UI.Layout.Processor
         /// </summary>
         public UiLayoutProcessorPreset(UiLayoutElement prefab)
         {
+            ID = Guid.NewGuid().ToString("N");
             Prefab = prefab;
         }
 
